@@ -12,11 +12,13 @@ Historia técnica: [descripción | ticket/issue/historia-de-usuario URL] <!-- op
 ## Índice
 - [Poll-App](#poll-app)
   - [Índice](#índice)
+  - [Introducción](#introducción)
   - [Organización del equipo](#organización-del-equipo)
   - [Miembros y roles](#miembros-y-roles)
   - [Metodología](#metodología)
-  - [Herramientas de gestión](#herramientas-de-gestión)
-  - [Herramientas](#herramientas)
+  - [Herramientas de gestión del proyecto](#herramientas-de-gestión-del-proyecto)
+  - [Herramientas de gestión de configuración](#herramientas-de-gestión-de-configuración)
+  - [Tecnologías de desarrollo](#tecnologías-de-desarrollo)
   - [Factores en la Decisión ](#factores-en-la-decisión-)
   - [Opciones Consideradas](#opciones-consideradas)
   - [Decisión](#decisión)
@@ -26,14 +28,15 @@ Historia técnica: [descripción | ticket/issue/historia-de-usuario URL] <!-- op
     - [\[opción 2\]](#opción-2)
     - [\[opción 3\]](#opción-3)
   - [Enlaces ](#enlaces-)
-  - [\[Cualquier otro apartado que se considere\] ](#cualquier-otro-apartado-que-se-considere-)
 
 
+## Introducción
 ## Organización del equipo
 ## Miembros y roles
 ## Metodología
-## Herramientas de gestión
-## Herramientas
+## Herramientas de gestión del proyecto
+## Herramientas de gestión de configuración
+## Tecnologías de desarrollo
 
 [Describe el contexto y el enunciado del problema, por ejemplo, usando dos o tres frases. Es posible plantear el problema en forma de pregunta. ]
 
@@ -95,5 +98,3 @@ Historia técnica: [descripción | ticket/issue/historia-de-usuario URL] <!-- op
 
 * [Link type] [Link to ADR] <!-- ejemplo: Detallado en [ADR-0005](0005-example.md) -->
 * …
-
-## [Cualquier otro apartado que se considere] <!-- opcional -->
