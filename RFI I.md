@@ -1,12 +1,39 @@
-# [Título corto del Problema Resuelto y Solución]
+# Poll-App
 
-* Estado: [propuesta | rechazada | aceptada | obsoleta | … | reemplazada por [ADR-0005](0005-example.md)] <!-- opcional -->
-* Responsables: [Listar todas las personas involucradas en la decisión] <!-- opcional -->
-* Fecha: [YYYY-MM-DD cuando se actualizó por última vez la decisión] <!-- opcional -->
+* Estado: propuesta <!-- opcional -->
+* Responsables: 
+  * Iñaki Velasco Rodríguez
+  * Jorge Bruned Alamán
+  * Unai Biurrun Villacorta 
+* Fecha: 2022-02-15
 
 Historia técnica: [descripción | ticket/issue/historia-de-usuario URL] <!-- opcional -->
 
-## Contexto y Planteamiento del Problema
+## Índice
+- [Poll-App](#poll-app)
+  - [Índice](#índice)
+  - [Organización del equipo](#organización-del-equipo)
+  - [Miembros y roles](#miembros-y-roles)
+  - [Metodología](#metodología)
+  - [Herramientas de gestión](#herramientas-de-gestión)
+  - [Herramientas](#herramientas)
+  - [Factores en la Decisión ](#factores-en-la-decisión-)
+  - [Opciones Consideradas](#opciones-consideradas)
+  - [Decisión](#decisión)
+    - [Consecuencias](#consecuencias)
+  - [Ventajas y Desventajas de las opciones](#ventajas-y-desventajas-de-las-opciones)
+    - [\[opción 1\]](#opción-1)
+    - [\[opción 2\]](#opción-2)
+    - [\[opción 3\]](#opción-3)
+  - [Enlaces ](#enlaces-)
+  - [\[Cualquier otro apartado que se considere\] ](#cualquier-otro-apartado-que-se-considere-)
+
+
+## Organización del equipo
+## Miembros y roles
+## Metodología
+## Herramientas de gestión
+## Herramientas
 
 [Describe el contexto y el enunciado del problema, por ejemplo, usando dos o tres frases. Es posible plantear el problema en forma de pregunta. ]
 
