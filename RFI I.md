@@ -1,100 +1,75 @@
-# Poll-App
+# Documento RFI I
 
-* Estado: propuesta <!-- opcional -->
-* Responsables: 
-  * Iñaki Velasco Rodríguez
-  * Jorge Bruned Alamán
-  * Unai Biurrun Villacorta 
-* Fecha: 2022-02-15
+En este documento se recoge la información relativa a las decisiones iniciales en cuanto a organización del equipo, metodologías, herramientas y tecnologías seleccionadas. Para cada decisión, se listan las opciones consideradas junto a una breve descripción, ventajas y contras, así como la decisión final argumentada.
 
-Historia técnica: [descripción | ticket/issue/historia-de-usuario URL] <!-- opcional -->
+# Tabla de contenidos
 
-## Índice
-- [Poll-App](#poll-app)
-  - [Índice](#índice)
-  - [Introducción](#introducción)
-  - [Organización del equipo](#organización-del-equipo)
-  - [Miembros y roles](#miembros-y-roles)
-  - [Metodología](#metodología)
-  - [Herramientas de gestión del proyecto](#herramientas-de-gestión-del-proyecto)
-  - [Herramientas de gestión de configuración](#herramientas-de-gestión-de-configuración)
-  - [Tecnologías de desarrollo](#tecnologías-de-desarrollo)
-  - [Factores en la Decisión ](#factores-en-la-decisión-)
-  - [Opciones Consideradas](#opciones-consideradas)
-  - [Decisión](#decisión)
-    - [Consecuencias](#consecuencias)
-  - [Ventajas y Desventajas de las opciones](#ventajas-y-desventajas-de-las-opciones)
-    - [\[opción 1\]](#opción-1)
-    - [\[opción 2\]](#opción-2)
-    - [\[opción 3\]](#opción-3)
-  - [Enlaces ](#enlaces-)
+[TOC]
+
+# Introducción
+
+El producto software solicitado se trata de una aplicación web que permita crear votaciones, las cuales podrán ser completadas por el resto de usuarios. 
+
+# Estructura organizacional
+
+Existe una gran variedad de estructuras organizativas posibles. Algunas de estas son:
+- Estructura vertical
+- Estructura horizontal
+- Funcional
+- En divisiones
+- Matricial
+- Híbrida
+
+La estructura organizacional escogida consiste en una estructura de tipo horizontal o plana. La principal motivación detrás de esta elección es la gran flexibilidad que aporta, además de facilitar colaboración entre miembros del equipo. Además, esta estructura se ajusta perfectamente a una *start-up*, como es nuestro caso, donde todos los miembros tienen un gran compromiso y nivel de responsabilidad.
+
+Adicionalmente, dada la disparidad de horario laboral de los integrantes de la organización, resulta especialmente interesante disponer de flexibilidad para trabajar. Del mismo modo, consideramos que los conocimientos de los distintos miembros están bastante equiparados, siendo esto nuevamente favorable para adoptar una estructura plana u horizontal.
+
+## Roles
+
+Si bien la estructura elegida es horizontal, consideramos interesante y positiva la asignación del rol de jefe o responsable, que podría ser más típico de una organización vertical. 
+
+Sin embargo, esta estructura no será rígida en absoluto; el rol de jefe no actúa como un jefe tradicional sino que actúa a modo de representante y lleva la iniciativa del proyecto, dirigiendo al resto de integrantes hacia los objetivos de la organización. También es el encargado de comunicarse con el docente.
+
+Con el objetivo de adquirir el mayor grado de competencias posible, se opta por rotar el rol de jefe periódicamente en cada entrega, de tal modo que todos los integrantes puedan ejercer dicho rol. Por tanto, la distribución de roles no es estática.
 
 
-## Introducción
-## Organización del equipo
-## Miembros y roles
-## Metodología
-## Herramientas de gestión del proyecto
-## Herramientas de gestión de configuración
-## Tecnologías de desarrollo
+## Miembros
 
-[Describe el contexto y el enunciado del problema, por ejemplo, usando dos o tres frases. Es posible plantear el problema en forma de pregunta. ]
+Los miembros del equipo, que irán rotando en el rol de responsable, son los siguientes:
 
-## Factores en la Decisión <!-- opcional -->
+- Unai Biurrun
+- Jorge Bruned
+- Iñaki Velasco
 
-* [factor 1, …]
-* [factor 2, …]
-* … <!-- el número de factores puede variar-->
+# Metodología de desarrollo
 
-## Opciones Consideradas
+Vamos a utilizar nuestra propia metodología empleando los elementos que más útiles nos parecen para nuestro caso de otras metodologías ágiles como Scrum o Kanban. El objetivo y motivación de esta decisión es que la metodología se adapte a nuestra situación concreta, cogiendo lo que más nos interesa de otras metodologías ágiles ampliamente conocidas. A su vez, el motivo para elegir una metodología ágil es [... (p ej: flexibilidad)]
 
-* [opción 1]
-* [opción 2]
-* [opción 3]
-* … <!-- el número de opciones puede variar -->
+## Buenas prácticas (se menciona en una de las preguntas)
 
-## Decisión
+Igual podemos hacer comentarios del estilo nomenclatura de código, patrones de diseño, etc
 
- Opción elegida: "[opción 1]", porque [justificación. por ejemplo única opción, qué satisface el factor de decisión 1...| es el mejor en.. (ver más abajo)].
+## Reuniones
 
-### Consecuencias<!-- opcional -->
+Dailys?
+Weeklys?
 
-* [Positiva: e.g., Mejora en los atributos.., Se necesita tomar siguientes decisiones sobre..., …]
-* [Negativa: e.g., Mejora en los atributos.., Se necesita tomar siguientes decisiones sobre..., …]
-* …
+## Boards
 
-## Ventajas y Desventajas de las opciones
+# Herramientas de gestión
 
-### [opción 1]
+Issues, boards? → GitHub Projects & Issues (meter captura de pantalla) ✔✔🤷‍♂️
 
-[ejemplo | descripción | puntero a más información [URL | doc anexo al ADR ] | …] <!-- opcional -->
+Github:
+- Empleamos la sección de *Projects* del repositorio junto a los *Issues*
+- También utilizamos *Issues*
 
-* Positivo, porque [argumento a]
-* Positivo, porque [argumento b]
-* Negativo, porque [argumento c]
-* …
+# Gestión de la configuración
+Git
+GitHub
 
-### [opción 2]
 
-[ejemplo | descripción | puntero a más información [URL | doc anexo al ADR ] | …] <!-- opcional -->
+# Tecnologías
 
-* Positivo, porque [argumento a]
-* Positivo, porque [argumento b]
-* Negativo, porque [argumento c]
-* …
-
-### [opción 3]
-
-[ejemplo | descripción | puntero a más información [URL | doc anexo al ADR ] | …] <!-- opcional -->
-
-* Positivo, porque [argumento a]
-* Positivo, porque [argumento b]
-* Negativo, porque [argumento c]
-* …
-
-...
-
-## Enlaces <!-- opcional -->
-
-* [Link type] [Link to ADR] <!-- ejemplo: Detallado en [ADR-0005](0005-example.md) -->
-* …
+Despliegues: Docker
+Desarrollo: Python+Flask, React
