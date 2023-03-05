@@ -18,9 +18,19 @@ Cabe destacar que se ha decidido aplicar metodologías ágiles debido a su flexi
 </div>
 
 ## Tabla de contenidos
-
-[TOC]
-
+<!-- [TOC] -->
+- [ADR - Metodologías de desarrollo](#adr---metodologías-de-desarrollo)
+- [Introducción](#introducción)
+  - [Tabla de contenidos](#tabla-de-contenidos)
+- [Factores en la Decisión](#factores-en-la-decisión)
+- [Opciones Consideradas - Metodología ágil principal](#opciones-consideradas---metodología-ágil-principal)
+  - [Ventajas y Desventajas de las opciones](#ventajas-y-desventajas-de-las-opciones)
+    - [Scrum](#scrum)
+    - [Kanban](#kanban)
+  - [Decisión](#decisión)
+- [Opciones Consideradas - Reuniones/Seguimiento](#opciones-consideradas---reunionesseguimiento)
+  - [Decisión](#decisión-1)
+- [Extra - Buenas prácticas](#extra---buenas-prácticas)
 
 # Factores en la Decisión
 <div style="text-align: justify!important">
