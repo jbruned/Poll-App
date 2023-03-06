@@ -1,4 +1,4 @@
-# ADR Backend
+# ADR Backend<!-- omit from toc -->
 
 * Estado: aceptada
 * Responsables:
@@ -17,19 +17,17 @@ Para cada decisión, se listan las opciones consideradas junto a una breve descr
 ## Tabla de contenidos
 
 <!-- [TOC] -->
-- [ADR Backend](#adr-backend)
 - [Introducción](#introducción)
   - [Tabla de contenidos](#tabla-de-contenidos)
-- [Factores en la Decisión](#factores-en-la-decisión)
-- [Opciones Consideradas](#opciones-consideradas)
-  - [Ventajas y Desventajas de las opciones](#ventajas-y-desventajas-de-las-opciones)
+- [Factores en la decisión](#factores-en-la-decisión)
+- [Opciones consideradas](#opciones-consideradas)
   - [Java](#java)
   - [.NET](#net)
   - [Python + Flask](#python--flask)
 - [Decisión](#decisión)
-- [Enlaces ](#enlaces-)
+- [Referencias](#referencias)
 
-# Factores en la Decisión
+# Factores en la decisión
 <div style="text-align: justify!important">
 
 Para tomar la decisión se han priorizado los siguientes factores:
@@ -38,7 +36,7 @@ Para tomar la decisión se han priorizado los siguientes factores:
 * Popularidad
 </div>
 
-# Opciones Consideradas
+# Opciones consideradas
 <div style="text-align: justify!important">
 
 Tras un análisis de las opciones disponibles actualmente, se han valorado las siguientes:
@@ -46,8 +44,6 @@ Tras un análisis de las opciones disponibles actualmente, se han valorado las s
 * .NET
 * Python + Flask
 </div>
-
-## Ventajas y Desventajas de las opciones
 
 ## Java
 <div style="text-align: justify!important">
@@ -113,12 +109,12 @@ En definitiva, consideramos que dada su sencillez y el conocimiento de Python de
 # Decisión
 <div style="text-align: justify!important">
 
- De entre todas las opciones barajadas y descritas previamente, finalmente se ha optado por utilizar Python y Flask para el desarrollo, dada su sencillez, principalmente.
+De entre todas las opciones barajadas y descritas previamente, finalmente se ha optado por utilizar Python y Flask para el desarrollo, dada su sencillez, principalmente.
 
- El proyecto no es muy grande y consideramos que lo más interesante del mismo en relación con la asignatura es su arquitectura y su despliegue. Por tanto, cuanto menos tiempo sea necesario invertir en otros elementos, habrá más tiempo disponible para profundizar en estos aspectos. 
+El proyecto no es muy grande y consideramos que lo más interesante del mismo en relación con la asignatura es su arquitectura y su despliegue. Por tanto, cuanto menos tiempo sea necesario invertir en otros elementos, habrá más tiempo disponible para profundizar en estos aspectos. 
 </div>
 
-# Enlaces <!-- opcional -->
+# Referencias<!-- opcional -->
 <div style="text-align: justify!important">
 
 * [Java](https://www.java.com/es/)

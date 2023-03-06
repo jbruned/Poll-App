@@ -1,4 +1,4 @@
-# ADR Base de Datos
+# ADR Base de Datos<!-- omit from toc -->
 
 * Estado: aceptada
 * Responsables:
@@ -17,20 +17,18 @@ Para cada decisión, se listan las opciones consideradas junto a una breve descr
 ## Tabla de contenidos
 
 <!-- [TOC] -->
-- [ADR Base de Datos](#adr-base-de-datos)
 - [Introducción](#introducción)
   - [Tabla de contenidos](#tabla-de-contenidos)
-- [Factores en la Decisión](#factores-en-la-decisión)
-- [Opciones Consideradas](#opciones-consideradas)
-  - [Ventajas y Desventajas de las opciones](#ventajas-y-desventajas-de-las-opciones)
+- [Factores en la decisión](#factores-en-la-decisión)
+- [Opciones consideradas](#opciones-consideradas)
   - [SQLite](#sqlite)
   - [Oracle Database Express Edition](#oracle-database-express-edition)
   - [PostgreSQL](#postgresql)
 - [Decisión](#decisión)
-- [Enlaces ](#enlaces-)
+- [Referencias](#referencias)
 
 
-# Factores en la Decisión
+# Factores en la decisión
 <div style="text-align: justify!important">
 
 Para tomar la decisión se han priorizado los siguientes factores:
@@ -39,7 +37,7 @@ Para tomar la decisión se han priorizado los siguientes factores:
 * Posibilidades de despliegue
 </div>
 
-# Opciones Consideradas
+# Opciones consideradas
 <div style="text-align: justify!important">
 
 Tras un análisis de las opciones disponibles actualmente, se han valorado las siguientes:
@@ -47,8 +45,6 @@ Tras un análisis de las opciones disponibles actualmente, se han valorado las s
 * Oracle Database Express Edition
 * PostgreSQL
 </div>
-
-## Ventajas y Desventajas de las opciones
 
 ## SQLite
 <div style="text-align: justify!important">
@@ -113,7 +109,7 @@ Dada su naturaleza de BDD tradicional y al tratarse de un producto gratuito y co
  Es una BDD tradicional, con lo que el despliegue será posible sin quebraderos de cabeza, es gratuita y es SQL (por lo que todo el equipo será capaz de manejarla más pronto que tarde)
 </div>
 
-# Enlaces <!-- opcional -->
+# Referencias<!-- opcional -->
 <div style="text-align: justify!important">
 
 * [SQLite](https://www.sqlite.org/index.html)
