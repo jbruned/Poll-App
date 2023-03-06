@@ -1,16 +1,16 @@
-# ADR Backend<!-- omit from toc -->
+# ADR Frontend<!-- omit from toc -->
 
 * Estado: aceptada
 * Responsables:
   * Unai Biurrun Villacorta
   * Jorge Bruned Alamán
   * Iñaki Velasco Rodríguez
-* Fecha: 28-02-2023
+* Fecha: 05-03-2023
 
 # Introducción
 <div style="text-align: justify!important">
 
-En este documento se recoge la información relativa a las decisiones iniciales en cuanto a la tecnología Backend que se utilizará en el proyecto. 
+En este documento se recoge la información relativa a las decisiones iniciales en cuanto a la tecnología Frontend que se utilizará en el proyecto. 
 Para cada decisión, se listan las opciones consideradas junto a una breve descripción, ventajas y contras, así como la decisión final tomada.
 </div>
 
@@ -21,9 +21,11 @@ Para cada decisión, se listan las opciones consideradas junto a una breve descr
   - [Tabla de contenidos](#tabla-de-contenidos)
 - [Factores en la decisión](#factores-en-la-decisión)
 - [Opciones consideradas](#opciones-consideradas)
-  - [Java](#java)
-  - [.NET](#net)
-  - [Python + Flask](#python--flask)
+  - [Server-side rendering](#server-side-rendering)
+  - [Client-side rendering](#client-side-rendering)
+    - [HTML + *JavaScript* puro](#html--javascript-puro)
+    - [React](#react)
+    - [Angular](#angular)
 - [Decisión](#decisión)
 - [Referencias](#referencias)
 
@@ -31,96 +33,140 @@ Para cada decisión, se listan las opciones consideradas junto a una breve descr
 <div style="text-align: justify!important">
 
 Para tomar la decisión se han priorizado los siguientes factores:
-* Conocimiento existente en el equipo
-* Sencillez
+* Velocidad de ejecución/requerimientos del equipo cliente
+* Sencillez de cara al desarrollo
 * Popularidad
+* Conocimiento existente en el equipo
 </div>
 
 # Opciones consideradas
 <div style="text-align: justify!important">
 
 Tras un análisis de las opciones disponibles actualmente, se han valorado las siguientes:
-* Java
-* .NET
-* Python + Flask
+* Server-side rendering
+* React
+* Angular
+* HTML + *JavaScript* puro
 </div>
 
-## Java
+## Server-side rendering
 <div style="text-align: justify!important">
 
-Mundialmente conocido y utilizado, [Java](https://www.java.com/es/) es una de las tecnologías más habituales para el desarrollo de aplicaciones de todo tipo. 
+En primer lugar, se consideró la opción de hacer todo el renderizado en el servidor y responder con una página HTML estática a cada petición. Esto presenta algunas ventajas:
+* Simplificación del código necesario para el frontend, no se ejecuta nada de código en el cliente.
+* La aplicación funcionará en equipos con peores especificaciones de hardware el no ejecutarse código en él.
+* Mejor de cara al indexado en motores de búsqueda y RRSS, aunque en principio no nos influye dada la naturaleza de nuestra aplicación.
 
-Las ventajas que ofrece para nuestro proyecto son las siguientes:
+Sin embargo, priman los inconvenientes:
+* Nos interesa dentro de la asignatura, tener varios componentes que se comuniquen entre sí. El frontend en este caso sería muy simple y no tendrái que comunicarse con el backend.
+* Necesidad de recargar la página constantemente para cualquier interacción con el backend.
+* Mayores tiempos de carga cuando el backend tenga una alta carga de trabajo.
+* Falta de aislamiento entre componentes; si por ejemplo el backend se cae no recibiríamos absolutamente ninguna respuesta (p. ej: *timeout*).
+* Respuestas del servidor de mucho mayor tamaño (página completa frente a, por ejemplo, un pequeño JSON con la información necesaria).
+* Imposibilidad de servir desde diferentes servidores la vista y los datos.
+* Este modelo está quedando obsoleto, debido entre otras cosas a estas desventajas.
+</div>
 
-* Todos los miembros del equipo poseen conocimientos sobre esta tecnología, a nivel académico.
-* Es una tecnología asentada en el mercado, con lo que hay muchos recursos para documentarse, mucho soporte, etc.
-* Es un lenguaje Orientado a Objetos, con lo que es mantenible.
-* Herramientas de desarrollo gratuitas disponibles.
+## Client-side rendering
+<div style="text-align: justify!important">
+
+Una primera posibilidad, sería la de devolver una página estática directamente desde el *backend*, con todos los datos recogidos de la base de datos ya integrados en la misma. Esto es muy típico en páginas desarrolladas con *PHP*, aunque obviamente podemos hacer lo mismo con *Python*+*Flask*, devolviendo un HTML con *placeholders* sustituidos por los datos deseados.
+
+Las ventajas comunes al resto de opciones planteadas incluyen:
+
+* Nos interesa dentro de la asignatura, especialmente de cara a aprender cómo hacer un buen despliegue, tener varios componentes que se comuniquen entre sí.
+El frontend en este caso sería un componente más que debe comunicarse con el backend, en lugar de que simplemente el backend nos devuelva una página estática.
+* Menor tamaño de las respuestas (pequeño *JSON* frente a página *HTML* completa).
+* No hace falta recargar la página constantemente, especialmente útil en conexiones lentas, gracias también al punto anterior.
+* Independencia entre componentes: por ejemplo, podemos servir la página desde una *CDN* y disponer de un servidor central donde se hagan pequeñas peticiones *JSON*.
+* Independencia entre componentes: si el backend tiene una carga muy alta o se cae, podemos mostrar un mensaje de error y parte de la página puede funcionar igualmente (en lugar de un *timeout*, por ejemplo).
+* Modelo más extendido y usado a día de hoy.
+
+Algunas desventajas serían:
+* Mayor complejidad del código *frontend*.
+* Necesarias mejores especificaciones/requisitos del equipo cliente o un mejor navegador.
+* Se complica el despliegue; esto no es algo negativo, puesto que en esta asignatura estamos adquiriendo conocimientos relativos al despliegue y nos interesa ponerlos en práctica.
+</div>
+
+### HTML + *JavaScript* puro
+
+<div style="text-align: justify!important">
+
+Una de las opciones planteadas consiste en no utilizar ninguna librería en el *frontend*, sino hacerlo todo desde cero con HTML+CSS+JS puro. Esto plantea algunas ventajas:
+
+* Menor número de dependencias
+* No tenemos que cargar las librerías sino solo nuestra propia web
+* No cargamos código que no se vaya a usar (las librerías habría que cargarlas enteras, no solo lo que se usa)
+* Mayor control sobre la arquitectura, la implementación y lo que hace nuestro código "por detrás"
+
+Sin embargo, abundan los inconvenientes:
+
+* Código redundante
+* Hay que "picar" todo "desde cero"
+* Productividad muy reducida; tardaríamos mucho más para desarrollar las mismas funcionalidades.
+* Mayor probabilidad de cometer errores de seguridad o ineficiencias, dado que las librerías están desarrolladas y revisadas por expertos y por una comunidad muy grande mientras que en *JavaScript* lo haríamos todo a mano nosotros mismos.
+</div>
+
+### React
+<div style="text-align: justify!important">
+
+Una de las librerías para desarrollar interfaces de usuario web es [React](https://reactjs.org/). Las ventajas y desventajas se van a analizar frente a *Angular*, que es la otra opción considerada.
+
+Entre las ventajas encontradas, destacaríamos:
+
+* Algunos miembros del equipo poseen conocimientos sobre esta tecnología y la han utilizado para desarrollar otros proyectos con anterioridad.
+* Es una tecnología asentada en el mercado y la más popular en su sector, lo que hace que haya muchos recursos de cara a documentación, soporte, solución de problemas, etc.
+* Permite dividir el código en componentes y lograr una mayor abstracción, un código más legible, mantenible y estructurado según patrones de diseño.
+* Más ligero en cuanto a peso que, por ejemplo, *Angular*.
+* Posibilidad de extender su funcionalidad mediante paquetes adicionales como podrían ser *Redux*, *React Router*, etc.
+* En general, se suele decir que tiene una mejor curva de aprendizaje respecto a *Angular*.
+* Mejor rendimiento que otras alternativas.
+* Mayor adaptabilidad para desarrollar una aplicación multi-plataforma que funcione correctamente por ejemplo en dispositivos móviles.
+* Disponibilidad de paquetes como *create-react-app* que simplifican la creación del entorno y compilación.
+* Posibilidad de utilizar *TypeScript*, con ventajas como el tipado de variables y una sintaxis mejorada pero compatible con *JavaScript*
 
 En cuanto a las desventajas, destacan las siguientes:
-* No es muy rápido.
-* Generalmente, presenta mucho boilerplate, lo que no agrada a los miembros del equipo, ya que se requiere de más líneas de código (y por tanto tiempo) para lograr lo mismo
-* Pese a contar con experiencia, los miembros del equipo tienen más experiencia con otras tecnologías.
-* Las herramientas de desarrollo no nos resultan especialmente agradables.
-
-En general, es una tecnología que encontramos más adecuada para proyectos más grandes. Dado el reducido tamaño de nuestro proyecto, parece que habría tecnologías más adecuadas.
+* Gestión del estado más pobre.
+* Falta de características "*built-in*", siendo necesario utilizar librerías para muchos aspectos básicos.
+* El *data-binding* es unidireccional (no dispone de elementos como *observers*)
   
 </div>
 
-## .NET
+### Angular
 <div style="text-align: justify!important">
 
-Otra de las tecnologías más populares, de la mano de Microsoft. Tiene muchas posibilidades, al igual que Java.
+Otra de las tecnologías más populares, utilizada y mantenida por *Google*, es [Angular](https://angular.io/). Se trata de un *frontend framework*, siendo *React* definido como una librería para crear GUIs.
 
 Las ventajas que ofrece para nuestro proyecto son las siguientes:
-* Algunos miembros del equipo poseen conocimiento previo del ecosistema [.NET](https://dotnet.microsoft.com/es-es/), a nivel profesional.
-* Es popular, con lo que, de forma similar a Java, existen muchos recursos para documentarse al respecto.
-* El ecosistema de trabajo y las herramientas (Visual Studio, NuGet, etc.) es francamente cómodo de utilizar en base a la experiencia previa de algunos miembros del equipo.
-* Herramientas de desarrollo gratuitas disponibles.
+* *Data-binding* bidireccional.
+* Mayor funcionalidad.
+* También ofrece la posibilidad de utilizar *TypeScript*, con ventajas como el tipado de variables y una sintaxis mejorada pero compatible con *JavaScript*
 
 En cuanto a las desventajas, destacan las siguientes:
 
-* No todos los miembros del equipo tienen experiencia con esta tecnología.
-* Es una tecnología grande y cuya posibilidad de despliegue se intuye más compleja que en otros casos. Debido al alcance del proyecto, se piensa que habría opciones más sencillas y eficientes de acuerdo a nuestro tiempo de desarrollo disponible.
-
-En general, es una tecnología que encontramos más adecuada para proyectos más grandes, pero la elegiríamos antes que Java por su ecosistema de trabajo. Dado el reducido tamaño de nuestro proyecto, parece que habría tecnologías más adecuadas.
+* En general, los miembros del equipo tienen una menor experiencia con esta tecnología.
+* Proceso de aprendizaje más complejo en general (lo cual, junto al punto anterior, es bastante negativo).
+* Menor libertad de cara a estructura y patrones de diseño que *React*.
+* Mayor tamaño.
+* Menor popularidad.
   
 </div>
-
-## Python + Flask
-<div style="text-align: justify!important">
-
-La combinación de [Python](https://www.python.org/downloads/) y [Flask](https://flask.palletsprojects.com/en/2.2.x/) es una de las opciones disponibles para el desarrollo de aplicaciones web con Python, uno de los lenguajes de programación más populares.
-
-Las ventajas que ofrece para nuestro proyecto son las siguientes:
-* Todos los miembros del equipo poseen un conocimiento amplio de Python a nivel educativo e incluso a nivel profesional.
-* Python es un lenguaje sencillo y con poco boilerplate, con lo que se intuye que el desarrollo será más rápido y el despliegue más fácil.
-* Al igual que el resto de tecnologías consideradas, Python es muy popular y Flask también, aunque en menor medida (al ser más específica).
-* Herramientas de desarrollo gratuitas disponibles. Incluso herramientas de pago como PyCharm (gracias a nuestra condición de estudiantes).
-* El personal docente puede guiarnos en caso de requerirlo sin problemas.
-
-En cuanto a las desventajas, destacan las siguientes:
-* No todo el equipo posee conocimientos de Flask
-* Posible dificultad para separar el código de instanciación de BBDD y servidor web al ir los paquetes ya integrados con un cierto nivel de acoplación entre ambos
-
-En definitiva, consideramos que dada su sencillez y el conocimiento de Python del qye ya disponemos, la combinación de Python y Flask es ideal para un proyecto de la envergadura del nuestro.
-</div>
-
 
 # Decisión
 <div style="text-align: justify!important">
 
-De entre todas las opciones barajadas y descritas previamente, finalmente se ha optado por utilizar Python y Flask para el desarrollo, dada su sencillez, principalmente.
+De entre todas las opciones enumeradas y discutidas con anterioridad, finalmente se ha optado por utilizar React para el desarrollo del frontend, principalmente debido a su sencillez y su popularidad, aunque, naturalmente, se han tenido en cuenta todas las ventajas y desventajas recogidas en los correspondientes apartados.
 
-El proyecto no es muy grande y consideramos que lo más interesante del mismo en relación con la asignatura es su arquitectura y su despliegue. Por tanto, cuanto menos tiempo sea necesario invertir en otros elementos, habrá más tiempo disponible para profundizar en estos aspectos. 
+Las opciones de página estática o desarrollo con *JavaScript* puro fueron rápidamente descartadas por estar más obsoletas y ofrecer una peor experiencia tanto de usuario como de cara al desarrollo.
+
+También nos ha parecido interestante esta combinación de cara al despliegue por los motivos mencionados: dentro de la asignatura estamos adquiriendo conocimientos de despliegue que nos interesa poner en práctica. Con la elección realizada, tendremos más componentes que deben comunicarse entre sí; el frontend en este caso sería un componente más que debe comunicarse con el backend, en lugar de que simplemente el backend nos devuelva una página estática. Esto puede requerir de ajustes y configuraciones extra (por ejemplo, para evitar errores *CORS*).
 </div>
 
 # Referencias<!-- opcional -->
 <div style="text-align: justify!important">
 
-* [Java](https://www.java.com/es/)
-* [.NET](https://dotnet.microsoft.com/es-es/)
-* [Python](https://www.python.org/downloads/)
-* [Flask](https://flask.palletsprojects.com/en/2.2.x/)
+* [React](https://reactjs.org/)
+* [Angular](https://angular.io/)
+* [TypeScript](https://www.typescriptlang.org/)
 
 </div>
