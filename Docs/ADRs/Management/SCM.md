@@ -15,7 +15,16 @@ En este documento se recoge la información relativa a las decisiones iniciales 
 
 ## Tabla de contenidos
 
-[TOC]
+<!-- [TOC] -->
+- [ADR - Gestión de la configuración](#adr---gestión-de-la-configuración)
+- [Introducción](#introducción)
+  - [Tabla de contenidos](#tabla-de-contenidos)
+- [Factores en la Decisión](#factores-en-la-decisión)
+- [Opciones Consideradas - Gestión de la configuración](#opciones-consideradas---gestión-de-la-configuración)
+  - [GitHub](#github)
+  - [GitLab](#gitlab)
+- [Decisión](#decisión)
+  - [Herramientas de gestión](#herramientas-de-gestión)
 
 # Factores en la Decisión
 <div style="text-align: justify!important">

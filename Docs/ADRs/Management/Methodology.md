@@ -22,18 +22,16 @@ Cabe destacar que de partida, se ha decidido hacer uso de una metodología ágil
 
 ## Tabla de contenidos
 <!-- [TOC] -->
-- [ADR - Metodologías de desarrollo](#adr---metodologías-de-desarrollo)
+- [ADR metodologías de desarrollo](#adr-metodologías-de-desarrollo)
 - [Introducción](#introducción)
   - [Tabla de contenidos](#tabla-de-contenidos)
-- [Factores en la Decisión](#factores-en-la-decisión)
-- [Opciones Consideradas - Metodología ágil principal](#opciones-consideradas---metodología-ágil-principal)
-  - [Ventajas y Desventajas de las opciones](#ventajas-y-desventajas-de-las-opciones)
-    - [Scrum](#scrum)
-    - [Kanban](#kanban)
-  - [Decisión](#decisión)
-- [Opciones Consideradas - Reuniones/Seguimiento](#opciones-consideradas---reunionesseguimiento)
-  - [Decisión](#decisión-1)
-- [Extra - Buenas prácticas](#extra---buenas-prácticas)
+- [Factores en la decisión](#factores-en-la-decisión)
+- [Opciones consideradas](#opciones-consideradas)
+  - [Scrum](#scrum)
+  - [Kanban](#kanban)
+- [Decisión](#decisión)
+  - [Reuniones/Seguimiento](#reunionesseguimiento)
+  - [Buenas prácticas](#buenas-prácticas)
 
 # Factores en la decisión
 <div style="text-align: justify!important">

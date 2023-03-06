@@ -15,8 +15,16 @@ En este documento se recoge la información relativa a las decisiones iniciales 
 
 ## Tabla de contenidos
 
-[TOC]
-
+<!-- [TOC] -->
+- [ADR estructura organizacional](#adr-estructura-organizacional)
+- [Introducción](#introducción)
+  - [Tabla de contenidos](#tabla-de-contenidos)
+- [Factores en la decisión](#factores-en-la-decisión)
+- [Opciones consideradas](#opciones-consideradas)
+  - [Vertical](#vertical)
+  - [Horizontal](#horizontal)
+  - [Híbrida](#híbrida)
+- [Decisión](#decisión)
 
 # Factores en la decisión
 <div style="text-align: justify!important">
