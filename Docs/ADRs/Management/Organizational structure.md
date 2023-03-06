@@ -1,4 +1,4 @@
-# ADR estructura organizacional
+# ADR estructura organizacional<!-- omit from toc -->
 
 * Estado: aceptada
 * Responsables:
@@ -16,7 +16,6 @@ En este documento se recoge la información relativa a las decisiones iniciales 
 ## Tabla de contenidos
 
 <!-- [TOC] -->
-- [ADR estructura organizacional](#adr-estructura-organizacional)
 - [Introducción](#introducción)
   - [Tabla de contenidos](#tabla-de-contenidos)
 - [Factores en la decisión](#factores-en-la-decisión)

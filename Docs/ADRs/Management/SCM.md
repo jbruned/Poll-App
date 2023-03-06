@@ -1,4 +1,4 @@
-# ADR - Gestión de la configuración
+# ADR - Gestión de la configuración<!-- omit from toc -->
 
 * Estado: aceptada
 * Responsables:
@@ -16,7 +16,6 @@ En este documento se recoge la información relativa a las decisiones iniciales 
 ## Tabla de contenidos
 
 <!-- [TOC] -->
-- [ADR - Gestión de la configuración](#adr---gestión-de-la-configuración)
 - [Introducción](#introducción)
   - [Tabla de contenidos](#tabla-de-contenidos)
 - [Factores en la Decisión](#factores-en-la-decisión)

@@ -1,4 +1,4 @@
-# ADR metodologías de desarrollo
+# ADR metodologías de desarrollo<!-- omit from toc -->
 
 * Estado: aceptada
 * Responsables:
@@ -22,7 +22,6 @@ Cabe destacar que de partida, se ha decidido hacer uso de una metodología ágil
 
 ## Tabla de contenidos
 <!-- [TOC] -->
-- [ADR metodologías de desarrollo](#adr-metodologías-de-desarrollo)
 - [Introducción](#introducción)
   - [Tabla de contenidos](#tabla-de-contenidos)
 - [Factores en la decisión](#factores-en-la-decisión)
