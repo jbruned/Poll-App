@@ -18,7 +18,7 @@ En este documento se recoge la información relativa a las decisiones iniciales 
 [TOC]
 
 
-# Factores en la Decisión
+# Factores en la decisión
 <div style="text-align: justify!important">
 
 Para tomar la decisión se han priorizado los siguientes factores:
@@ -27,7 +27,7 @@ Para tomar la decisión se han priorizado los siguientes factores:
 * Cantidad de trabajo, responsabilidad e implicación equitativas
 </div>
 
-# Opciones Consideradas
+# Opciones consideradas
 <div style="text-align: justify!important">
 
 Existe una gran variedad de estructuras organizativas posibles. Algunas de estas son:
@@ -45,8 +45,6 @@ Por tanto, quedarían tres tipos de estructura:
 * Horizontal
 * Híbrida
 </div>
-
-## Ventajas y Desventajas de las opciones
 
 ## Vertical
 <div style="text-align: justify!important">

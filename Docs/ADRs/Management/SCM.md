@@ -10,7 +10,7 @@
 # Introducción
 <div style="text-align: justify!important">
 
-En este documento se recoge la información relativa a las decisiones iniciales en cuanto a la **gestión de configuración**. Para cada decisión, se listan las opciones consideradas junto a una breve descripción, ventajas y contras, así como la decisión final tomada.
+En este documento se recoge la información relativa a las decisiones iniciales en cuanto a la herramienta elegida para llevar a cabo la **gestión de configuración** (así como el control de versiones). Para cada decisión, se listan las opciones consideradas junto a una breve descripción, ventajas y contras, así como la decisión final tomada.
 </div>
 
 ## Tabla de contenidos
@@ -36,29 +36,34 @@ Tras un análisis de las opciones disponibles actualmente, se han valorado las s
 * GitLab
 </div>
 
-## Ventajas y Desventajas de las opciones
-
-### GitHub
+## GitHub
 <div style="text-align: justify!important">
 
-* Positivo, alta popularidad → soporte extendido en la comunidad.
-* Positivo, conocido por varios miembros del equipo.
-* Positivo, ofrece herramientas de gestión de gestión necesarias para el correcto desarrollo del proyecto (comentadas más adelante).
-* Positivo, GitHub Pro gratuito al ser estudiante, que además incluye otras herramientas de utilidad.
-* Negativo, CI/CD con menos posibilidades que otras soluciones.
-* Negativo, límite de espacio de ficheros de 100 MB, aunque no debería ser problema en este caso.
+Consideramos que este servicio tiene numerosas ventajas:
+* Alta popularidad → soporte extendido en la comunidad.
+* Conocido por todos los miembros del equipo.
+* Ofrece herramientas de gestión de gestión necesarias para el correcto desarrollo del proyecto (comentadas más adelante).
+* GitHub Pro gratuito al ser estudiante, que además incluye otras herramientas de utilidad.
+* Junto con otros proyectos que ya tienen los desarrolladores en sus perfiles de la plataforma, permite disponer de un pequeño portafolio online muy útil para nuestra imagen como desarrolladores.
+
+Sin embargo, también hemos encontrado algunos aspectos negativos:
+* CI/CD con menos posibilidades que otras soluciones (*GitHub actions*).
+* Límite de espacio de ficheros de 100 MB, aunque no debería ser problema en nuestro caso.
 </div>
 
-### GitLab
+## GitLab
 <div style="text-align: justify!important">
 
-* Positivo, ampliamente implantada en la actualidad en numerosas empresas.
-* Positivo, CI/CD muy completo.
-* Negativo, no empleado previamente entre los miembros del equipo.
-* Negativo, a pesar de estar implantado en numerosas empresas, su popularidad es menor que otras soluciones.
+Por un lado, los factores positivos serían:
+* Ampliamente implantada en la actualidad en numerosas empresas.
+* CI/CD muy completo (*pipelines*).
+
+De igual manera, hay algunos aspectos negativos a tener en cuenta:
+* No empleado previamente por todos los miembros del equipo de desarrollo.
+* A pesar de estar implantado en numerosas empresas, su popularidad es menor que otras soluciones.
 </div>
 
-## Decisión
+# Decisión
 <div style="text-align: justify!important">
 
 De entre todas las opciones barajadas y descritas previamente y con el objetivo de asegurar la calidad del producto, integrar de manera correcta el desarrollo de los miembros del equipo y asegurar un despliegue y un control de versiones correcto, se hará uso de *GitHub* en cuanto a herramienta de gestión de configuración.
@@ -68,7 +73,7 @@ Se ha elegido esta herramienta sobre otras como *GitLab* debido al conocimiento 
 Se puede acceder al mismo a través del siguiente [enlace al repositorio](https://github.com/jbruned/Poll-App).
 </div>
 
-# Extra - Herramientas de gestión
+## Herramientas de gestión
 <div style="text-align: justify">
     
 Como ya se ha mencionado previamente en este documento y con objetivo de desarrollar el proyecto de forma óptima y procurar una distribución adecuada de las tareas y objetivos, se empleará el conjunto de herramientas que GitHub provee para ello. 

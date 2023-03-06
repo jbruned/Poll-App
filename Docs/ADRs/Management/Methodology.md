@@ -1,4 +1,4 @@
-# ADR - Metodologías de desarrollo
+# ADR metodologías de desarrollo
 
 * Estado: aceptada
 * Responsables:
@@ -14,7 +14,10 @@ En este documento se recoge la información relativa a las decisiones iniciales 
 
 En este caso, se evaluarán diferentes opciones para los distintos aspectos posibles de las metodologías de desarrollo. 
 
-Cabe destacar que se ha decidido aplicar metodologías ágiles debido a su flexibilidad, posibilidad de generar entregas continuas basadas en el incremento de funcionalidad (adecuándose así a la planificación de la asignatura) o la capacidad de adaptarse a posibles cambios en los requisitos.
+Cabe destacar que de partida, se ha decidido hacer uso de una metodología ágil debido a motivos como:
+- Alta flexibilidad que aporta, muy conveniente en un equipo como el nuestro donde nuestra única ocupación no es desarrollar este proyecto.
+- Posibilidad de generar entregas continuas basadas en el incremento de funcionalidad, adecuándose así a la planificación de la asignatura.
+- Gran capacidad de adaptarse a posibles cambios en los requisitos, dado que inicialmente no están definidos de una forma clara y firme.
 </div>
 
 ## Tabla de contenidos
@@ -32,7 +35,7 @@ Cabe destacar que se ha decidido aplicar metodologías ágiles debido a su flexi
   - [Decisión](#decisión-1)
 - [Extra - Buenas prácticas](#extra---buenas-prácticas)
 
-# Factores en la Decisión
+# Factores en la decisión
 <div style="text-align: justify!important">
 
 Para tomar la decisión se han priorizado los siguientes factores:
@@ -42,7 +45,7 @@ Para tomar la decisión se han priorizado los siguientes factores:
 * Adecuación a la complejidad del proyecto
 </div>
 
-# Opciones Consideradas - Metodología ágil principal
+# Opciones consideradas
 <div style="text-align: justify!important">
 
 Tras un análisis de las opciones disponibles actualmente, se han valorado las siguientes:
@@ -50,9 +53,7 @@ Tras un análisis de las opciones disponibles actualmente, se han valorado las s
 * Kanban
 </div>
 
-## Ventajas y Desventajas de las opciones
-
-### Scrum
+## Scrum
 <div style="text-align: justify!important">
 
 * Positivo, ampliamente implantada en la actualidad en numerosas empresas.
@@ -61,7 +62,7 @@ Tras un análisis de las opciones disponibles actualmente, se han valorado las s
 * Negativo, scrum diario/reunión rápida considerada innecesaria debido a la naturaleza del proyecto y la compaginación de horarios.
 </div>
 
-### Kanban
+## Kanban
 <div style="text-align: justify!important">
 
 * Positivo, ampliamente implantada en la actualidad en numerosas empresas.
@@ -69,7 +70,7 @@ Tras un análisis de las opciones disponibles actualmente, se han valorado las s
 * Positivo, tablero Kanban considerado de gran utilidad
 </div>
 
-## Decisión
+# Decisión
 <div style="text-align: justify!important">
 
  De entre todas las opciones barajadas y descritas previamente, finalmente se ha optado por una combinación de ambas opciones, aplicando los aspectos que consideramos más adecuados de cada una de las mismas.
@@ -79,28 +80,24 @@ Tras un análisis de las opciones disponibles actualmente, se han valorado las s
  * Periodos de trabajos: similar a los [*sprints* de *Scrum*](https://www.atlassian.com/agile/scrum/sprints#:~:text=What%20are%20sprints%3F-,A%20sprint%20is%20a%20short%2C%20time%2Dboxed%20period%20when%20a,better%20software%20with%20fewer%20headaches.) y que se adaptarán a los periodos de entrega de la asignatura.
 </div>
 
-# Opciones Consideradas - Reuniones/Seguimiento
+## Reuniones/Seguimiento
 <div style="text-align: justify!important">
 
 Tras un análisis de las opciones disponibles actualmente, se han valorado las siguientes:
 * Reuniones diarias
 * Reuniones semanales
 * Reuniones sin planificación
-</div>
-
-## Decisión
-<div style="text-align: justify!important">
 
 En este caso no se ha desarrollado de manera detallada los aspectos positivos y negativos de cada opción debido a lo simple del aspecto a comparar.
 
 Se ha decidido realizar una reunión semanal debido a cuatro puntos principales:
 - Se podría llegar a plantear reuniones sin planificación de horario y día, sobre todo teniendo en cuenta las dificultades que podría llegar a haber a la hora de compatibilizar horarios. No obstante, se considera necesario imponer al menos un determinado momento para realizar estas reuniones.
-- El tamaño del equipo y la función de cada miembro: al ser un equipo reducido y con funciones similares, no se considera correcto realizar reuniones diarias ya que con los comentarios y discusiones rápidas entre miembros es suficiente para resolver los problemas cotidianos.
-- El estado actual del proyecto: debido a que se trata de un inicio de proyecto en el que se está comenzando con el desarrollo, no se ve necesario un seguimiento mayor al semanal.
+- El tamaño del equipo y la función de cada miembro: al ser un equipo reducido y con funciones similares, no se considera correcto realizar reuniones diarias ya que con los comentarios y discusiones rápidas entre miembros es suficiente para resolver los problemas cotidianos. El hecho de que la reunión fija tenga una frecuencia semanal no significa que no pueda haber contacto entre los miembros del equipo desde una reunión hasta la siguiente.
+- El estado actual del proyecto: debido a que se trata de un inicio de proyecto en el que se está comenzando con el desarrollo, no se ve necesario un seguimiento con mayor frecuencia.
 - Tablero Kanban: la existencia de este tablero hace que sea más fácil conocer el estado de las tareas y desarrollo general sin ser necesario recurrir a reuniones diarias.
 </div>
 
-# Extra - Buenas prácticas
+## Buenas prácticas
 <div style="text-align: justify">
     
 Debido a la similitud en cuanto al origen académico y trayectoria de los tres integrantes del grupo, todos ellos provenientes del Grado en Ingeniería Informática y con experiencia en el campo, se ha decidido desarrollar, gestionar y desplegar la aplicación conforme a buenas prácticas establecidas previamente.
