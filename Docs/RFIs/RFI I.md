@@ -7,7 +7,24 @@ En este documento se recoge la información relativa a las decisiones iniciales 
     
 ## Tabla de contenidos
 
-[TOC]
+<!-- [TOC] -->
+- [Documento RFI I](#documento-rfi-i)
+  - [Tabla de contenidos](#tabla-de-contenidos)
+- [Introducción](#introducción)
+- [Estructura organizacional](#estructura-organizacional)
+  - [Roles](#roles)
+  - [Miembros](#miembros)
+- [Metodología de desarrollo](#metodología-de-desarrollo)
+  - [Reuniones](#reuniones)
+  - [Buenas prácticas](#buenas-prácticas)
+    - [Buenas prácticas de programación](#buenas-prácticas-de-programación)
+- [Herramientas de gestión](#herramientas-de-gestión)
+  - [Gestión de la configuración](#gestión-de-la-configuración)
+- [Tecnologías](#tecnologías)
+  - [Backend](#backend)
+    - [Base de datos](#base-de-datos)
+    - [Frontend](#frontend)
+  - [Despliegue](#despliegue)
     
 # Introducción
 
@@ -29,6 +46,8 @@ La estructura organizacional escogida consiste en una estructura de tipo horizon
 Adicionalmente, dada la disparidad de horario laboral de los integrantes de la organización, resulta especialmente interesante disponer de flexibilidad para trabajar. Del mismo modo, consideramos que los conocimientos de los distintos miembros están bastante equiparados, siendo esto nuevamente favorable para adoptar una estructura plana u horizontal.
     
 Por último, teniendo en cuenta la escasa complejidad y alcance del producto a desarrollar, así como la corta duración del desarrollo, no consideramos que sea necesaria una estructura más sofisticada.
+
+→ ***[Ver ADR correspondiente](../ADRs/Management/Organizational%20structure.md)***
 </div>
     
 ## Roles
@@ -59,6 +78,8 @@ Vamos a utilizar nuestra propia metodología empleando los elementos que más ú
 Así, definiremos periodos de trabajo en los que desarrollar un conjunto predeterminado de tareas (similar a los [*sprints* de *Scrum*](https://www.atlassian.com/agile/scrum/sprints#:~:text=What%20are%20sprints%3F-,A%20sprint%20is%20a%20short%2C%20time%2Dboxed%20period%20when%20a,better%20software%20with%20fewer%20headaches.)) y mantendremos un tablero [Kanban](https://www.atlassian.com/agile/kanban#:~:text=In%20Japanese%2C%20kanban%20literally%20translates,in%20a%20highly%20visual%20manner.) en el que actualizaremos su estado. Para llevar a cabo este proceso se emplean herramientas de gestión que se explicarán más adelante.
     
 La razón por la que se ha optado por una metodología ágil es, no solo por la flexibilidad que ofrece, sino porque permite generar entregas continuas incrementando gradualmente la funcionalidad, lo cual se ajusta a la planificación de la asignatura. Además, de forma inicial, el producto a desarrollar no está claramente definido, de modo que consideramos importante adoptar una metodología que nos permita adaptarnos fácilmente a posibles cambios en los requisitos.
+
+→ ***[Ver ADR correspondiente](../ADRs/Management/Methodology.md)***
 </div>
 
 ## Reuniones
@@ -113,7 +134,7 @@ Naturalmente, las tareas mostradas no son finales y sirven a modo de ejemplo.
 Otras alternativas como un tablón físico ni siquiera han sido consideradas por sus claras desventajas con respecto a un tablón online disponible desde cualquier parte y que puede usarse de forma colaborativa.
 </div>
 
-# Gestión de la configuración
+## Gestión de la configuración
 <div style="text-align: justify">
     
 Con el objetivo de asegurar la calidad del producto, integrar de manera correcta el desarrollo de los miembros del equipo y asegurar un despliegue y un control de versiones correcto, se hará uso de *GitHub* en cuanto a herramienta de gestión de configuración.
@@ -121,6 +142,8 @@ Con el objetivo de asegurar la calidad del producto, integrar de manera correcta
 Se ha elegido esta herramienta sobre otras como *GitLab* debido al conocimiento previo de la misma del equipo al completo y a que ofrece otros aspectos mencionados previamente como los tableros (GitHub Projects) o la sección de Issues.
     
 Se puede acceder al mismo a través del siguiente [enlace al repositorio](https://github.com/jbruned/Poll-App).
+
+→ ***[Ver ADR correspondiente](../ADRs/Management/SCM.md)***
 </div>
 
 # Tecnologías
@@ -135,6 +158,8 @@ Se realizará el análisis pertinente para decidir que tecnología se utilizará
 Uno de los puntos claves a decidir para el desarrollo del proyecto son las tecnologías de desarrollo del backend de la aplicación.
     
 Se ha decidido hacer uso de Python como lenguaje principal junto al paquete [Flask](https://flask.palletsprojects.com/en/2.2.x/) para poder crear la aplicación web de manera sencilla. Nos hemos decantado por esta combinación frente a otros lenguajes como *Java*, que en ocasiones es menos eficiente y menos portable, y frente a otras librerías peor documentadas y con menor soporte de la comunidad por ser menos populares. Además, y como se comentará más adelante en [Base de datos](#Base-de-datos), el conjunto de ambas herramientas facilitará la conexión y la interoperabilidad con la base de datos.
+
+→ ***[Ver ADR correspondiente](../ADRs/Tech/Backend.md)***
 </div>
 
 ### Base de datos
@@ -143,12 +168,16 @@ Se ha decidido hacer uso de Python como lenguaje principal junto al paquete [Fla
 Teniendo en cuenta la disponibilidad de kits de herramientas en Python como SQLAlchemy, ya integrados con Flask ([Flask-SQLAlchemy](https://python-adv-web-apps.readthedocs.io/en/latest/flask_db1.html)), la sencillez de uso y el conocimiento previo por parte de los miembros del equipo, se ha decidido hacer uso de [PostgreSQL](https://www.postgresql.org/) como sistema gestor de bases de datos. 
     
 Como otros factores determinantes, el hecho de que PostgreSQL sea Open Source y que permita la expansión del proyecto en caso de necesitar desplegar la base de datos con herramientas ya conocidas por el equipo como Heroku ([gratuito con GitHub Student](https://www.heroku.com/github-students)), han hecho que sea la decisión final.
+
+→ ***[Ver ADR correspondiente](../ADRs/Tech/Database.md)***
 </div>
 
 ### Frontend
 <div style="text-align: justify">
 
 En el lado del cliente, se utilizarán, naturalmente, HTML, CSS y JavaScript al tratarse de una aplicación web. Por encima de ellos, se utilizarán librerías como Bootstrap para CSS y React para JavaScript. En el primer caso, esta conocida librería nos facilitará el diseño de una página estética y *responsive* de una forma sencilla y rápida. Por otro lado, *React* nos permitirá desarrollar una interfaz de usuario interactiva, así como los diferentes componentes de la GUI. Todo esto, de forma muy sencilla y fácilmente integrable con las llamadas *API* gracias a los *fetch* de *JavaScript*. Se han elegido estas librerías frente a otras, en ambos casos, gracias a su simplez, documentación y gran popularidad, algo muy importante a la hora de resolver problemas comunes o encontrar documentación o códigos de ejemplo.
+
+→ ***[Ver ADR correspondiente](../ADRs/Tech/Frontend.md)***
 </div>
 
 ## Despliegue
@@ -159,4 +188,6 @@ Principalmente con los propósitos de hacer el producto fácilmente portable y l
 El objetivo es crear contenedores independientes para cada servicio y hacer que trabajen al unísono mediante un [Docker Compose](https://docs.docker.com/compose/). Este paradigma basado en microservicios permite que, aunque alguno de ellos caiga (por ejemplo, la base de datos), el resto sigan funcionando (en este caso, el servidor web podría mostrar un mensaje de error en operaciones que impliquen a la base de datos, en lugar de caer el servicio al completo).
     
 El motivo de elección de Docker frente a otros sistemas es su facilidad de uso y a los conocimientos de los que disponemos y que ampliaremos a lo largo de la asignatura. De este modo no será necesario invertir más tiempo de formación en sistemas adicionales que cumplan el mismo papel. También es muy conveniente la gran popularidad del servicio y la enorme cantidad de imágenes disponibles de forma pública y que están listos para ser instalados.
+
+→ ***[Ver ADR correspondiente](../ADRs/Tech/Deployment.md)***
 </div>
