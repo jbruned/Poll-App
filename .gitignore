@@ -1,0 +1,7 @@
+*.log
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+*/instance
+.idea/
