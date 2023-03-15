@@ -7,6 +7,9 @@ from flask import Flask, send_file, abort, request, redirect, session, url_for
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 
+from sqlalchemy import create_engine
+from sqlalchemy_utils import database_exists, create_database
+
 from .db import AppSettings, Poll, Option, Answer, NotFoundException
 from .log import log_warning
 
@@ -28,8 +31,13 @@ class WebGUI:
         self.web = Flask(__name__)
         getLogger('werkzeug').setLevel(CRITICAL)
         # Database configuration
-        self.web.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///pollapp.db?check_same_thread=False'
+        self.web.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:1234@localhost:5432/flasksqlTest'
         self.web.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
+
+        engine = create_engine(self.web.config['SQLALCHEMY_DATABASE_URI'])
+        if not database_exists(engine.url):
+            create_database(engine.url)
+
         db.init_app(self.web)
         self.web.app_context().push()
         # Set the secret key for the Flask sessions
