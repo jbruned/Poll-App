@@ -1,11 +1,10 @@
 import logging
-from threading import Thread
 
 from waitress import serve
 
 from .db import db
-from .web import WebGUI
 from .log import log_info
+from .web import WebGUI
 
 
 class PollApp:
