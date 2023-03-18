@@ -191,10 +191,40 @@ class WebGUI:
             except Exception as e:
                 return placeholder_exception_handler(e)
 
+        @self.web.route(f"{self.API_V1_PREFIX}/option/<option_id>/answers",
+                        methods=['GET', 'POST', 'DELETE'])
+        def answers_actions(option_id):
+            try:
+                option = Option.get(int(option_id))
+                if request.method == 'GET':
+                    answers = option.answers
+                    result = [answer.get_info() for answer in answers]
+                    return json.dumps(result, default=str)
+                if not self.is_logged_in(option.poll.author):
+                    return "Unauthorized", 401
+                session_id = session.get("id")
+                if request.method == 'POST':
+                    result = option.vote(str(session_id))
+                    if result is None:
+                        return "Vote unsuccessful, you have already voted", 409
+                    return "Vote successful. Thank you for your participation!", 200
+                elif request.method == 'DELETE':
+                    try:
+                        option.remove_vote(str(session_id))
+                        return "Vote removed", 200
+                    except NotFoundException:
+                        return "Answer not found", 404
+            except ValueError:
+                return "Invalid request", 400
+            except NotFoundException:
+                return "Option not found", 404
+            except Exception as e:
+                return placeholder_exception_handler(e)
+
     # noinspection PyMethodMayBeStatic
     def is_logged_in(self, session_id=None) -> bool:
         """
         Checks if the user has started a session by entering the password
         @return: True if the user is logged in
         """
-        return session.get("admin") is True or (session_id is not None and session.get("session_id") == session_id)
+        return session.get("admin") is True or (session_id is not None and session.get("id") == session_id)

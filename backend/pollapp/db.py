@@ -293,6 +293,12 @@ class Option(db.Model):
         db.session.commit()
         return answer
 
+    def remove_vote(self, session_id: str):
+        answer = Answer.query.filter(Answer.option_id == self.id, session_id == session_id).first()
+        if answer is None:
+            raise NotFoundException
+        answer.delete()
+
     def get_info(self, session_id=None):
         """
         Returns a dictionary with the option info
@@ -320,3 +326,14 @@ class Answer(db.Model):
         """
         db.session.delete(self)
         db.session.commit()
+
+    def get_info(self, session_id=None):
+        """
+        Returns a dictionary with the answer info
+        """
+        return {
+            'id': self.id,
+            'option_id': self.option_id,
+            'session_id': self.session_id,
+            'timestamp': self.timestamp
+        }
