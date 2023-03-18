@@ -92,7 +92,7 @@ class WebGUI:
             if not self.settings.is_password_correct(request.form['old']):
                 return "Old password is incorrect", 401
             self.settings.set(request.form['new'])
-            return "", 200
+            return "Success", 200
 
         @self.web.route(f"{self.API_V1_PREFIX}/logout")
         def logout():
@@ -117,7 +117,7 @@ class WebGUI:
                         inserted.get_info()
                     ), 200
             except Exception as e:
-                placeholder_exception_handler(e)
+                return placeholder_exception_handler(e)
 
         @self.web.route(f"{self.API_V1_PREFIX}/poll/<poll_id>", methods=['GET', 'POST', 'DELETE'])
         def poll_actions(poll_id=None):
@@ -141,7 +141,7 @@ class WebGUI:
             except NotFoundException:
                 return "Poll not found", 404
             except Exception as e:
-                placeholder_exception_handler(e)
+                return placeholder_exception_handler(e)
 
         @self.web.route(f"{self.API_V1_PREFIX}/poll/<poll_id>/options", methods=['GET', 'POST'])
         def options_actions(poll_id):
@@ -165,7 +165,7 @@ class WebGUI:
             except NotFoundException:
                 return "Poll not found", 404
             except Exception as e:
-                placeholder_exception_handler(e)
+                return placeholder_exception_handler(e)
 
         @self.web.route(f"{self.API_V1_PREFIX}/option/<option_id>", methods=['GET', 'POST', 'DELETE'])
         def option_actions(option_id):
@@ -189,7 +189,7 @@ class WebGUI:
             except NotFoundException:
                 return "Option not found", 404
             except Exception as e:
-                placeholder_exception_handler(e)
+                return placeholder_exception_handler(e)
 
     # noinspection PyMethodMayBeStatic
     def is_logged_in(self, session_id=None) -> bool:
