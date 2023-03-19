@@ -5,13 +5,6 @@ from flask_sqlalchemy import SQLAlchemy
 db = SQLAlchemy()
 
 
-class NotFoundException(Exception):
-    """
-    Exception thrown when a resource is not found
-    """
-    pass
-
-
 class AppSettings(db.Model):
     """
     Stores the PollApp application settings (currently only the admin password)
@@ -108,8 +101,6 @@ class Poll(db.Model):
         if poll_id is None:
             return Poll.query.all()
         item = Poll.query.get(poll_id)
-        if item is None:
-            raise NotFoundException()
         return item
 
     @staticmethod
@@ -135,6 +126,7 @@ class Poll(db.Model):
         """
         Updates the poll data
         @param title: The poll title
+        @param author: The poll author
         """
         self.title = title
         self.author = author
@@ -191,8 +183,6 @@ class Poll(db.Model):
         if answer is None:
             return None
         item = Option.query.get(answer.option_id)
-        if item is None:
-            raise NotFoundException()
         return item
 
     @staticmethod
@@ -243,8 +233,6 @@ class Option(db.Model):
         :return: The option with the given ID
         """
         item = Option.query.get(option_id)
-        if item is None:
-            raise NotFoundException()
         return item
 
     @staticmethod
@@ -294,10 +282,15 @@ class Option(db.Model):
         return answer
 
     def remove_vote(self, session_id: str):
+        """
+        Removes the vote from the poll option
+        @param session_id: The user session ID
+        """
         answer = Answer.query.filter(Answer.option_id == self.id, session_id == session_id).first()
         if answer is None:
-            raise NotFoundException
+            return None
         answer.delete()
+        return answer
 
     def get_info(self, session_id=None):
         """
