@@ -1,6 +1,6 @@
 import json
 import uuid
-from logging import getLogger, CRITICAL
+from logging import getLogger, CRITICAL, DEBUG
 
 from flask import Flask, send_file, abort, request, session
 from flask_migrate import Migrate
@@ -13,60 +13,94 @@ from .db import AppSettings, Poll, Option, NotFoundException, AlreadyVotedExcept
 from .log import log_warning
 
 
-class WebGUI:
+class WebGUI(Flask):
     """
-    Contains the implementation of the entire web GUI
+    Contains the implementation of the entire web GUI in Flask
     """
 
     _SECRET_KEY = "b0928e1a460370d300c864856520f265"
-
     API_V1_PREFIX = "/api/v1"
 
-    def __init__(self, db: SQLAlchemy, use_sqlite: bool = True, drop_db_and_insert_test_data: bool = False):
+    def __init__(self, db: SQLAlchemy, debug: bool = True, use_sqlite: bool = None,
+                 drop_db_and_insert_test_data: bool = None):
         """
         Implementation of the WebGUI and all endpoints using Flask
         @param db: database where all data is persisted
         """
-        self.web = Flask(__name__)
-        getLogger('werkzeug').setLevel(CRITICAL)
-        # Database configuration
-        self.web.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///flasksqlTest.db' if use_sqlite else \
-            'postgresql://postgres:1234@localhost:5432/flasksqlTest'
-        self.web.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+        super().__init__(__name__)
 
+        # Set debug mode and logging level
+        if debug:
+            self.config['DEBUG'] = True
+            self.config['TESTING'] = True
+            self.config['ENV'] = 'development'
+            if use_sqlite is None:
+                use_sqlite = True
+            if drop_db_and_insert_test_data is None:
+                drop_db_and_insert_test_data = True
+        getLogger('werkzeug').setLevel(DEBUG if debug else CRITICAL)
+
+        # Push the app context to the current thread
+        self.app_context().push()
+
+        # Initialize the app
+        self.init_db(db, use_sqlite, drop_db_and_insert_test_data)
+        self.settings = self.load_settings()
+        self.init_gui()
+        self.init_api()
+        self.init_error_handler()
+
+        # Set the secret key for the Flask sessions
+        self.secret_key = self._SECRET_KEY
+
+    def init_db(self, db: SQLAlchemy, use_sqlite: bool = True, drop_db_and_insert_test_data: bool = False):
+        """
+        Initializes the database
+        """
+        # Database configuration
+        self.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///flasksqlTest.db' if use_sqlite else \
+            'postgresql://postgres:1234@localhost:5432/flasksqlTest'
+        self.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+        # Create PostgreSQL database if it doesn't exist
         if not use_sqlite:
-            engine = create_engine(self.web.config['SQLALCHEMY_DATABASE_URI'])
+            engine = create_engine(self.config['SQLALCHEMY_DATABASE_URI'])
             if not database_exists(engine.url):
                 create_database(engine.url)
-
-        db.init_app(self.web)
-        self.web.app_context().push()
-        # Set the secret key for the Flask sessions
-        self.web.secret_key = self._SECRET_KEY
         # Initialize database
-        Migrate(self.web, db)
+        db.init_app(self)
+        Migrate(self, db)
         if drop_db_and_insert_test_data:
             db.drop_all()
             db.create_all()
             self._insert_test_data()
         db.create_all()
         # Load app settings from the database
+
+    @staticmethod
+    def load_settings():
+        """
+        Loads the app settings from the database
+        """
         if not AppSettings.is_initialized():
             AppSettings.init()  # To restore default settings, run unconditionally
-        self.settings = AppSettings.query.first()
+        settings = AppSettings.query.first()
         # Warn about the default password if needed
-        if self.settings.is_password_correct(AppSettings.DEFAULT_ADMIN_PASSWORD):
+        if settings.is_password_correct(AppSettings.DEFAULT_ADMIN_PASSWORD):
             log_warning(f"Admin password is set to default: {AppSettings.DEFAULT_ADMIN_PASSWORD}\n"
                         "          Please change it from the GUI")
+        return settings
 
-        # Web GUI (frontend) endpoints
-        @self.web.route("/")
-        @self.web.route("/login")
-        @self.web.route("/poll/<poll_id>")
-        def dashboard(poll_id=None):
+    def init_gui(self):
+        """
+        Initializes the GUI (frontend) endpoints
+        """
+        @self.route("/")
+        @self.route("/login")
+        @self.route("/poll/<poll_id>")
+        def dashboard():
             return send_file("gui/index.html")
 
-        @self.web.route('/assets/<filename>')
+        @self.route('/assets/<filename>')
         def asset(filename):
             try:
                 while '../' in filename:
@@ -75,8 +109,11 @@ class WebGUI:
             except FileNotFoundError:
                 abort(404, "Asset not found")
 
-        # API endpoints
-        @self.web.route(f"{self.API_V1_PREFIX}/login", methods=['GET', 'POST'])
+    def init_api(self):
+        """
+        Initializes the API endpoints
+        """
+        @self.route(f"{self.API_V1_PREFIX}/login", methods=['GET', 'POST'])
         def login():
             # TODO replace by Kong API Gateway
             if request.method == "POST":
@@ -89,7 +126,7 @@ class WebGUI:
                 "session_id": self.get_or_create_session_id()
             })
 
-        @self.web.route(f"{self.API_V1_PREFIX}/password", methods=['POST'])
+        @self.route(f"{self.API_V1_PREFIX}/password", methods=['POST'])
         def change_password():
             if not request.form['old'] or len(request.form['new'] or '') < 5 or len(request.form['repeat'] or '') < 5 \
                     or request.form['new'] != request.form['repeat']:
@@ -99,13 +136,13 @@ class WebGUI:
             self.settings.set(request.form['new'])
             return "", 200
 
-        @self.web.route(f"{self.API_V1_PREFIX}/logout")
+        @self.route(f"{self.API_V1_PREFIX}/logout")
         def logout():
             session.pop("admin", None)
             session.pop("id", None)
             return "", 200
 
-        @self.web.route(f"{self.API_V1_PREFIX}/polls/", methods=['GET', 'POST'])
+        @self.route(f"{self.API_V1_PREFIX}/polls/", methods=['GET', 'POST'])
         def polls_actions():
             if request.method == 'GET':
                 return json.dumps(Poll.get_polls(as_dict=True), default=str)
@@ -118,7 +155,7 @@ class WebGUI:
                         .get_info(self.get_or_create_session_id())
                 ), 200
 
-        @self.web.route(f"{self.API_V1_PREFIX}/poll/<poll_id>", methods=['GET', 'POST', 'DELETE'])
+        @self.route(f"{self.API_V1_PREFIX}/poll/<poll_id>", methods=['GET', 'POST', 'DELETE'])
         def poll_actions(poll_id=None):
             poll = Poll.get(int(poll_id))
             if request.method == 'GET':
@@ -135,7 +172,7 @@ class WebGUI:
                 poll.delete()
                 return "", 200
 
-        @self.web.route(f"{self.API_V1_PREFIX}/poll/<poll_id>/options", methods=['GET', 'POST'])
+        @self.route(f"{self.API_V1_PREFIX}/poll/<poll_id>/options", methods=['GET', 'POST'])
         def options_actions(poll_id):
             poll = Poll.get(int(poll_id))
             if request.method == 'GET':
@@ -150,7 +187,7 @@ class WebGUI:
                     Option.insert(text=data['text'], poll_id=poll.id).get_info()
                 ), 200
 
-        @self.web.route(f"{self.API_V1_PREFIX}/option/<option_id>", methods=['GET', 'POST', 'DELETE'])
+        @self.route(f"{self.API_V1_PREFIX}/option/<option_id>", methods=['GET', 'POST', 'DELETE'])
         def option_actions(option_id):
             option = Option.get(int(option_id))
             if request.method == 'GET':
@@ -167,8 +204,8 @@ class WebGUI:
                 option.delete()
                 return "", 200
 
-        @self.web.route(f"{self.API_V1_PREFIX}/option/<option_id>/answers",
-                        methods=['POST', 'DELETE'])
+        @self.route(f"{self.API_V1_PREFIX}/option/<option_id>/answers",
+                    methods=['POST', 'DELETE'])
         def answers_actions(option_id):
             option = Option.get(int(option_id))
             session_id = self.get_or_create_session_id()
@@ -181,30 +218,31 @@ class WebGUI:
                 option.remove_vote(str(session_id))
                 return "", 200
 
-        # Defined errors
-        # noinspection PyPep8Naming
-        HTTP_ERRORS = {
-            400: "Bad request",
-            401: "Unauthorized",
-            403: "Forbidden",
-            404: "Not found",
-            409: "Conflict",
-            500: "Internal server error"
-        }
-        # noinspection PyPep8Naming
-        EXCEPTIONS = {
-            NotFoundException: 404,
-            ValueError: 400,
-            AlreadyVotedException: 409,
-            Exception: 500,
-            Unauthorized: 401,
-            Forbidden: 403,
-            NotFound: 404,
-            Conflict: 409,
-            InternalServerError: 500
-        }
+    HTTP_ERRORS = {
+        400: "Bad request",
+        401: "Unauthorized",
+        403: "Forbidden",
+        404: "Not found",
+        409: "Conflict",
+        500: "Internal server error"
+    }
+    EXCEPTIONS = {
+        NotFoundException: 404,
+        ValueError: 400,
+        AlreadyVotedException: 409,
+        Exception: 500,
+        Unauthorized: 401,
+        Forbidden: 403,
+        NotFound: 404,
+        Conflict: 409,
+        InternalServerError: 500
+    }
 
-        @self.web.errorhandler(Exception)
+    def init_error_handler(self):
+        """
+        Initializes the error handler
+        """
+        @self.errorhandler(Exception)
         def handle_error(code_or_exception=500, message=None, debug=False):
             """
             Handles errors
@@ -218,33 +256,33 @@ class WebGUI:
                 }), code_or_exception
             if isinstance(code_or_exception, int):
                 try:
-                    return handle_error(code_or_exception, HTTP_ERRORS[code_or_exception])
+                    return handle_error(code_or_exception, self.HTTP_ERRORS[code_or_exception])
                 except KeyError:
                     return handle_error(500)
             if isinstance(code_or_exception, Exception):
                 try:
                     return handle_error(
-                        EXCEPTIONS[type(code_or_exception)],
+                        self.EXCEPTIONS[type(code_or_exception)],
                         str(code_or_exception) or "Unknown error"
                     )
                 except KeyError:
                     return handle_error(500)
             return handle_error(500)
 
-    # noinspection PyMethodMayBeStatic
-    def get_or_create_session_id(self):
+    @staticmethod
+    def get_or_create_session_id():
         if "id" not in session or session["id"] is None:
             session["id"] = str(uuid.uuid4())
         return session["id"]
 
-    # noinspection PyMethodMayBeStatic
-    def is_admin_logged_in(self, session_id=None) -> bool:
+    @staticmethod
+    def is_admin_logged_in(session_id=None) -> bool:
         """
         Checks if the user has started a session by entering the password
         @return: True if the user is logged in
         """
         return session.get("admin") is True or (
-            session_id is not None and self.get_or_create_session_id() == session_id
+            session_id is not None and WebGUI.get_or_create_session_id() == session_id
         )
 
     @staticmethod

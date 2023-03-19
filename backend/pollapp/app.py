@@ -30,10 +30,7 @@ class PollApp:
             logging.getLogger('waitress').setLevel(logging.DEBUG if debug else logging.ERROR)
             # noinspection HttpUrlsUsage
             log_info(f"Starting web interface at http://{web_addr_port}")
-            # if debug:
-            #    self.gui.web.run(host=web_addr_port.split(":")[0], port=int(web_addr_port.split(":")[1]), debug=True)
-            # else:
-            serve(self.gui.web, listen=web_addr_port)
+            serve(self.gui, listen=web_addr_port)
         except KeyboardInterrupt:
             log_info("\nTerminating PollApp...")
 
@@ -42,7 +39,6 @@ def _instantiate_flask_app():
     """
     Instantiates the Flask app
     Intended to auto-generate the Postman collection
-
     @return: The Flask app
     """
-    return PollApp().gui.web
+    return PollApp().gui
