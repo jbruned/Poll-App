@@ -9,7 +9,16 @@ class NotFoundException(Exception):
     """
     Exception thrown when a resource is not found
     """
-    pass
+    def __init__(self, resource_name="Resource"):
+        super().__init__(f"{resource_name} not found")
+
+
+class AlreadyVotedException(Exception):
+    """
+    Exception thrown when a user has already voted
+    """
+    def __init__(self):
+        super().__init__(f"You have already voted!")
 
 
 class AppSettings(db.Model):
@@ -107,7 +116,7 @@ class Poll(db.Model):
             return Poll.query.all()
         item = Poll.query.get(poll_id)
         if item is None:
-            raise NotFoundException()
+            raise NotFoundException(f"Poll #{poll_id}")
         return item
 
     @staticmethod
@@ -183,7 +192,7 @@ class Poll(db.Model):
             return None
         item = Option.query.get(answer.option_id)
         if item is None:
-            raise NotFoundException()
+            raise NotFoundException("Answered option")
         return item
 
     @staticmethod
@@ -247,7 +256,7 @@ class Option(db.Model):
         """
         item = Option.query.get(option_id)
         if item is None:
-            raise NotFoundException()
+            raise NotFoundException(f"Option #{option_id}")
         return item
 
     @staticmethod
