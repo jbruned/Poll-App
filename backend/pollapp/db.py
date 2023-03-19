@@ -5,6 +5,13 @@ from flask_sqlalchemy import SQLAlchemy
 db = SQLAlchemy()
 
 
+class NotFoundException(Exception):
+    """
+    Exception thrown when a resource is not found
+    """
+    pass
+
+
 class AppSettings(db.Model):
     """
     Stores the PollApp application settings (currently only the admin password)
@@ -86,10 +93,8 @@ class Poll(db.Model):
     title = db.Column(db.String(64), nullable=False)
     author = db.Column(db.String(64), nullable=True)
     timestamp = db.Column(db.DateTime, nullable=False)
-    # SEE: https://www.digitalocean.com/community/tutorials/how-to-use-one-to-many-database-relationships-with-flask-sqlalchemy#step-2-setting-up-the-database-and-models
-    options = db.relationship('Option', backref='poll', lazy=True, cascade="all, delete-orphan")
 
-    # options = db.relationship('Option', backref='poll', lazy=True, cascade="all, delete-orphan")
+    options = db.relationship('Option', backref='poll', lazy=True, cascade="all, delete-orphan")
 
     @staticmethod
     def get(poll_id: int = None):
@@ -101,6 +106,8 @@ class Poll(db.Model):
         if poll_id is None:
             return Poll.query.all()
         item = Poll.query.get(poll_id)
+        if item is None:
+            raise NotFoundException()
         return item
 
     @staticmethod
@@ -122,14 +129,12 @@ class Poll(db.Model):
         db.session.delete(self)
         db.session.commit()
 
-    def update(self, title: str, author: str = None):
+    def update(self, title: str):
         """
         Updates the poll data
         @param title: The poll title
-        @param author: The poll author
         """
         self.title = title
-        self.author = author
         db.session.commit()
 
     def get_options(self):
@@ -142,20 +147,14 @@ class Poll(db.Model):
         """
         Returns the number of answers for the poll
         """
-        return Answer.query \
-            .join(Option, Answer.option_id == Option.id) \
-            .join(Poll, Option.poll_id == self.id).count()
+        return Answer.query.join(Option, Option.id == Answer.option_id).filter(Option.poll_id == self.id).count()
 
     def get_answers_count_by_option(self):
         """
         Returns the number of answers for each option of the poll
         """
-        return db.session.query(Option.id, db.func.count(Answer.id).label('answer_count')) \
-            .select_from(Poll) \
-            .outerjoin(Option, Poll.id == Option.poll_id) \
-            .outerjoin(Answer, Option.id == Answer.option_id) \
-            .filter(self.id == 1) \
-            .group_by(Option.id).all()
+        return Answer.query.join(Option, Option.id == Answer.option_id).filter(Option.poll_id == self.id) \
+            .group_by(Option.id).count()
 
     def has_answered(self, session_id: str):
         """
@@ -183,10 +182,12 @@ class Poll(db.Model):
         if answer is None:
             return None
         item = Option.query.get(answer.option_id)
+        if item is None:
+            raise NotFoundException()
         return item
 
     @staticmethod
-    def get_polls():
+    def get_polls(as_dict: bool = False):
         """
         Returns a list with all the polls including:
             - the id
@@ -195,9 +196,20 @@ class Poll(db.Model):
             - the timestamp
             - the option count
             - the answer count
-            - if the user answered the poll or not
         """
-        return Poll.query.all()
+        polls = db.session.query(Poll, db.func.count(Option.id).label('options_count'),
+                                 db.func.count(Answer.id).label('answers_count')) \
+            .outerjoin(Option, Poll.id == Option.poll_id) \
+            .outerjoin(Answer, Option.id == Answer.option_id) \
+            .group_by(Poll.id).all()
+        return polls if not as_dict else [{
+            'id': poll.id,
+            'title': poll.title,
+            'author': poll.author,
+            'timestamp': poll.timestamp,
+            'options_count': options_count,
+            'answers_count': answers_count
+        } for poll, options_count, answers_count in polls]
 
     def get_info(self, session_id=None):
         """
@@ -223,6 +235,7 @@ class Option(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     poll_id = db.Column(db.Integer, db.ForeignKey('polls.id', ondelete='CASCADE'), nullable=False)
     text = db.Column(db.String(64), nullable=False)
+
     answers = db.relationship('Answer', backref='option', lazy=True, cascade="all, delete-orphan")
 
     @staticmethod
@@ -233,6 +246,8 @@ class Option(db.Model):
         :return: The option with the given ID
         """
         item = Option.query.get(option_id)
+        if item is None:
+            raise NotFoundException()
         return item
 
     @staticmethod
@@ -281,6 +296,22 @@ class Option(db.Model):
         db.session.commit()
         return answer
 
+    def get_info(self):
+        """
+        Returns a dictionary with the option info
+        """
+        return {
+            'id': self.id,
+            'text': self.text,
+            'answers_count': self.get_answers_count()
+        }
+
+    def get_answers_count(self):
+        """
+        Returns the number of answers for the option
+        """
+        return db.session.query(Answer).filter(Answer.option_id == self.id).count()
+
     def remove_vote(self, session_id: str):
         """
         Removes the vote from the poll option
@@ -291,16 +322,6 @@ class Option(db.Model):
             return None
         answer.delete()
         return answer
-
-    def get_info(self, session_id=None):
-        """
-        Returns a dictionary with the option info
-        """
-        return {
-            'id': self.id,
-            'poll_id': self.poll_id,
-            'text': self.text,
-        }
 
 
 class Answer(db.Model):
@@ -319,14 +340,3 @@ class Answer(db.Model):
         """
         db.session.delete(self)
         db.session.commit()
-
-    def get_info(self, session_id=None):
-        """
-        Returns a dictionary with the answer info
-        """
-        return {
-            'id': self.id,
-            'option_id': self.option_id,
-            'session_id': self.session_id,
-            'timestamp': self.timestamp
-        }

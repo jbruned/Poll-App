@@ -16,7 +16,7 @@ class PollApp:
         """
         PollApp constructor, creates the Flask instance and loads the database
         """
-        self.gui = WebGUI(db)
+        self.gui = WebGUI(db, drop_db_and_insert_test_data=True)
 
     def run(self, web_addr_port: str = "127.0.0.1:80"):
         """
@@ -34,3 +34,13 @@ class PollApp:
             serve(self.gui.web, listen=web_addr_port)
         except KeyboardInterrupt:
             log_info("\nTerminating PollApp...")
+
+
+def _instantiate_flask_app():
+    """
+    Instantiates the Flask app
+    Intended to auto-generate the Postman collection
+
+    @return: The Flask app
+    """
+    return PollApp().gui.web

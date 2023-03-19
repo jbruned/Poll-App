@@ -23,7 +23,7 @@ class WebGUI:
 
     API_V1_PREFIX = "/api/v1"
 
-    def __init__(self, db: SQLAlchemy):
+    def __init__(self, db: SQLAlchemy, drop_db_and_insert_test_data: bool = False):
         """
         Implementation of the WebGUI and all endpoints using Flask
         @param db: database where all data is persisted
@@ -44,6 +44,10 @@ class WebGUI:
         self.web.secret_key = self._SECRET_KEY
         # Initialize database
         Migrate(self.web, db)
+        if drop_db_and_insert_test_data:
+            db.drop_all()
+            db.create_all()
+            self._insert_test_data()
         db.create_all()
         # Load app settings from the database
         if not AppSettings.is_initialized():
@@ -71,15 +75,29 @@ class WebGUI:
                     filename = filename.replace('../', '')
                 return send_file(f"gui/assets/{filename}")
             except FileNotFoundError:
-                abort(404, "Assets not found")
+                abort(404, "Asset not found")
 
         # API endpoints
-        @self.web.route(f"{self.API_V1_PREFIX}/login", methods=['POST'])
+        @self.web.route(f"{self.API_V1_PREFIX}/login", methods=['GET', 'POST'])
         def login():
-            if self.settings.is_password_correct(request.form['password']):
-                session["admin"] = True
-                session["id"] = uuid.uuid4()
-            return jsons.dumps(self.is_logged_in()), 200 if self.is_logged_in() else 401
+            # TODO replace by Kong API Gateway
+            try:
+                if request.method == "POST":
+                    if self.settings.is_password_correct(request.json['password']):
+                        session["admin"] = True
+                    else:
+                        return "Incorrect password", 401
+                return json.dumps({
+                    "is_admin": self.is_admin_logged_in(),
+                    "session_id": get_or_create_session_id()
+                })  # if self.is_logged_in() else 401
+            except KeyError as e:
+                return "Missing password " + str(e), 400
+
+        def get_or_create_session_id():
+            if "id" not in session or session["id"] is None:
+                session["id"] = str(uuid.uuid4())
+            return session["id"]
 
         @self.web.route(f"{self.API_V1_PREFIX}/password", methods=['POST'])
         def change_password():
@@ -89,118 +107,109 @@ class WebGUI:
             if not self.settings.is_password_correct(request.form['old']):
                 abort(401, "Old password is incorrect")
             self.settings.set(request.form['new'])
-            return "Success", 200
+            return "", 200
 
         @self.web.route(f"{self.API_V1_PREFIX}/logout")
         def logout():
             session.pop("admin", None)
             session.pop("id", None)
-            return "Logged out", 200
+            return "", 200
 
         @self.web.route(f"{self.API_V1_PREFIX}/polls/", methods=['GET', 'POST'])
         def polls_actions():
             if request.method == 'GET':
-                polls = Poll.get_polls()
-                result = [poll.get_info() for poll in polls]
-                return jsons.dumps(result, default=str)
-
+                return json.dumps(Poll.get_polls(as_dict=True), default=str)
             elif request.method == 'POST':
                 data = request.form
                 if not data['title']:
                     abort(400, "Missing title")
-                inserted = Poll.insert(title=data['title'], author=data['author'] or None)
-                return jsons.dumps(inserted.get_info()), 200
+                return json.dumps(
+                    Poll.insert(title=data['title'], author=data['author'] or None)
+                        .get_info(self.get_or_create_session_id())
+                ), 200
 
         @self.web.route(f"{self.API_V1_PREFIX}/poll/<poll_id>", methods=['GET', 'POST', 'DELETE'])
         def poll_actions(poll_id=None):
             try:
                 poll = Poll.get(int(poll_id))
-                if poll is None:
-                    abort(404, description="Poll not found")
                 if request.method == 'GET':
                     return json.dumps(poll.get_info(), default=str)
-                if not self.is_logged_in(poll.author):
+                if not self.is_admin_logged_in(poll.author):
                     abort(401, "Not logged in")
                 if request.method == 'POST':
                     data = request.form
                     if not data['title']:
                         abort(400, "Missing title")
                     poll.update(title=data['title'], author=data['author'] or None)
-                    return "Update successful", 200
+                    return "", 200
                 elif request.method == 'DELETE':
                     poll.delete()
-                    return "Success", 200
+                    return "", 200
             except ValueError:
                 abort(400, "Invalid request")
+            except NotFoundException:
+                abort(404, "Poll not found")
 
         @self.web.route(f"{self.API_V1_PREFIX}/poll/<poll_id>/options", methods=['GET', 'POST'])
         def options_actions(poll_id):
             try:
                 poll = Poll.get(int(poll_id))
-                if poll is None:
-                    abort(404, "Poll not found")
                 if request.method == 'GET':
-                    options = poll.get_options()
-                    result = [option.get_info() for option in options]
-                    return json.dumps(result, default=str)
-                if not self.is_logged_in(poll.author):
+                    return json.dumps(poll.get_options(), default=str)  # [option.get_info() for option in options]
+                if not self.is_admin_logged_in(poll.author):
                     abort(401, "Not logged in")
                 if request.method == 'POST':
                     data = request.form
                     if not data['text']:
                         abort(400, "Missing text")
-                    return jsons.dumps(Option.insert(text=data['text'], poll_id=poll.id).get_info()), 200
+                    return json.dumps(
+                        Option.insert(text=data['text'], poll_id=poll.id).get_info()
+                    ), 200
             except ValueError:
                 abort(400, "Invalid request")
+            except NotFoundException:
+                abort(404, "Poll not found")
 
         @self.web.route(f"{self.API_V1_PREFIX}/option/<option_id>", methods=['GET', 'POST', 'DELETE'])
         def option_actions(option_id):
             try:
                 option = Option.get(int(option_id))
-                if option is None:
-                    abort(404, "Option not found")
                 if request.method == 'GET':
                     return json.dumps(option.get_info())
-                if not self.is_logged_in(option.poll.author):
+                if not self.is_admin_logged_in(option.get_poll().author):
                     abort(401, "Not logged in")
                 if request.method == 'POST':
                     data = request.form
                     if not data['text']:
                         abort(400, "Missing text")
                     option.update(text=data['text'])
-                    return "Update successful", 200
+                    return "", 200
                 elif request.method == 'DELETE':
                     option.delete()
-                    return "Success", 200
+                    return "", 200
             except ValueError:
                 abort(400, "Invalid request")
-
+            except NotFoundException:
+                abort(404, "Poll not found")
+                
         @self.web.route(f"{self.API_V1_PREFIX}/option/<option_id>/answers",
-                        methods=['GET', 'POST', 'DELETE'])
+                        methods=['POST', 'DELETE'])
         def answers_actions(option_id):
             try:
                 option = Option.get(int(option_id))
-                if option is None:
-                    abort(404, "Option not found")
-                if request.method == 'GET':
-                    answers = option.answers
-                    result = [answer.get_info() for answer in answers]
-                    return json.dumps(result, default=str)
-                if not self.is_logged_in(option.poll.author):
-                    abort(401, "Not logged in")
-                session_id = session.get("id")
+                session_id = self.get_or_create_session_id()
                 if request.method == 'POST':
                     result = option.vote(str(session_id))
                     if result is None:
-                        abort(409, "Vote unsuccessful, you have already voted")
+                        abort(409, "You have already voted!")
                     return "Vote successful. Thank you for your participation!", 200
                 elif request.method == 'DELETE':
                     answer = option.remove_vote(str(session_id))
-                    if answer is None:
-                        abort(404, "Answer not found")
-                    return "Vote removed", 200
+                    return "", 200
             except ValueError:
                 abort(400, "Invalid request")
+            except NotFoundException:
+                abort(404, "Poll not found")
 
     # noinspection PyMethodMayBeStatic
     def is_logged_in(self, session_id=None) -> bool:
@@ -208,4 +217,24 @@ class WebGUI:
         Checks if the user has started a session by entering the password
         @return: True if the user is logged in
         """
-        return session.get("admin") is True or (session_id is not None and session.get("id") == session_id)
+        return session.get("admin") is True or (session_id is not None and self.get_or_create_session_id() == session_id)
+
+    def _insert_test_data(self):
+        """
+        Inserts some test data into the database
+        """
+        poll = Poll.insert(title="Test poll", author="admin")
+        Option.insert(text="Option 1", poll_id=poll.id)
+        Option.insert(text="Option 2", poll_id=poll.id)
+        Option.insert(text="Option 3", poll_id=poll.id)
+
+        poll = Poll.insert(title="Another poll", author="admin")
+        option = Option.insert(text="Option 1", poll_id=poll.id)
+        Option.insert(text="Option 2", poll_id=poll.id)
+        Option.insert(text="Option 3", poll_id=poll.id)
+        Option.insert(text="Option 4", poll_id=poll.id)
+        Option.insert(text="Option 5", poll_id=poll.id)
+        option.vote("test")
+
+        poll = Poll.insert(title="Poll with votes", author=None)
+        Option.insert(text="Option 1", poll_id=poll.id)
