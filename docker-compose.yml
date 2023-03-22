@@ -1,0 +1,16 @@
+version: "1.0"
+services:
+  database:
+    image: postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 1234
+      POSTGRES_DB: flasksqlTest
+    ports:
+#      - host:container
+      - "5432:5432"
+  backend:
+    image: backend
+    ports:
+      - '9000:9000'
+  
