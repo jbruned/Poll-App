@@ -1,6 +1,7 @@
 import hashlib
 
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import distinct
 
 db = SQLAlchemy()
 
@@ -206,8 +207,8 @@ class Poll(db.Model):
             - the option count
             - the answer count
         """
-        polls = db.session.query(Poll, db.func.count(Option.id).label('options_count'),
-                                 db.func.count(Answer.id).label('answers_count')) \
+        polls = db.session.query(Poll, db.func.count(distinct(Option.id)).label('options_count'),
+                                 db.func.count(distinct(Answer.id)).label('answers_count')) \
             .outerjoin(Option, Poll.id == Option.poll_id) \
             .outerjoin(Answer, Option.id == Answer.option_id) \
             .group_by(Poll.id).all()
@@ -295,11 +296,12 @@ class Option(db.Model):
     def vote(self, session_id: str):
         """
         Adds a new answer for the option
-        @param session_id: The user session ID
-        @return: The answer object if the user has not already voted, None otherwise
+        @:param session_id: The user session ID
+        @:return The answer object if the user has not already voted
+        @:raises AlreadyVotedException if the user has already voted
         """
         if self.get_poll().has_answered(session_id):
-            return None
+            raise AlreadyVotedException()
         answer = Answer(option_id=self.id, session_id=session_id, timestamp=db.func.now())
         db.session.add(answer)
         db.session.commit()
@@ -326,11 +328,7 @@ class Option(db.Model):
         Removes the vote from the poll option
         @param session_id: The user session ID
         """
-        answer = Answer.query.filter(Answer.option_id == self.id, session_id == session_id).first()
-        if answer is None:
-            return None
-        answer.delete()
-        return answer
+        Answer.query.filter(Answer.option_id == self.id, session_id == session_id).delete()
 
 
 class Answer(db.Model):

@@ -134,13 +134,13 @@ class WebGUI(Flask):
             if not self.settings.is_password_correct(request.form['old']):
                 abort(401, "Old password is incorrect")
             self.settings.set(request.form['new'])
-            return "", 200
+            return self.success()
 
         @self.route(f"{self.API_V1_PREFIX}/logout")
         def logout():
             session.pop("admin", None)
             session.pop("id", None)
-            return "", 200
+            return self.success()
 
         @self.route(f"{self.API_V1_PREFIX}/polls/", methods=['GET', 'POST'])
         def polls_actions():
@@ -167,10 +167,10 @@ class WebGUI(Flask):
                 if not data['title']:
                     abort(400, "Missing title")
                 poll.update(title=data['title'], author=data['author'] or None)
-                return "", 200
+                return self.success()
             elif request.method == 'DELETE':
                 poll.delete()
-                return "", 200
+                return self.success()
 
         @self.route(f"{self.API_V1_PREFIX}/poll/<poll_id>/options", methods=['GET', 'POST'])
         def options_actions(poll_id):
@@ -199,12 +199,12 @@ class WebGUI(Flask):
                 if not data['text']:
                     abort(400, "Missing text")
                 option.update(text=data['text'])
-                return "", 200
+                return self.success()
             elif request.method == 'DELETE':
                 option.delete()
-                return "", 200
+                return self.success()
 
-        @self.route(f"{self.API_V1_PREFIX}/option/<option_id>/answers",
+        @self.route(f"{self.API_V1_PREFIX}/option/<option_id>/vote",
                     methods=['POST', 'DELETE'])
         def answers_actions(option_id):
             option = Option.get(int(option_id))
@@ -213,10 +213,10 @@ class WebGUI(Flask):
                 result = option.vote(str(session_id))
                 if result is None:
                     abort(409, "You have already voted!")
-                return "Vote successful. Thank you for your participation!", 200
+                return self.success()
             elif request.method == 'DELETE':
                 option.remove_vote(str(session_id))
-                return "", 200
+                return self.success()
 
     HTTP_ERRORS = {
         400: "Bad request",
@@ -284,6 +284,12 @@ class WebGUI(Flask):
         return session.get("admin") is True or (
             session_id is not None and WebGUI.get_or_create_session_id() == session_id
         )
+
+    @staticmethod
+    def success(message=True):
+        return json.dumps({
+            "success": message
+        }), 200
 
     @staticmethod
     def _insert_test_data():
