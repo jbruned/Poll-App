@@ -31,7 +31,8 @@ class WebGUI:
         self.web = Flask(__name__)
         getLogger('werkzeug').setLevel(CRITICAL)
         # Database configuration
-        self.web.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:1234@localhost:5432/flasksqlTest'
+        # self.web.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:1234@localhost:5432/flasksqlTest'
+        self.web.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:1234@database:5432/flasksqlTest'
         self.web.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 
         engine = create_engine(self.web.config['SQLALCHEMY_DATABASE_URI'])

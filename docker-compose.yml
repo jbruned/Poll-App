@@ -1,5 +1,14 @@
-version: "1.0"
+version: '3'
+
 services:
+  backend:
+    image: backend
+    build: .
+    ports:
+      - "9000:9000"
+    depends_on:
+      - database
+
   database:
     image: postgres
     environment:
@@ -7,10 +16,8 @@ services:
       POSTGRES_PASSWORD: 1234
       POSTGRES_DB: flasksqlTest
     ports:
-#      - host:container
       - "5432:5432"
-  backend:
-    image: backend
-    ports:
-      - '9000:9000'
-  
+
+  debug_client:
+    image: alpine
+    command: tail -f /dev/null
