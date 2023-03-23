@@ -174,7 +174,7 @@ export function Icon(props) {
 
 export function TitleWithButtonBack (props) {
     const navigate = useNavigate();
-    return <div className="mb-3">
+    return <div className={`mb-${props.mb ?? '3'}`}>
         {props.to
             ? <a to={props.to} className="btn btn-primary" style={{marginTop: '-20px'}}><Icon name="arrow-left" me="2" />{props.text || "Go back"}</a>
             : <a onClick={() => navigate(props.href ?? -1)} className="btn btn-primary" style={{marginTop: '-20px'}}><Icon name="arrow-left" me="2" />{props.text || "Go back"}</a>

@@ -1,31 +1,19 @@
-import logo from './logo.svg'
 import './App.css'
 import {
 	BrowserRouter as Router,
 	Routes,
 	Route,
-	Link
+    useParams
 } from "react-router-dom"
-import {
+import React, {
 	useState,
-	useEffect,
-	createRef,
-	useRef
+	useEffect
 } from 'react'
 import {
-	readableDateDiff,
-	myAlert,
-	apiRequest,
-	firstUpper
+	apiRequest
 } from './util.js'
-import Swal from 'sweetalert2'
 import {
-	Spinner,
-	TextMuted,
-	ClearFix,
-	Loader,
-	TitleWithButtonBack,
-	Redirect
+	Spinner
 } from './components/basicComponents.js'
 import {
 	BasicLayout,
@@ -34,18 +22,17 @@ import {
 import {
 	Home,
 	Poll,
-	EditPoll
+	EditPoll,
+    PollResults,
+    PollMenu
 } from './components/pageComponents.js'
 
 function App() {
         
-    const [userData, setUserData] = useState(null);
-    const [error, setError] = useState(null);
-    const [isLoaded, setIsLoaded] = useState(false);
-    const [isLoggingIn, setLoggingIn] = useState(false);
-    const [darkMode, setDarkMode] = useState((localStorage.getItem('darkMode') ?? 'false') == 'true');
-    const loginForm = useRef(),
-          registerForm = useRef();
+    const [userData, setUserData] = useState(null)
+    const [error, setError] = useState(null)
+    const [isLoaded, setIsLoaded] = useState(false)
+    const [darkMode, setDarkMode] = useState((localStorage.getItem('darkMode') ?? 'false') == 'true')
 
     useEffect(() => {
         doLogin()
@@ -53,7 +40,6 @@ function App() {
 
     function doLogin(password) {
 		return new Promise((resolve, reject) => {
-			setLoggingIn(true)
 			apiRequest("login", password ? 'POST' : 'GET', password ? {
 				password: password
 			} : null)
@@ -67,14 +53,12 @@ function App() {
 							})
 						}
 						setIsLoaded(true)
-						setLoggingIn(false)
 					},
 					(error) => {
 						reject()
-						// setIsLoaded(true)
+						setIsLoaded(true)
 						// setError(error)
 						setUserData({})
-						/// setLoggingIn(false)
 					}
 				)
 		})
@@ -94,9 +78,6 @@ function App() {
                 }
             )
     }
-    function clearFields(event) {
-        loginForm.current?.reset()
-    }
     function toggleDarkMode() {
         setDarkMode(!darkMode)
         localStorage.setItem('darkMode', !darkMode ? 'true' : 'false')
@@ -105,35 +86,20 @@ function App() {
     return <div className={`min-vh-100 ${darkMode ? 'dark-mode' : 'dark-mode-disabled'}`}><Router>
         {!isLoaded ? <BasicLayout><Spinner /></BasicLayout> : 
             (error ? <BasicLayout title="Error" icon="exclamation-triangle-fill" subtitle="Couldn't authenticate">{error ?? ""}</BasicLayout> : 
-                // Authentication
-                !(userData ?? false) ? <Routes>
-                    <Route index element={<BasicLayout title="Login" icon="lock-fill" subtitle="To access this page, authenticate first">    
-                        <form className="text-center" onSubmit={doLogin} ref={loginForm}>
-                            <input name="email" type="email" placeholder="Email" autoFocus className="form-control mb-2 d-inline-block" style={{"maxWidth": "300px"}} required/>
-                            <ClearFix />
-                            <input name="pass" type="password" placeholder="Password" className="form-control mb-3 d-inline-block" style={{"maxWidth": "300px"}} required/>
-                            <ClearFix />
-                            <button className="btn btn-primary button" type="submit">
-                                <Loader loading={isLoggingIn}>Let me in!</Loader>
-                            </button>
-                            <ClearFix />
-                            <Link to="/register" style={{"fontSize": "smaller"}}>Create new account</Link>
-                        </form>
-                    </BasicLayout>} />
-                </Routes> :
-                // Actual web application
                 <Routes>
-                    <Route path="/" element={<MainLayout darkMode={darkMode} toggleDarkMode={toggleDarkMode} admin={userData.is_admin} doLogin={doLogin} doLogout={doLogout} />}>
-                        <Route path="/" element={<Home isAdmin={userData.is_admin} />} />
-						<Route path="/polls" element={<Home isAdmin={userData.is_admin} />} />
-                        <Route path="/polls/:poll_id" element={<Poll isAdmin={userData.is_admin} />} />
-                        <Route path="/polls/:poll_id/edit" element={<EditPoll isAdmin={userData.is_admin} />} />
+                    <Route path="/" element={<MainLayout darkMode={darkMode} toggleDarkMode={toggleDarkMode} />}>{/*admin={...} doLogin={doLogin} doLogout={doLogout}*/}
+                        <Route path="/" element={<Home />} />
+						<Route path="polls" element={<Home />} />
+                        <Route path="polls/:poll_id/" element={<PollMenu />}>
+                            <Route index element={<Poll />} />
+                            <Route path="/polls/:poll_id/results" element={<PollResults />} />
+                        </Route>
                     </Route>
                     <Route path="*" element={<BasicLayout title="Page not found" subtitle="The page you are looking doesn't exist" icon="exclamation-triangle-fill" />} />
                 </Routes>
             )
         }
-    </Router></div>;
+    </Router></div>
 }
 
-export default App;
+export default App
