@@ -26,6 +26,8 @@ services:
       POSTGRES_DB: ${DB_NAME}
     ports:
       - "${DB_EXPOSED_PORT}:${DB_PORT}"
+    volumes:
+      - database-data:${DB_VOL_PATH}
     env_file:
       - .env
     healthcheck:
@@ -37,3 +39,6 @@ services:
   debug_client:
     image: alpine
     command: sh -c "apk update && apk add --no-cache nmap curl iputils && tail -f /dev/null"
+
+volumes:
+  database-data:
