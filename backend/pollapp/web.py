@@ -58,8 +58,10 @@ class WebGUI(Flask):
         Initializes the database
         """
         # Database configuration
+        # self.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///flasksqlTest.db' if use_sqlite else \
+        #    'postgresql://postgres:1234@localhost:5432/flasksqlTest'
         self.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///flasksqlTest.db' if use_sqlite else \
-            'postgresql://postgres:1234@localhost:5432/flasksqlTest'
+            'postgresql://postgres:1234@database:5432/flasksqlTest'
         self.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
         # Create PostgreSQL database if it doesn't exist
         if not use_sqlite:

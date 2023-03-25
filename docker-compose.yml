@@ -1,0 +1,44 @@
+version: '3'
+
+services:
+  backend:
+    image: backend
+    build: ./backend
+    ports:
+      - "${BACKEND_EXPOSED_PORT}:${BACKEND_PORT}"
+    depends_on:
+      database:
+        condition: service_healthy
+    environment:
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
+      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+    env_file:
+      - .env
+
+  database:
+    image: postgres
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    ports:
+      - "${DB_EXPOSED_PORT}:${DB_PORT}"
+    volumes:
+      - database-data:${DB_VOL_PATH}
+    env_file:
+      - .env
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${DB_USER} -h localhost -d ${DB_NAME}" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  debug_client:
+    image: alpine
+    command: sh -c "apk update && apk add --no-cache nmap curl iputils && tail -f /dev/null"
+
+volumes:
+  database-data:
