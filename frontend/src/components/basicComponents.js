@@ -44,7 +44,7 @@ export function CardAction(props) {
 }
 
 export function CardCollection(props) {
-    return ((props.cards ?? {}).length == 0 ? <TextMuted>{props.empty_msg ?? "Nothing to see here!"}</TextMuted> :
+    return ((props.cards ?? {}).length === 0 ? <TextMuted>{props.empty_msg ?? "Nothing to see here!"}</TextMuted> :
         <div className="row">
             {props.cards.map(item => (
                 <div className="col-md-6 col-lg-4" key={item.key}>
@@ -83,7 +83,7 @@ export function Loader(props) {
             setStyle({
                 width: `${box.current.offsetWidth}px`,
                 height: `${box.current.offsetHeight}px`,
-                whiteSpace:'nowrap',
+                whiteSpace: 'nowrap',
                 padding: '0 6px'
             });
             setLoading(props.loading);
@@ -160,7 +160,7 @@ export function ClearFix() {
 export function Redirect(props) {
     const navigate = useNavigate();
     useEffect(() => {
-        navigate(props.to ?? '/', props.replace ? {replace: props.replace} : {});
+        navigate(props.to ?? '/', props.replace ? { replace: props.replace } : {});
     }, []);
 }
 
@@ -172,12 +172,12 @@ export function Icon(props) {
     return <i className={`bi bi-${props.name} me-${props.me ?? 0}`}></i>
 }
 
-export function TitleWithButtonBack (props) {
+export function TitleWithButtonBack(props) {
     const navigate = useNavigate();
     return <div className={`mb-${props.mb ?? '3'}`}>
         {props.to
-            ? <a to={props.to} className="btn btn-primary" style={{marginTop: '-20px'}}><Icon name="arrow-left" me="2" />{props.text || "Go back"}</a>
-            : <a onClick={() => navigate(props.href ?? -1)} className="btn btn-primary" style={{marginTop: '-20px'}}><Icon name="arrow-left" me="2" />{props.text || "Go back"}</a>
+            ? <a to={props.to} className="btn btn-primary" style={{ marginTop: '-20px' }}><Icon name="arrow-left" me="2" />{props.text || "Go back"}</a>
+            : <a onClick={() => navigate(props.href ?? -1)} className="btn btn-primary" style={{ marginTop: '-20px' }}><Icon name="arrow-left" me="2" />{props.text || "Go back"}</a>
         }
         <h1 className='d-inline ms-md-3'>{props.children}</h1>
     </div>
@@ -192,8 +192,9 @@ export function FormHelp(props) {
 export function TimeAgo(props) {
     const [now, setNow] = useState(new Date())
     useEffect(() => {
-        setTimeout(() => setNow(new Date()), 
+        setTimeout(() => setNow(new Date()),
             readableDateDiff(props.timestamp).includes('second') || readableDateDiff(props.timestamp).includes('just') ? 1000 : 60000
-    )}, [now, props.timestamp])
+        )
+    }, [now, props.timestamp])
     return (props.firstUpper ?? false) ? firstUpper(readableDateDiff(props.timestamp)) : readableDateDiff(props.timestamp);
 }

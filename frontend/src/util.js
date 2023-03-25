@@ -9,7 +9,7 @@ export function apiRequest(endpoint, method, data) {
         fetch(`${BASE_URL}/${endpoint}`, {
             method: method?.toUpperCase() ?? 'GET',
             body: data ? JSON.stringify(data) : null,
-            headers: method?.toUpperCase() == 'POST' ? {
+            headers: method?.toUpperCase() === 'POST' ? {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json'
             } : {
@@ -18,13 +18,13 @@ export function apiRequest(endpoint, method, data) {
         }).catch(
             err => reject("An error occurred while making the request")
         ).then(res => {
-            if (res?.status == 401)
+            if (res?.status === 401)
                 reject("You need to be logged in to perform this action")
-            else if (res?.status == 403)
+            else if (res?.status === 403)
                 reject("You are not authorized to perform this action")
-            else if (res?.status == 404)
+            else if (res?.status === 404)
                 reject("The requested resource was not found")
-            else if (res?.status == 500)
+            else if (res?.status === 500)
                 reject("An internal server error occurred")
             else
                 res?.json().catch(
@@ -47,7 +47,7 @@ export function firstUpper(string) {
 }
 
 export function formToDict(form, extraData) {
-    var formData = form ? Object.assign(...Array.from(new FormData(form).entries(), ([x,y]) => ({[x]:y}))) : {}
+    var formData = form ? Object.assign(...Array.from(new FormData(form).entries(), ([x, y]) => ({ [x]: y }))) : {}
     if (extraData)
         Object.keys(extraData).forEach(key => formData[key] = extraData[key])
     return formData
@@ -100,7 +100,7 @@ export function swalInput(title, text, input_type, confirm_text, promise) {
 }
 
 export function plural(number) {
-    return number == 1 ? '' : 's';
+    return number === 1 ? '' : 's';
 }
 
 export function dateAsString(date) {
@@ -114,7 +114,7 @@ export function hourAsString(date) {
 export function readableDateDiff(date, wrt) {
     if (!wrt)
         wrt = new Date();
-    if (date == null || date == '')
+    if (date === null || date === '')
         return 'never';
     if (!(date instanceof Date))
         date = new Date(date);
@@ -133,6 +133,6 @@ export function readableDateDiff(date, wrt) {
     diff = Math.floor(diff / 60);
     if (Math.abs(diff) < 12)
         return pre + Math.abs(diff) + ' hour' + plural(diff) + pos;
-    let day_diff = Math.abs(Math.round((new Date(wrt).setHours(12) - new Date(date).setHours(12))/8.64e7));
-    return (day_diff == 0 ? 'today' : day_diff == 1 ? (diff < 0 ? 'tomorrow' : 'yesterday') : ('on ' + dateAsString(date))) + ' at ' + hourAsString(date);
+    let day_diff = Math.abs(Math.round((new Date(wrt).setHours(12) - new Date(date).setHours(12)) / 8.64e7));
+    return (day_diff === 0 ? 'today' : day_diff === 1 ? (diff < 0 ? 'tomorrow' : 'yesterday') : ('on ' + dateAsString(date))) + ' at ' + hourAsString(date);
 }
