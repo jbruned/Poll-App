@@ -3,6 +3,7 @@ import uuid
 from logging import getLogger, CRITICAL, DEBUG
 
 from flask import Flask, send_file, abort, request, session
+from flask_cors import CORS
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import create_engine
@@ -28,6 +29,7 @@ class WebGUI(Flask):
         @param db: database where all data is persisted
         """
         super().__init__(__name__)
+        CORS(self)
 
         # Set debug mode and logging level
         if debug:
@@ -96,6 +98,7 @@ class WebGUI(Flask):
         """
         Initializes the GUI (frontend) endpoints
         """
+
         @self.route("/")
         @self.route("/login")
         @self.route("/poll/<poll_id>")
@@ -115,6 +118,7 @@ class WebGUI(Flask):
         """
         Initializes the API endpoints
         """
+
         @self.route(f"{self.API_V1_PREFIX}/login", methods=['GET', 'POST'])
         def login():
             # TODO replace by Kong API Gateway
@@ -154,7 +158,7 @@ class WebGUI(Flask):
                     abort(400, "Missing title")
                 return json.dumps(
                     Poll.insert(title=data['title'], author=data['author'] or None)
-                        .get_info(self.get_or_create_session_id())
+                    .get_info(self.get_or_create_session_id())
                 ), 200
 
         @self.route(f"{self.API_V1_PREFIX}/poll/<poll_id>", methods=['GET', 'POST', 'DELETE'])
@@ -244,6 +248,7 @@ class WebGUI(Flask):
         """
         Initializes the error handler
         """
+
         @self.errorhandler(Exception)
         def handle_error(code_or_exception=500, message=None, debug=False):
             """
@@ -284,7 +289,7 @@ class WebGUI(Flask):
         @return: True if the user is logged in
         """
         return session.get("admin") is True or (
-            session_id is not None and WebGUI.get_or_create_session_id() == session_id
+                session_id is not None and WebGUI.get_or_create_session_id() == session_id
         )
 
     @staticmethod
