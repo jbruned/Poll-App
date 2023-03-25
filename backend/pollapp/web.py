@@ -1,4 +1,5 @@
 import json
+import os
 import uuid
 from logging import getLogger, CRITICAL, DEBUG
 
@@ -18,6 +19,11 @@ class WebGUI(Flask):
     """
     Contains the implementation of the entire web GUI in Flask
     """
+    DB_HOST = os.getenv('DB_HOST')
+    DB_PORT = os.getenv('DB_PORT')
+    DB_NAME = os.getenv('DB_NAME')
+    DB_USER = os.getenv('DB_USER')
+    DB_PASSWORD = os.getenv('DB_PASSWORD')
 
     _SECRET_KEY = "b0928e1a460370d300c864856520f265"
     API_V1_PREFIX = "/api/v1"
@@ -60,10 +66,8 @@ class WebGUI(Flask):
         Initializes the database
         """
         # Database configuration
-        # self.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///flasksqlTest.db' if use_sqlite else \
-        #    'postgresql://postgres:1234@localhost:5432/flasksqlTest'
-        self.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///flasksqlTest.db' if use_sqlite else \
-            'postgresql://postgres:1234@database:5432/flasksqlTest'
+        self.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{self.DB_NAME}.db' if use_sqlite else \
+            f'postgresql://{self.DB_USER}:{self.DB_PASSWORD}@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}'
         self.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
         # Create PostgreSQL database if it doesn't exist
         if not use_sqlite:
