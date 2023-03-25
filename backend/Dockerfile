@@ -5,9 +5,7 @@ WORKDIR /app
 COPY requirements.txt .
 RUN pip install -r requirements.txt
 
-COPY ../.env .
-ENV BACKEND_PORT=${BACKEND_PORT}
+ARG BACKEND_PORT
 
 COPY . .
-
-CMD ["python3", "main.py", "0.0.0.0:${BACKEND_PORT}"]
+CMD ["sh", "-c", "python3 main.py 0.0.0.0:${BACKEND_PORT}"]
