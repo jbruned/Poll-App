@@ -161,12 +161,12 @@ class WebGUI(Flask):
             if request.method == 'GET':
                 return json.dumps(Poll.get_polls(as_dict=True), default=str)
             elif request.method == 'POST':
-                data = request.form
+                data = self.get_request_body(request)
                 if not data['title']:
                     abort(400, "Missing title")
                 return json.dumps(
                     Poll.insert(title=data['title'], author=data['author'] or None)
-                    .get_info(self.get_or_create_session_id())
+                    .get_info(self.get_or_create_session_id()), default=str
                 ), 200
 
         @self.route(f"{self.API_V1_PREFIX}/poll/<poll_id>", methods=['GET', 'POST', 'DELETE'])
@@ -177,7 +177,7 @@ class WebGUI(Flask):
             if not self.is_admin_logged_in(poll.author):
                 abort(401, "Not logged in")
             if request.method == 'POST':
-                data = request.form
+                data = self.get_request_body(request)
                 if not data['title']:
                     abort(400, "Missing title")
                 poll.update(title=data['title'], author=data['author'] or None)
@@ -190,26 +190,27 @@ class WebGUI(Flask):
         def options_actions(poll_id):
             poll = Poll.get(int(poll_id))
             if request.method == 'GET':
-                return json.dumps(poll.get_options(), default=str)  # [option.get_info() for option in options]
+                options = poll.get_options()
+                return json.dumps([option.to_dict() for option in options], default=str)
             if not self.is_admin_logged_in(poll.author):
                 abort(401, "Not logged in")
             if request.method == 'POST':
-                data = request.form
+                data = self.get_request_body(request)
                 if not data['text']:
                     abort(400, "Missing text")
                 return json.dumps(
-                    Option.insert(text=data['text'], poll_id=poll.id).get_info()
+                    Option.insert(text=data['text'], poll_id=poll.id).to_dict()
                 ), 200
 
         @self.route(f"{self.API_V1_PREFIX}/option/<option_id>", methods=['GET', 'POST', 'DELETE'])
         def option_actions(option_id):
             option = Option.get(int(option_id))
             if request.method == 'GET':
-                return json.dumps(option.get_info())
+                return json.dumps(option.to_dict())
             if not self.is_admin_logged_in(option.get_poll().author):
                 abort(401, "Not logged in")
             if request.method == 'POST':
-                data = request.form
+                data = self.get_request_body(request)
                 if not data['text']:
                     abort(400, "Missing text")
                 option.update(text=data['text'])
@@ -326,3 +327,16 @@ class WebGUI(Flask):
 
         poll = Poll.insert(title="Poll with votes", author="author")
         Option.insert(text="Option 1", poll_id=poll.id)
+
+    @staticmethod
+    def get_request_body(req):
+        """
+        Gets the request body
+        @param req: request
+        @return: the data contained in the request body
+        """
+        if req.is_json:
+            data = req.json
+        else:
+            data = req.form
+        return data
