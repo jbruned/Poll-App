@@ -12,12 +12,6 @@ services:
     depends_on:
       database:
         condition: service_healthy
-    environment:
-      DB_HOST: ${DB_HOST}
-      DB_PORT: ${DB_PORT}
-      DB_NAME: ${DB_NAME}
-      DB_USER: ${DB_USER}
-      DB_PASSWORD: ${DB_PASSWORD}
     env_file:
       - .env
 
@@ -38,10 +32,6 @@ services:
       interval: 10s
       timeout: 5s
       retries: 3
-
-#  debug_client:
-#    image: alpine
-#    command: sh -c "apk update && apk add --no-cache nmap curl iputils && tail -f /dev/null"
 
 volumes:
   database-data:
