@@ -63,11 +63,11 @@ export function PollList(props) {
                     key: i.id,
                     link: "/polls/" + i.id,
                     title: i.title,
-                    descr: <p className='m-2 d-flex flex-column'>
+                    descr: <div className='m-2 d-flex flex-column'>
                         <div><Icon name="bar-chart-fill" me="2" />{i.options_count} option{plural(i.options_count)}</div>{/*grid-fill*/}
                         <div><Icon name="people-fill" me="2" />{i.answers_count} answer{plural(i.answers_count)}</div>
                         <div><Icon name="clock-fill" me="2" />Created <TimeAgo timestamp={i.timestamp} /></div>
-                    </p>,
+                    </div>,
                     actions: <CardAction text="Vote" icon="send-fill" to={`/polls/${i.id}`} />
                 }))} empty_msg={props.empty_msg || "No polls have been created (yet)"} />
         )
