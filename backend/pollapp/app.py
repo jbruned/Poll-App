@@ -1,4 +1,5 @@
 import logging
+import os
 
 from waitress import serve
 
@@ -16,9 +17,9 @@ class PollApp:
         """
         PollApp constructor, creates the Flask instance and loads the database
         """
-        self.gui = WebGUI(db, drop_db_and_insert_test_data=True)
+        self.gui = WebGUI(db)
 
-    def run(self, web_addr_port: str = "127.0.0.1:80", debug: bool = False):
+    def run(self, web_addr_port: str = "127.0.0.1:80"):
         """
         Runs the web GUI in its own thread
         :param web_addr_port: The IP address and port where to listen for the web GUI
@@ -27,7 +28,8 @@ class PollApp:
         :param debug: Run Flask in debug mode
         """
         try:
-            logging.getLogger('waitress').setLevel(logging.DEBUG if debug else logging.ERROR)
+            debug_on = os.getenv("DEBUG_ON", 'False').lower() in ('true', '1', 't')
+            logging.getLogger('waitress').setLevel(logging.DEBUG if debug_on else logging.ERROR)
             # noinspection HttpUrlsUsage
             log_info(f"Starting web interface at http://{web_addr_port}")
             serve(self.gui, listen=web_addr_port)

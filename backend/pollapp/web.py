@@ -19,17 +19,19 @@ class WebGUI(Flask):
     """
     Contains the implementation of the entire web GUI in Flask
     """
-    DB_HOST = os.getenv('DB_HOST')
-    DB_PORT = os.getenv('DB_PORT')
-    DB_NAME = os.getenv('DB_NAME')
-    DB_USER = os.getenv('DB_USER')
-    DB_PASSWORD = os.getenv('DB_PASSWORD')
+    DB_HOST = os.getenv("DB_HOST")
+    DB_PORT = os.getenv("DB_PORT")
+    DB_NAME = os.getenv("DB_NAME")
+    DB_USER = os.getenv("DB_USER")
+    DB_PASSWORD = os.getenv("DB_PASSWORD")
+    DEBUG_ON = os.getenv("DEBUG_ON", 'False').lower() in ('true', '1', 't')
+    USE_SQLITE = os.getenv("USE_SQLITE", 'False').lower() in ('true', '1', 't')
+    DROP_DB_AND_INSERT_TEST_DATA = os.getenv("DROP_DB_AND_INSERT_TEST_DATA", 'False').lower() in ('true', '1', 't')
 
     _SECRET_KEY = "b0928e1a460370d300c864856520f265"
     API_V1_PREFIX = "/api/v1"
 
-    def __init__(self, db: SQLAlchemy, debug: bool = True, use_sqlite: bool = None,
-                 drop_db_and_insert_test_data: bool = None):
+    def __init__(self, db: SQLAlchemy):
         """
         Implementation of the WebGUI and all endpoints using Flask
         @param db: database where all data is persisted
@@ -38,21 +40,17 @@ class WebGUI(Flask):
         CORS(self)
 
         # Set debug mode and logging level
-        if debug:
+        if self.DEBUG_ON:
             self.config['DEBUG'] = True
             self.config['TESTING'] = True
             self.config['ENV'] = 'development'
-            if use_sqlite is None:
-                use_sqlite = True
-            if drop_db_and_insert_test_data is None:
-                drop_db_and_insert_test_data = True
-        getLogger('werkzeug').setLevel(DEBUG if debug else CRITICAL)
+        getLogger('werkzeug').setLevel(DEBUG if self.DEBUG_ON else CRITICAL)
 
         # Push the app context to the current thread
         self.app_context().push()
 
         # Initialize the app
-        self.init_db(db, use_sqlite, drop_db_and_insert_test_data)
+        self.init_db(db)
         self.settings = self.load_settings()
         self.init_gui()
         self.init_api()
@@ -61,23 +59,29 @@ class WebGUI(Flask):
         # Set the secret key for the Flask sessions
         self.secret_key = self._SECRET_KEY
 
-    def init_db(self, db: SQLAlchemy, use_sqlite: bool = True, drop_db_and_insert_test_data: bool = False):
+    def init_db(self, db: SQLAlchemy):
         """
         Initializes the database
         """
         # Database configuration
-        self.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{self.DB_NAME}.db' if use_sqlite else \
-            f'postgresql://{self.DB_USER}:{self.DB_PASSWORD}@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}'
+        db_connection_uri = ""
+        if self.USE_SQLITE:
+            db_connection_uri = 'sqlite:///flasksqlTest.db'
+        else:
+            db_connection_uri = f'postgresql://{self.DB_USER}:{self.DB_PASSWORD}@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}'
+
+        self.config['SQLALCHEMY_DATABASE_URI'] = db_connection_uri
         self.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-        # Create PostgreSQL database if it doesn't exist
-        if not use_sqlite:
+        # Create database if it doesn't exist
+        if not self.USE_SQLITE:
             engine = create_engine(self.config['SQLALCHEMY_DATABASE_URI'])
             if not database_exists(engine.url):
                 create_database(engine.url)
+
         # Initialize database
         db.init_app(self)
         Migrate(self, db)
-        if drop_db_and_insert_test_data:
+        if self.DROP_DB_AND_INSERT_TEST_DATA:
             db.drop_all()
             db.create_all()
             self._insert_test_data()
@@ -320,5 +324,5 @@ class WebGUI(Flask):
         Option.insert(text="Option 5", poll_id=poll.id)
         option.vote("test")
 
-        poll = Poll.insert(title="Poll with votes", author=None)
+        poll = Poll.insert(title="Poll with votes", author="author")
         Option.insert(text="Option 1", poll_id=poll.id)
