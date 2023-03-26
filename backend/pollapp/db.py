@@ -339,3 +339,24 @@ class Answer(db.Model):
         """
         db.session.delete(self)
         db.session.commit()
+
+
+def insert_test_data():
+    """
+    Inserts some test data into the database
+    """
+    poll = Poll.insert(title="Test poll", author="admin")
+    Option.insert(text="Option 1", poll_id=poll.id)
+    Option.insert(text="Option 2", poll_id=poll.id)
+    Option.insert(text="Option 3", poll_id=poll.id)
+
+    poll = Poll.insert(title="Another poll", author="admin")
+    option = Option.insert(text="Option 1", poll_id=poll.id)
+    Option.insert(text="Option 2", poll_id=poll.id)
+    Option.insert(text="Option 3", poll_id=poll.id)
+    Option.insert(text="Option 4", poll_id=poll.id)
+    Option.insert(text="Option 5", poll_id=poll.id)
+    option.vote("test")
+
+    poll = Poll.insert(title="Poll with votes", author="author")
+    Option.insert(text="Option 1", poll_id=poll.id)

@@ -1,32 +1,22 @@
 import json
-import os
 import uuid
 from logging import getLogger, CRITICAL, DEBUG
 
 from flask import Flask, send_file, abort, request, session
-from flask_cors import CORS
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import create_engine
 from sqlalchemy_utils import database_exists, create_database
 from werkzeug.exceptions import Unauthorized, Forbidden, NotFound, Conflict, InternalServerError
 
-from .db import AppSettings, Poll, Option, NotFoundException, AlreadyVotedException
-from .log import log_warning
+from .config import Config
+from .db import AppSettings, Poll, Option, NotFoundException, AlreadyVotedException, insert_test_data
 
 
 class WebGUI(Flask):
     """
     Contains the implementation of the entire web GUI in Flask
     """
-    DB_HOST = os.getenv("DB_HOST")
-    DB_PORT = os.getenv("DB_PORT")
-    DB_NAME = os.getenv("DB_NAME")
-    DB_USER = os.getenv("DB_USER")
-    DB_PASSWORD = os.getenv("DB_PASSWORD")
-    DEBUG_ON = os.getenv("DEBUG_ON", 'False').lower() in ('true', '1', 't')
-    USE_SQLITE = os.getenv("USE_SQLITE", 'False').lower() in ('true', '1', 't')
-    DROP_DB_AND_INSERT_TEST_DATA = os.getenv("DROP_DB_AND_INSERT_TEST_DATA", 'False').lower() in ('true', '1', 't')
 
     _SECRET_KEY = "b0928e1a460370d300c864856520f265"
     API_V1_PREFIX = "/api/v1"
@@ -36,15 +26,14 @@ class WebGUI(Flask):
         Implementation of the WebGUI and all endpoints using Flask
         @param db: database where all data is persisted
         """
-        super().__init__(__name__)
-        CORS(self)
+        super().__init__(__name__, static_folder="gui/static", static_url_path="/static")
 
         # Set debug mode and logging level
-        if self.DEBUG_ON:
+        if Config.DEBUG_ON:
             self.config['DEBUG'] = True
             self.config['TESTING'] = True
             self.config['ENV'] = 'development'
-        getLogger('werkzeug').setLevel(DEBUG if self.DEBUG_ON else CRITICAL)
+        getLogger('werkzeug').setLevel(DEBUG if Config.DEBUG_ON else CRITICAL)
 
         # Push the app context to the current thread
         self.app_context().push()
@@ -63,17 +52,12 @@ class WebGUI(Flask):
         """
         Initializes the database
         """
-        # Database configuration
-        db_connection_uri = ""
-        if self.USE_SQLITE:
-            db_connection_uri = 'sqlite:///flasksqlTest.db'
-        else:
-            db_connection_uri = f'postgresql://{self.DB_USER}:{self.DB_PASSWORD}@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}'
-
-        self.config['SQLALCHEMY_DATABASE_URI'] = db_connection_uri
+        self.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///flasksqlTest.db" if not Config.USE_POSTGRES else \
+            f"postgresql://{Config.DB_USER}:{Config.DB_PASSWORD}@{Config.DB_HOST}:{Config.DB_PORT}/{Config.DB_NAME}"
         self.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
         # Create database if it doesn't exist
-        if not self.USE_SQLITE:
+        if Config.USE_POSTGRES:
             engine = create_engine(self.config['SQLALCHEMY_DATABASE_URI'])
             if not database_exists(engine.url):
                 create_database(engine.url)
@@ -81,12 +65,11 @@ class WebGUI(Flask):
         # Initialize database
         db.init_app(self)
         Migrate(self, db)
-        if self.DROP_DB_AND_INSERT_TEST_DATA:
+        if Config.DROP_DB_AND_INSERT_TEST_DATA:
             db.drop_all()
             db.create_all()
-            self._insert_test_data()
+            insert_test_data()
         db.create_all()
-        # Load app settings from the database
 
     @staticmethod
     def load_settings():
@@ -97,36 +80,29 @@ class WebGUI(Flask):
             AppSettings.init()  # To restore default settings, run unconditionally
         settings = AppSettings.query.first()
         # Warn about the default password if needed
-        if settings.is_password_correct(AppSettings.DEFAULT_ADMIN_PASSWORD):
-            log_warning(f"Admin password is set to default: {AppSettings.DEFAULT_ADMIN_PASSWORD}\n"
-                        "          Please change it from the GUI")
+        # if settings.is_password_correct(AppSettings.DEFAULT_ADMIN_PASSWORD):
+        #     log_warning(f"Admin password is set to default: {AppSettings.DEFAULT_ADMIN_PASSWORD}\n"
+        #                 "          Please change it from the GUI")
         return settings
 
     def init_gui(self):
         """
         Initializes the GUI (frontend) endpoints
         """
-
         @self.route("/")
-        @self.route("/login")
-        @self.route("/poll/<poll_id>")
-        def dashboard():
+        @self.route("/polls/<poll_id>")
+        @self.route("/polls/<poll_id>/results")
+        def dashboard(poll_id=None):
             return send_file("gui/index.html")
 
-        @self.route('/assets/<filename>')
-        def asset(filename):
-            try:
-                while '../' in filename:
-                    filename = filename.replace('../', '')
-                return send_file(f"gui/assets/{filename}")
-            except FileNotFoundError:
-                abort(404, "Asset not found")
+        @self.route('/<any("favicon.ico", "manifest.json", "robots.txt", "logo192.png", "logo512.png"):filename>')
+        def other_static_files(filename):
+            return send_file(f"gui/{filename}")
 
     def init_api(self):
         """
         Initializes the API endpoints
         """
-
         @self.route(f"{self.API_V1_PREFIX}/login", methods=['GET', 'POST'])
         def login():
             # TODO replace by Kong API Gateway
@@ -257,19 +233,25 @@ class WebGUI(Flask):
         """
         Initializes the error handler
         """
-
         @self.errorhandler(Exception)
         def handle_error(code_or_exception=500, message=None, debug=False):
             """
             Handles errors
             """
             if debug:
+                print("Traceback")
                 import traceback
                 traceback.print_exc()
+            else:
+                print("no traceback")
             if message is not None and isinstance(code_or_exception, int):
-                return json.dumps({
-                    "error": message
-                }), code_or_exception
+                return (
+                    json.dumps({
+                        "error": message
+                    }) if request.url.__contains__(self.API_V1_PREFIX) else message,
+                    code_or_exception
+                )
+
             if isinstance(code_or_exception, int):
                 try:
                     return handle_error(code_or_exception, self.HTTP_ERRORS[code_or_exception])
@@ -298,7 +280,7 @@ class WebGUI(Flask):
         @return: True if the user is logged in
         """
         return session.get("admin") is True or (
-                session_id is not None and WebGUI.get_or_create_session_id() == session_id
+            session_id is not None and WebGUI.get_or_create_session_id() == session_id
         )
 
     @staticmethod
@@ -308,35 +290,10 @@ class WebGUI(Flask):
         }), 200
 
     @staticmethod
-    def _insert_test_data():
-        """
-        Inserts some test data into the database
-        """
-        poll = Poll.insert(title="Test poll", author="admin")
-        Option.insert(text="Option 1", poll_id=poll.id)
-        Option.insert(text="Option 2", poll_id=poll.id)
-        Option.insert(text="Option 3", poll_id=poll.id)
-
-        poll = Poll.insert(title="Another poll", author="admin")
-        option = Option.insert(text="Option 1", poll_id=poll.id)
-        Option.insert(text="Option 2", poll_id=poll.id)
-        Option.insert(text="Option 3", poll_id=poll.id)
-        Option.insert(text="Option 4", poll_id=poll.id)
-        Option.insert(text="Option 5", poll_id=poll.id)
-        option.vote("test")
-
-        poll = Poll.insert(title="Poll with votes", author="author")
-        Option.insert(text="Option 1", poll_id=poll.id)
-
-    @staticmethod
     def get_request_body(req):
         """
         Gets the request body
         @param req: request
         @return: the data contained in the request body
         """
-        if req.is_json:
-            data = req.json
-        else:
-            data = req.form
-        return data
+        return req.json if req.is_json else req.form
