@@ -1,7 +1,6 @@
 import hashlib
 
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import distinct
 
 db = SQLAlchemy()
 
@@ -10,6 +9,7 @@ class NotFoundException(Exception):
     """
     Exception thrown when a resource is not found
     """
+
     def __init__(self, resource_name="Resource"):
         super().__init__(f"{resource_name} not found")
 
@@ -18,6 +18,7 @@ class AlreadyVotedException(Exception):
     """
     Exception thrown when a user has already voted
     """
+
     def __init__(self):
         super().__init__(f"You have already voted!")
 
@@ -207,30 +208,21 @@ class Poll(db.Model):
             - the option count
             - the answer count
         """
-        polls = db.session.query(Poll, db.func.count(distinct(Option.id)).label('options_count'),
-                                 db.func.count(distinct(Answer.id)).label('answers_count')) \
-            .outerjoin(Option, Poll.id == Option.poll_id) \
-            .outerjoin(Answer, Option.id == Answer.option_id) \
-            .group_by(Poll.id).all()
-        return polls if not as_dict else [{
-            'id': poll.id,
-            'title': poll.title,
-            'author': poll.author,
-            'timestamp': poll.timestamp,
-            'options_count': options_count,
-            'answers_count': answers_count
-        } for poll, options_count, answers_count in polls]
+        polls = Poll.query.all()
+        return polls if not as_dict else [poll.get_info() for poll in polls]
 
     def get_info(self, session_id=None):
         """
         Returns a dictionary with the poll info
         """
+        options = [option.to_dict() for option in self.get_options()]
         return {
             'id': self.id,
             'title': self.title,
             'author': self.author,
             'timestamp': self.timestamp,
-            'options': [option.get_info() for option in self.get_options()],
+            'options': options,
+            'options_count': len(options),
             'answers_count': self.get_answers_count(),
             'answers_count_by_option': self.get_answers_count_by_option(),
             'user_answered': self.get_answered_option(session_id) if session_id is not None else False
@@ -307,7 +299,7 @@ class Option(db.Model):
         db.session.commit()
         return answer
 
-    def get_info(self):
+    def to_dict(self):
         """
         Returns a dictionary with the option info
         """

@@ -1,37 +1,25 @@
 import {
     useState,
-    useEffect,
-    useRef
+    useEffect
 } from 'react';
 import {
-    Link,
     Outlet,
     useNavigate,
     useParams,
     NavLink
 } from "react-router-dom";
 import {
-    readableDateDiff,
     myAlert,
     apiRequest,
-    swalInput,
-    dateAsString,
     parseMarkdown,
     plural
 } from '../util.js'
 import {
     Spinner,
-    TextMuted,
     CardAction,
     CardCollection,
-    Loader,
-    PromiseLoader,
-    confirmDelete,
-    ClearFix,
-    LeftRightDivs,
     Icon,
     TitleWithButtonBack,
-    FormHelp,
     TimeAgo,
     Redirect
 } from './basicComponents.js'
@@ -55,7 +43,7 @@ export function PollList(props) {
     const [items, setItems] = useState([])
 
     useEffect(() => {
-        apiRequest('polls')
+        apiRequest('polls/')
             .then(
                 (result) => {
                     setItems(result)
@@ -75,11 +63,11 @@ export function PollList(props) {
                     key: i.id,
                     link: "/polls/" + i.id,
                     title: i.title,
-                    descr: <p className='m-2 d-flex flex-column'>
+                    descr: <div className='m-2 d-flex flex-column'>
                         <div><Icon name="bar-chart-fill" me="2" />{i.options_count} option{plural(i.options_count)}</div>{/*grid-fill*/}
                         <div><Icon name="people-fill" me="2" />{i.answers_count} answer{plural(i.answers_count)}</div>
                         <div><Icon name="clock-fill" me="2" />Created <TimeAgo timestamp={i.timestamp} /></div>
-                    </p>,
+                    </div>,
                     actions: <CardAction text="Vote" icon="send-fill" to={`/polls/${i.id}`} />
                 }))} empty_msg={props.empty_msg || "No polls have been created (yet)"} />
         )
@@ -161,7 +149,7 @@ export function PollResults(props) {
             error ? <p>{error ?? "Error while fetching the requested poll"}</p> : <>
                 {parseMarkdown(poll.content ?? '')}
                 <div className='m-4 w-100'>
-                    <div className='m-auto' style={{minHeight: '300px', maxHeight: '75vh', maxWidth: '500px'}}>
+                    <div className='m-auto' style={{ minHeight: '300px', maxHeight: '75vh', maxWidth: '500px' }}>
                         <Doughnut data={{
                             labels: poll.options.map(o => o.text),
                             datasets: [{
@@ -238,9 +226,9 @@ export function Poll(props) {
                 {userHasAnswered ? <Redirect replace={true} to={`./results`} /> : null}
                 <div className='d-flex align-items-center justify-content-center flex-column'>
                     <div className="m-4">
-                        {poll.options.length == 0 ? <p>No options have been added yet</p> :
+                        {poll.options.length === 0 ? <p>No options have been added yet</p> :
                             poll.options.map(o => <div className="form-check" key={o.id}>
-                                <input className="form-check-input" type="radio" name="flexRadioDefault" id={`radio-${o.id}`} disabled={userHasAnswered} checked={selectedOption === o.id} onChange={(e) => {if (e.target.checked) setSelectedOption(o.id)}} />
+                                <input className="form-check-input" type="radio" name="flexRadioDefault" id={`radio-${o.id}`} disabled={userHasAnswered} checked={selectedOption === o.id} onChange={(e) => { if (e.target.checked) setSelectedOption(o.id) }} />
                                 <label className="form-check-label" htmlFor={`radio-${o.id}`}>{o.text}</label>
                             </div>)
                         }

@@ -1,8 +1,10 @@
 import json
+import os
 import uuid
 from logging import getLogger, CRITICAL, DEBUG
 
 from flask import Flask, send_file, abort, request, session
+from flask_cors import CORS
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import create_engine
@@ -17,34 +19,38 @@ class WebGUI(Flask):
     """
     Contains the implementation of the entire web GUI in Flask
     """
+    DB_HOST = os.getenv("DB_HOST")
+    DB_PORT = os.getenv("DB_PORT")
+    DB_NAME = os.getenv("DB_NAME")
+    DB_USER = os.getenv("DB_USER")
+    DB_PASSWORD = os.getenv("DB_PASSWORD")
+    DEBUG_ON = os.getenv("DEBUG_ON", 'False').lower() in ('true', '1', 't')
+    USE_SQLITE = os.getenv("USE_SQLITE", 'False').lower() in ('true', '1', 't')
+    DROP_DB_AND_INSERT_TEST_DATA = os.getenv("DROP_DB_AND_INSERT_TEST_DATA", 'False').lower() in ('true', '1', 't')
 
     _SECRET_KEY = "b0928e1a460370d300c864856520f265"
     API_V1_PREFIX = "/api/v1"
 
-    def __init__(self, db: SQLAlchemy, debug: bool = True, use_sqlite: bool = None,
-                 drop_db_and_insert_test_data: bool = None):
+    def __init__(self, db: SQLAlchemy):
         """
         Implementation of the WebGUI and all endpoints using Flask
         @param db: database where all data is persisted
         """
         super().__init__(__name__)
+        CORS(self)
 
         # Set debug mode and logging level
-        if debug:
+        if self.DEBUG_ON:
             self.config['DEBUG'] = True
             self.config['TESTING'] = True
             self.config['ENV'] = 'development'
-            if use_sqlite is None:
-                use_sqlite = True
-            if drop_db_and_insert_test_data is None:
-                drop_db_and_insert_test_data = True
-        getLogger('werkzeug').setLevel(DEBUG if debug else CRITICAL)
+        getLogger('werkzeug').setLevel(DEBUG if self.DEBUG_ON else CRITICAL)
 
         # Push the app context to the current thread
         self.app_context().push()
 
         # Initialize the app
-        self.init_db(db, use_sqlite, drop_db_and_insert_test_data)
+        self.init_db(db)
         self.settings = self.load_settings()
         self.init_gui()
         self.init_api()
@@ -53,25 +59,29 @@ class WebGUI(Flask):
         # Set the secret key for the Flask sessions
         self.secret_key = self._SECRET_KEY
 
-    def init_db(self, db: SQLAlchemy, use_sqlite: bool = True, drop_db_and_insert_test_data: bool = False):
+    def init_db(self, db: SQLAlchemy):
         """
         Initializes the database
         """
         # Database configuration
-        # self.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///flasksqlTest.db' if use_sqlite else \
-        #    'postgresql://postgres:1234@localhost:5432/flasksqlTest'
-        self.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///flasksqlTest.db' if use_sqlite else \
-            'postgresql://postgres:1234@database:5432/flasksqlTest'
+        db_connection_uri = ""
+        if self.USE_SQLITE:
+            db_connection_uri = 'sqlite:///flasksqlTest.db'
+        else:
+            db_connection_uri = f'postgresql://{self.DB_USER}:{self.DB_PASSWORD}@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}'
+
+        self.config['SQLALCHEMY_DATABASE_URI'] = db_connection_uri
         self.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-        # Create PostgreSQL database if it doesn't exist
-        if not use_sqlite:
+        # Create database if it doesn't exist
+        if not self.USE_SQLITE:
             engine = create_engine(self.config['SQLALCHEMY_DATABASE_URI'])
             if not database_exists(engine.url):
                 create_database(engine.url)
+
         # Initialize database
         db.init_app(self)
         Migrate(self, db)
-        if drop_db_and_insert_test_data:
+        if self.DROP_DB_AND_INSERT_TEST_DATA:
             db.drop_all()
             db.create_all()
             self._insert_test_data()
@@ -96,6 +106,7 @@ class WebGUI(Flask):
         """
         Initializes the GUI (frontend) endpoints
         """
+
         @self.route("/")
         @self.route("/login")
         @self.route("/poll/<poll_id>")
@@ -115,6 +126,7 @@ class WebGUI(Flask):
         """
         Initializes the API endpoints
         """
+
         @self.route(f"{self.API_V1_PREFIX}/login", methods=['GET', 'POST'])
         def login():
             # TODO replace by Kong API Gateway
@@ -149,12 +161,12 @@ class WebGUI(Flask):
             if request.method == 'GET':
                 return json.dumps(Poll.get_polls(as_dict=True), default=str)
             elif request.method == 'POST':
-                data = request.form
+                data = self.get_request_body(request)
                 if not data['title']:
                     abort(400, "Missing title")
                 return json.dumps(
                     Poll.insert(title=data['title'], author=data['author'] or None)
-                        .get_info(self.get_or_create_session_id())
+                    .get_info(self.get_or_create_session_id()), default=str
                 ), 200
 
         @self.route(f"{self.API_V1_PREFIX}/poll/<poll_id>", methods=['GET', 'POST', 'DELETE'])
@@ -165,7 +177,7 @@ class WebGUI(Flask):
             if not self.is_admin_logged_in(poll.author):
                 abort(401, "Not logged in")
             if request.method == 'POST':
-                data = request.form
+                data = self.get_request_body(request)
                 if not data['title']:
                     abort(400, "Missing title")
                 poll.update(title=data['title'], author=data['author'] or None)
@@ -178,26 +190,27 @@ class WebGUI(Flask):
         def options_actions(poll_id):
             poll = Poll.get(int(poll_id))
             if request.method == 'GET':
-                return json.dumps(poll.get_options(), default=str)  # [option.get_info() for option in options]
+                options = poll.get_options()
+                return json.dumps([option.to_dict() for option in options], default=str)
             if not self.is_admin_logged_in(poll.author):
                 abort(401, "Not logged in")
             if request.method == 'POST':
-                data = request.form
+                data = self.get_request_body(request)
                 if not data['text']:
                     abort(400, "Missing text")
                 return json.dumps(
-                    Option.insert(text=data['text'], poll_id=poll.id).get_info()
+                    Option.insert(text=data['text'], poll_id=poll.id).to_dict()
                 ), 200
 
         @self.route(f"{self.API_V1_PREFIX}/option/<option_id>", methods=['GET', 'POST', 'DELETE'])
         def option_actions(option_id):
             option = Option.get(int(option_id))
             if request.method == 'GET':
-                return json.dumps(option.get_info())
+                return json.dumps(option.to_dict())
             if not self.is_admin_logged_in(option.get_poll().author):
                 abort(401, "Not logged in")
             if request.method == 'POST':
-                data = request.form
+                data = self.get_request_body(request)
                 if not data['text']:
                     abort(400, "Missing text")
                 option.update(text=data['text'])
@@ -244,6 +257,7 @@ class WebGUI(Flask):
         """
         Initializes the error handler
         """
+
         @self.errorhandler(Exception)
         def handle_error(code_or_exception=500, message=None, debug=False):
             """
@@ -284,7 +298,7 @@ class WebGUI(Flask):
         @return: True if the user is logged in
         """
         return session.get("admin") is True or (
-            session_id is not None and WebGUI.get_or_create_session_id() == session_id
+                session_id is not None and WebGUI.get_or_create_session_id() == session_id
         )
 
     @staticmethod
@@ -311,5 +325,18 @@ class WebGUI(Flask):
         Option.insert(text="Option 5", poll_id=poll.id)
         option.vote("test")
 
-        poll = Poll.insert(title="Poll with votes", author=None)
+        poll = Poll.insert(title="Poll with votes", author="author")
         Option.insert(text="Option 1", poll_id=poll.id)
+
+    @staticmethod
+    def get_request_body(req):
+        """
+        Gets the request body
+        @param req: request
+        @return: the data contained in the request body
+        """
+        if req.is_json:
+            data = req.json
+        else:
+            data = req.form
+        return data
