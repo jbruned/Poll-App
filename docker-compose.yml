@@ -33,5 +33,64 @@ services:
       timeout: 5s
       retries: 3
 
+  kong-database:
+    image: postgres:13.0
+    environment:
+      POSTGRES_USER: ${KONG_DB_USER}
+      POSTGRES_PASSWORD: ${KONG_DB_PASSWORD}
+      POSTGRES_DB: ${KONG_DB_NAME}
+    ports:
+      - "${KONG_DB_EXPOSED_PORT}:${KONG_DB_PORT}"
+    volumes:
+      - kong-database-data:${KONG_DB_VOL_PATH}
+    env_file:
+      - .env
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${KONG_DB_USER} -h localhost -d ${KONG_DB_NAME} -p ${KONG_DB_PORT}" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    command: -p ${KONG_DB_PORT}
+  #    command: sh -c "postgres -p ${KONG_DB_PORT} && kong migrations bootstrap"
+
+  kong-migrations:
+    image: kong/kong-gateway:3.2.1.0
+    command: kong migrations bootstrap
+    depends_on:
+      - kong-database
+    environment:
+      KONG_DATABASE: postgres
+      KONG_PG_PORT: ${KONG_DB_PORT}
+      KONG_PG_HOST: ${KONG_DB_HOST}
+      KONG_PG_PASSWORD: ${KONG_DB_PASSWORD}
+    restart: on-failure
+
+  api_gateway:
+    image: kong/kong-gateway:3.2.1.0
+    environment:
+      KONG_DATABASE: postgres
+      KONG_PG_HOST: ${KONG_DB_HOST}
+      KONG_PG_PORT: ${KONG_DB_PORT}
+      KONG_PG_USER: ${KONG_DB_USER}
+      KONG_PG_PASSWORD: ${KONG_DB_PASSWORD}
+      KONG_PROXY_ACCESS_LOG: ${KONG_PROXY_ACCESS_LOG}
+      KONG_ADMIN_ACCESS_LOG: ${KONG_ADMIN_ACCESS_LOG}
+      KONG_PROXY_ERROR_LOG: ${KONG_PROXY_ERROR_LOG}
+      KONG_ADMIN_ERROR_LOG: ${KONG_ADMIN_ERROR_LOG}
+      KONG_ADMIN_LISTEN: ${KONG_ADMIN_LISTEN}
+    env_file:
+      - .env
+    ports:
+      - ${KONG_REVERSE_PROXY_PORT}:${KONG_REVERSE_PROXY_EXPOSED_PORT}
+      - ${KONG_ADMIN_EXPOSED_PORT}:${KONG_ADMIN_PORT}
+      - ${KONG_MANAGER_EXPOSED_PORT}:${KONG_MANAGER_PORT}
+      - "8003:8003"
+      - "8004:8004"
+      - "8443:8443"
+      - "8444:8444"
+      - "8445:8445"
+    restart: on-failure
+
 volumes:
   database-data:
+  kong-database-data:
