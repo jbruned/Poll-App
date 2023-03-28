@@ -101,7 +101,7 @@ ya que se requiere el uso de Docker, entre otros requisitos. Por otro lado, la a
 Gateways, con lo que el uso de esta arquitectura es casi obligado.
 </div>
 
-## Arquitecura de 3 capas
+## Arquitectura de 3 capas
 
 <div style="text-align: justify!important">
 
