@@ -1,8 +1,8 @@
 import logging
-import os
 
 from waitress import serve
 
+from .config import Config
 from .db import db
 from .log import log_info
 from .web import WebGUI
@@ -28,8 +28,7 @@ class PollApp:
         :param debug: Run Flask in debug mode
         """
         try:
-            debug_on = os.getenv("DEBUG_ON", 'False').lower() in ('true', '1', 't')
-            logging.getLogger('waitress').setLevel(logging.DEBUG if debug_on else logging.ERROR)
+            logging.getLogger('waitress').setLevel(logging.DEBUG if Config.DEBUG_ON else logging.ERROR)
             # noinspection HttpUrlsUsage
             log_info(f"Starting web interface at http://{web_addr_port}")
             serve(self.gui, listen=web_addr_port)
