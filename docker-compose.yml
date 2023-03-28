@@ -78,6 +78,11 @@ services:
       KONG_PROXY_ERROR_LOG: ${KONG_PROXY_ERROR_LOG}
       KONG_ADMIN_ERROR_LOG: ${KONG_ADMIN_ERROR_LOG}
       KONG_ADMIN_LISTEN: ${KONG_ADMIN_LISTEN}
+    #      KONG_FILE_LOG_DIR: ${API_GATEWAY_VOL_PATH} # Directory where log files will be stored
+    #      KONG_FILE_LOG_PATH: "${API_GATEWAY_VOL_PATH}/requests.log" # The path to the log file within the Kong container
+    #      KONG_FILE_LOG_FORMAT: "$request_time $upstream_response_time $request_uri" # Format of log entries
+    #      KONG_PLUGINS: bundled,file-log
+    #      KONG_LOG_LEVEL: "info"
     env_file:
       - .env
     ports:
@@ -89,8 +94,11 @@ services:
       - "8443:8443"
       - "8444:8444"
       - "8445:8445"
+    #    volumes:
+    #      - api_gateway-data:${API_GATEWAY_VOL_PATH}
     restart: on-failure
 
 volumes:
   database-data:
   kong-database-data:
+  api_gateway-data:
