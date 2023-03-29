@@ -3,7 +3,7 @@ run:
 	make copy
 	make docker-compose
 front:
-	cd frontend && npm run build && cd ..
+	cd frontend && npm install && npm run build && cd ..
 copy:
 	cp -r frontend/build/* backend/pollapp/gui
 docker-build:

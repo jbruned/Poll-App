@@ -1,37 +1,73 @@
 version: '3'
 
 services:
-  backend:
-    image: backend
-    build:
-      context: ./backend
-      args:
-        BACKEND_PORT: ${BACKEND_PORT}
-    ports:
-      - "${BACKEND_EXPOSED_PORT}:${BACKEND_PORT}"
-    depends_on:
-      database:
-        condition: service_healthy
-    env_file:
-      - .env
+    backend:
+        image: backend
+        build:
+            context: ./backend
+            args:
+                BACKEND_PORT: ${BACKEND_PORT_INTERNAL}
+        # No need to expose the backend since it's accessed through the gateway using Kong's reverse proxy
+        # ports:
+            # - ${BACKEND_PORT_EXPOSED}:${BACKEND_PORT_INTERNAL}
+        depends_on:
+            database:
+                condition: service_healthy
+        env_file:
+            - .env
+        healthcheck:
+            test: [ "CMD-SHELL", "curl -f http://localhost:${BACKEND_PORT_INTERNAL}/" ]
+            interval: 10s
+            timeout: 10s
+            retries: 3
+        restart: always
 
-  database:
-    image: postgres
-    environment:
-      POSTGRES_USER: ${DB_USER}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
-      POSTGRES_DB: ${DB_NAME}
-    ports:
-      - "${DB_EXPOSED_PORT}:${DB_PORT}"
-    volumes:
-      - database-data:${DB_VOL_PATH}
-    env_file:
-      - .env
-    healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U ${DB_USER} -h localhost -d ${DB_NAME}" ]
-      interval: 10s
-      timeout: 5s
-      retries: 3
+    database:
+        image: postgres:${POSTGRES_VERSION}
+        environment:
+            POSTGRES_USER: ${DB_USER}
+            POSTGRES_PASSWORD: ${DB_PASSWORD}
+            POSTGRES_DB: ${DB_NAME}
+        # Optionally expose the port
+        # ports:
+        #     - "${DB_PORT}:${DB_PORT}"
+        volumes:
+            - database-data:${DB_VOL_PATH}
+        env_file:
+            - .env
+        healthcheck:
+            test: [ "CMD-SHELL", "pg_isready -U ${DB_USER} -h localhost -d ${DB_NAME}" ]
+            interval: 10s
+            timeout: 10s
+            retries: 3
+        restart: always
+
+    gateway:
+        image: kong/kong-gateway:${KONG_VERSION}
+        environment:
+            KONG_DATABASE: 'off'
+            KONG_DECLARATIVE_CONFIG: /etc/kong/kong_config.yml
+            KONG_PROXY_ACCESS_LOG: ${KONG_PROXY_ACCESS_LOG}
+            KONG_ADMIN_ACCESS_LOG: ${KONG_ADMIN_ACCESS_LOG}
+            KONG_PROXY_ERROR_LOG: ${KONG_PROXY_ERROR_LOG}
+            KONG_ADMIN_ERROR_LOG: ${KONG_ADMIN_ERROR_LOG}
+            KONG_ADMIN_LISTEN: ${KONG_ADMIN_LISTEN}
+        env_file:
+            - .env
+        ports:
+            - ${KONG_REVERSE_PROXY_PORT_EXPOSED}:${KONG_REVERSE_PROXY_PORT_INTERNAL}
+            # Optionally expose the admin and manager ports
+            # - ${KONG_ADMIN_PORT_EXPOSED}:${KONG_ADMIN_PORT_INTERNAL}
+            # - ${KONG_MANAGER_PORT_EXPOSED}:${KONG_MANAGER_PORT_INTERNAL}
+        volumes:
+            - ./kong_config.yml:/etc/kong/kong_config.yml
+            - ./logs:/logs
+        healthcheck:
+            test: [ "CMD-SHELL", "curl -f http://localhost:${KONG_REVERSE_PROXY_PORT_INTERNAL}/" ]
+            interval: 10s
+            timeout: 10s
+            retries: 3
+        restart: always
 
 volumes:
-  database-data:
+    database-data:

@@ -1,4 +1,10 @@
+# Custom folders to exclude from version control
 backend/pollapp/gui/
+logs/
+
+# NPM packages from the root folder are not relevant to the project
+package.json
+package-lock.json
 
 # Python gitignore template https://github.com/github/gitignore/blob/main/Python.gitignore
 # Byte-compiled / optimized / DLL files

@@ -351,12 +351,15 @@ def insert_test_data():
     """
     Inserts some test data into the database
     """
-    poll = Poll.insert(title="Test poll", author="admin")
-    Option.insert(text="Option 1", poll_id=poll.id)
-    Option.insert(text="Option 2", poll_id=poll.id)
-    Option.insert(text="Option 3", poll_id=poll.id)
+    poll = Poll.insert(title="Test poll", author="Admin")
+    Option.insert(text="Option A", poll_id=poll.id)
+    Option.insert(text="Option B", poll_id=poll.id)
 
-    poll = Poll.insert(title="Another poll", author="admin")
+    poll = Poll.insert(title="When do you prefer this course's exam?", author="Admin")
+    Option.insert(text="May 17th", poll_id=poll.id)
+    Option.insert(text="May 31st", poll_id=poll.id)
+
+    poll = Poll.insert(title="Another poll", author="Jorge Bruned")
     option = Option.insert(text="Option 1", poll_id=poll.id)
     Option.insert(text="Option 2", poll_id=poll.id)
     Option.insert(text="Option 3", poll_id=poll.id)
@@ -364,5 +367,12 @@ def insert_test_data():
     Option.insert(text="Option 5", poll_id=poll.id)
     option.vote("test")
 
-    poll = Poll.insert(title="Poll with votes", author="author")
+    poll = Poll.insert(title="Poll with a single option", author="Unai Biurrun")
+    Option.insert(text="Not much to choose from, right?", poll_id=poll.id)
+
+    poll = Poll.insert(title="Yet another poll", author="Iñaki Velasco")
     Option.insert(text="Option 1", poll_id=poll.id)
+    Option.insert(text="Option 2", poll_id=poll.id)
+    Option.insert(text="Option 3", poll_id=poll.id)
+    Option.insert(text="All of the above", poll_id=poll.id)
+
