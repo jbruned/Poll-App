@@ -55,10 +55,10 @@ export function MainLayout(props) {
                     </button>
                     <div id="navbar-content" className="collapse navbar-collapse">
                         <ul className="navbar-nav ms-auto mb-2 mb-lg-0">
-                            <li className="nav-item">
+                            {/*<li className="nav-item">
                                 <Link to="/" className="nav-link text-white">Home</Link>
                             </li>
-                            {/*<li className="nav-item">
+                            <li className="nav-item">
                                     <Link to="/edit" className="nav-link text-white">Create poll</Link>
                                 </li>
                                 {(props.admin ?? false) ? (
