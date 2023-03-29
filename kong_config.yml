@@ -10,3 +10,9 @@ services:
   - name: flask
     paths:
     - /
+
+plugins:
+- name: file-log
+  config:
+    path: /logs/file-log.log
+    reopen: false
