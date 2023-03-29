@@ -4,8 +4,9 @@ Poll app for the "Gestión de Tecnologías Informáticas en las Organizaciones" 
 ## Instructions
 To build, deploy locally and run the app, you need to follow the next steps:
 
-### 1. Install _Docker_
-You can download it from [here](https://www.docker.com/products/docker-desktop).
+### 1. Install _Docker_ and _npm_
+- You can download _Docker_ from [the official site](https://www.docker.com/products/docker-desktop).
+- You can download _npm_ using [this link](https://www.npmjs.com/get-npm).
 
 ### 2. Clone the repository
 Of course, you need to download the repository. You can do it using `git clone` or downloading the zip file.
