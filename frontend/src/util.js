@@ -2,7 +2,7 @@ import Swal from 'sweetalert2'
 import { marked } from 'marked'
 import parseHTML from 'html-react-parser'
 
-const BASE_URL = "http://localhost:9000/api/v1"
+const BASE_URL = "/api/v1"
 
 export function apiRequest(endpoint, method, data) {
     return new Promise((resolve, reject) => {
@@ -24,6 +24,8 @@ export function apiRequest(endpoint, method, data) {
                 reject("You are not authorized to perform this action")
             else if (res?.status === 404)
                 reject("The requested resource was not found")
+            else if (res?.status === 409)
+                reject("You have already voted!")
             else if (res?.status === 500)
                 reject("An internal server error occurred")
             else

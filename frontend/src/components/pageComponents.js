@@ -211,7 +211,8 @@ export function Poll(props) {
                         setUserHasAnswered(true)
                     },
                     (error) => {
-                        setError(error)
+                        myAlert("error", "Couldn't vote", error)
+                        // setError(error)
                         setIsLoaded(true)
                         setUserHasAnswered(false)
                     }
