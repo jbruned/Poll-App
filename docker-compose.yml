@@ -28,11 +28,11 @@ services:
             POSTGRES_USER: ${DB_USER}
             POSTGRES_PASSWORD: ${DB_PASSWORD}
             POSTGRES_DB: ${DB_NAME}
-        # Optionally expose the port and volume to the host machine
+        # Optionally expose the port
         # ports:
         #     - "${DB_PORT}:${DB_PORT}"
-        # volumes:
-        #     - database-data:${DB_VOL_PATH}
+        volumes:
+            - database-data:${DB_VOL_PATH}
         env_file:
             - .env
         healthcheck:
@@ -69,5 +69,5 @@ services:
             retries: 3
         restart: always
 
-# volumes:
-#     database-data:
+volumes:
+    database-data:
