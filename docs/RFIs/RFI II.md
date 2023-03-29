@@ -8,24 +8,16 @@ En este documento se recoge la información relativa a las decisiones tomadas en
 ## Tabla de contenidos
 
 <!-- [TOC] -->
-- [Documento RFI I](#documento-rfi-i)
+- [Documento RFI II](#documento-rfi-ii)
   - [Tabla de contenidos](#tabla-de-contenidos)
 - [Introducción](#introducción)
-- [Estructura organizacional](#estructura-organizacional)
-  - [Roles](#roles)
-  - [Miembros](#miembros)
-- [Metodología de desarrollo](#metodología-de-desarrollo)
-  - [Reuniones](#reuniones)
-  - [Buenas prácticas](#buenas-prácticas)
-    - [Buenas prácticas de programación](#buenas-prácticas-de-programación)
-- [Herramientas de gestión](#herramientas-de-gestión)
-  - [Gestión de la configuración](#gestión-de-la-configuración)
-- [Tecnologías](#tecnologías)
+- [Arquitectura](#arquitectura)
+- [Microservicios](#microservicios)
+  - [Base de datos](#base-de-datos)
   - [Backend](#backend)
-    - [Base de datos](#base-de-datos)
-    - [Frontend](#frontend)
-  - [Despliegue](#despliegue)
-    
+  - [API Gateway](#api-gateway)
+- [Análisis final de las preguntas](#análisis-final-de-las-preguntas)
+
 # Introducción
 
 Se ha implementado una arquitectura basada en microservicios que, en nuestro caso, serán los siguientes tres: base de datos, backend y API Gateway.
@@ -87,9 +79,9 @@ Ver [ADR Microservicios](../ADRs/Infrastructure/Microservices.md)
 - ¿Cómo se despliega el sistema en un entorno de test local?
 Ver [README](../../README.md)
 - ¿Cómo se prueba la funcionalidad del sistema en un entorno de test local?
-Ver [README](../../README.md)
+ Lanzar aplicación / usar Postman (Ver [ADR Microservicios](../ADRs/Infrastructure/Microservices.md))
 - ¿Cómo se lleva a cabo la autenticación, autorización y auditoria del sistema?
-Ver [Microservicios](#microservicios)
+Ver [ADR Microservicios](../ADRs/Infrastructure/Microservices.md)
 - ¿Por qué es escalable y elástica la solución?
 Ver [Arquitectura](#arquitectura) y [Microservicios](#microservicios)
 
