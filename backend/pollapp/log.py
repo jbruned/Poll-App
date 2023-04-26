@@ -1,4 +1,6 @@
-import traceback
+"""
+This package is used for logging
+"""
 from sys import stdout, stderr
 
 from .config import Config
@@ -17,7 +19,10 @@ LOG_FILENAME = Config.LOG_FILENAME
 SHOW_DEBUG = Config.DEBUG_ON  # Debug exceptions to the console
 
 # Open the log file
-log_file = open(LOG_FILENAME, 'a') if LOG_LEVEL > LOG_LEVEL_NOTHING and LOG_FILENAME is not None else None
+# pylint: disable=consider-using-with
+log_file = open(LOG_FILENAME, 'a', encoding='utf-8') \
+    if LOG_LEVEL > LOG_LEVEL_NOTHING and LOG_FILENAME is not None \
+    else None
 
 
 def _log(message: str, log_type: str = "Log", console_file=stdout):
@@ -69,12 +74,3 @@ def log_debug(message: str):
     """
     if LOG_LEVEL >= LOG_LEVEL_DEBUG:
         _log(message, "Debug")
-
-
-def debug(exception: Exception):
-    """
-    Traceback an exception and show it in the console (depending on LOG_LEVEL)
-    @param exception: exception to log (currently ignored, last exception is used)
-    """
-    if LOG_LEVEL >= LOG_LEVEL_DEBUG:
-        traceback.print_exc()

@@ -1,8 +1,10 @@
+"""
+This package contains the database models and exceptions
+for the Poll App
+"""
 import hashlib
 
 from flask_sqlalchemy import SQLAlchemy
-
-from .log import log_error
 
 db = SQLAlchemy()
 
@@ -22,17 +24,17 @@ class AlreadyVotedException(Exception):
     """
 
     def __init__(self):
-        super().__init__(f"You have already voted!")
+        super().__init__("You have already voted!")
 
 
 class AppSettings(db.Model):
     """
     Stores the PollApp application settings (currently only the admin password)
-    There must only exist one object of this type (one row in the corresponding table)
+    There must only exist one object of this type (one row in the table)
     """
     __tablename__ = "settings"
     id = db.Column(db.Integer, primary_key=True)
-    admin_password = db.Column(db.String(64), nullable=False)  # sha256 hash is 64 chars long (256 bytes)
+    admin_password = db.Column(db.String(64), nullable=False)  # sha256 hash
 
     DEFAULT_ADMIN_PASSWORD = "admin"
     _PASSWORD_SALT = "80355aa66e1c958f9707fb9ac85a8a24"
@@ -67,7 +69,9 @@ class AppSettings(db.Model):
         """
         if AppSettings.is_initialized():
             AppSettings.clear()
-        settings = AppSettings(admin_password=AppSettings.get_hashed_password(admin_password))
+        settings = AppSettings(
+            admin_password=AppSettings.get_hashed_password(admin_password)
+        )
         db.session.add(settings)
         db.session.commit()
 
@@ -78,7 +82,9 @@ class AppSettings(db.Model):
         @param password: original password
         @return: hashed password
         """
-        return hashlib.sha256((password + AppSettings._PASSWORD_SALT).encode()).hexdigest()
+        return hashlib.sha256(
+            (password + AppSettings._PASSWORD_SALT).encode()
+        ).hexdigest()
 
     @staticmethod
     def clear():
@@ -107,7 +113,9 @@ class Poll(db.Model):
     author = db.Column(db.String(64), nullable=True)
     timestamp = db.Column(db.DateTime, nullable=False)
 
-    options = db.relationship('Option', backref='poll', lazy=True, cascade="all, delete-orphan")
+    options = db.relationship(
+        'Option', backref='poll', lazy=True, cascade="all, delete-orphan"
+    )
 
     @staticmethod
     def get(poll_id: int = None):
@@ -160,7 +168,9 @@ class Poll(db.Model):
         """
         Returns the number of answers for the poll
         """
-        return Answer.query.join(Option, Option.id == Answer.option_id).filter(Option.poll_id == self.id).count()
+        return Answer.query \
+            .join(Option, Option.id == Answer.option_id) \
+            .filter(Option.poll_id == self.id).count()
 
     def get_answers_count_by_option(self):
         """
@@ -170,30 +180,31 @@ class Poll(db.Model):
             .join(Option, Option.id == Answer.option_id) \
             .filter(Option.poll_id == self.id) \
             .group_by(Option.id).all()
-        # return Answer.query..join(Option, Option.id == Answer.option_id).filter(Option.poll_id == self.id) \
-        #     .group_by(Option.id).count()
 
-    def has_answered(self, session_id: str):
+    def has_answered(self, current_session_id: str):
         """
-        Returns True if the poll has been answered by the user with the given session ID
-        @param session_id: The user session ID
+        Returns True if the poll has been answered by the given session ID
+        @param current_session_id: The user session ID
         """
-        return db.session.query(Answer).join(Option) \
-            .filter(Option.poll_id == self.id, Answer.session_id == session_id).count() > 0
+        return db.session.query(Answer).join(Option).filter(
+            Option.poll_id == self.id, Answer.session_id == current_session_id
+        ).count() > 0
 
-    def get_answer(self, session_id: str):
+    def get_answer(self, current_session_id: str):
         """
         Returns the answer of the user with the given session ID
-        @param session_id: The user session ID
+        @param current_session_id: The user session ID
         """
-        return db.session.query(Answer).join(Option) \
-            .filter(Option.poll_id == self.id, Answer.session_id == session_id).first()
+        return db.session.query(Answer).join(Option).filter(
+            Option.poll_id == self.id, Answer.session_id == current_session_id
+        ).first()
 
     def get_answered_option(self, session_id: str):
         """
         Returns the answer option of the user with the given session ID
         @param session_id: The user session ID
-        @return: The answer option of the user with the given session ID if the user has already voted, None otherwise
+        @return: The answer option of the user with the given session ID
+                 if the user has already voted, None otherwise
         """
         answer = self.get_answer(session_id)
         if answer is None:
@@ -231,7 +242,8 @@ class Poll(db.Model):
             'options_count': len(options),
             'answers_count': self.get_answers_count(),
             'answers_count_by_option': self.get_answers_count_by_option(),
-            'user_answered': self.get_answered_option(session_id) if session_id is not None else False
+            'user_answered': self.get_answered_option(session_id)
+            if session_id is not None else False
         }
 
 
@@ -241,10 +253,16 @@ class Option(db.Model):
     """
     __tablename__ = "options"
     id = db.Column(db.Integer, primary_key=True)
-    poll_id = db.Column(db.Integer, db.ForeignKey('polls.id', ondelete='CASCADE'), nullable=False)
+    poll_id = db.Column(
+        db.Integer,
+        db.ForeignKey('polls.id', ondelete='CASCADE'),
+        nullable=False
+    )
     text = db.Column(db.String(64), nullable=False)
 
-    answers = db.relationship('Answer', backref='option', lazy=True, cascade="all, delete-orphan")
+    answers = db.relationship(
+        'Answer', backref='option', lazy=True, cascade="all, delete-orphan"
+    )
 
     @staticmethod
     def get(option_id: int):
@@ -300,7 +318,11 @@ class Option(db.Model):
         """
         if self.get_poll().has_answered(session_id):
             raise AlreadyVotedException()
-        answer = Answer(option_id=self.id, session_id=session_id, timestamp=db.func.now())
+        answer = Answer(
+            option_id=self.id,
+            session_id=session_id,
+            timestamp=db.func.now()
+        )
         db.session.add(answer)
         db.session.commit()
         return answer
@@ -319,23 +341,31 @@ class Option(db.Model):
         """
         Returns the number of answers for the option
         """
-        return db.session.query(Answer).filter(Answer.option_id == self.id).count()
+        return db.session.query(Answer).filter(
+            Answer.option_id == self.id
+        ).count()
 
-    def remove_vote(self, session_id: str):
+    def remove_vote(self, current_session_id: str):
         """
         Removes the vote from the poll option
-        @param session_id: The user session ID
+        @param current_session_id: The user session ID
         """
-        Answer.query.filter(Answer.option_id == self.id, session_id == session_id).delete()
+        Answer.query.filter(
+            Answer.option_id == self.id, Answer.session_id == current_session_id
+        ).delete()
 
 
-class Answer(db.Model):
+class Answer(db.Model):  # pylint: disable=too-few-public-methods
     """
     Stores an answer for a poll
     """
     __tablename__ = "answers"
     id = db.Column(db.Integer, primary_key=True)
-    option_id = db.Column(db.Integer, db.ForeignKey('options.id', ondelete='CASCADE'), nullable=False)
+    option_id = db.Column(
+        db.Integer,
+        db.ForeignKey('options.id', ondelete='CASCADE'),
+        nullable=False
+    )
     session_id = db.Column(db.String(64), nullable=False)
     timestamp = db.Column(db.DateTime, nullable=False)
 
@@ -355,11 +385,13 @@ def insert_test_data():
     Option.insert(text="Option A", poll_id=poll.id)
     Option.insert(text="Option B", poll_id=poll.id)
 
-    poll = Poll.insert(title="When do you prefer this course's exam?", author="Admin")
+    poll = Poll.insert(title="When do you prefer this course's exam?",
+                       author="Admin")
     Option.insert(text="May 17th", poll_id=poll.id)
     Option.insert(text="May 31st", poll_id=poll.id)
 
-    poll = Poll.insert(title="Another poll", author="Jorge Bruned")
+    poll = Poll.insert(title="Another poll",
+                       author="Jorge Bruned")
     option = Option.insert(text="Option 1", poll_id=poll.id)
     Option.insert(text="Option 2", poll_id=poll.id)
     Option.insert(text="Option 3", poll_id=poll.id)
@@ -367,7 +399,8 @@ def insert_test_data():
     Option.insert(text="Option 5", poll_id=poll.id)
     option.vote("test")
 
-    poll = Poll.insert(title="Poll with a single option", author="Unai Biurrun")
+    poll = Poll.insert(title="Poll with a single option",
+                       author="Unai Biurrun")
     Option.insert(text="Not much to choose from, right?", poll_id=poll.id)
 
     poll = Poll.insert(title="Yet another poll", author="Iñaki Velasco")
@@ -375,4 +408,3 @@ def insert_test_data():
     Option.insert(text="Option 2", poll_id=poll.id)
     Option.insert(text="Option 3", poll_id=poll.id)
     Option.insert(text="All of the above", poll_id=poll.id)
-

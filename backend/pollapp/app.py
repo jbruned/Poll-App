@@ -1,3 +1,7 @@
+"""
+This module contains the PollApp class, which is the main class of the program
+"""
+
 import logging
 
 from waitress import serve
@@ -8,7 +12,7 @@ from .log import log_info
 from .web import WebGUI
 
 
-class PollApp:
+class PollApp:  # pylint: disable=too-few-public-methods
     """
     This class runs the entire PollApp program
     """
@@ -22,13 +26,15 @@ class PollApp:
     def run(self, web_addr_port: str = "127.0.0.1:80"):
         """
         Runs the web GUI in its own thread
-        :param web_addr_port: The IP address and port where to listen for the web GUI
+        :param web_addr_port: The IP address and port where to listen
                               Accepted format is "IP:PORT"
                               IP can be "0.0.0.0" to listen in all interfaces
         :param debug: Run Flask in debug mode
         """
         try:
-            logging.getLogger('waitress').setLevel(logging.DEBUG if Config.DEBUG_ON else logging.ERROR)
+            logging.getLogger('waitress').setLevel(
+                logging.DEBUG if Config.DEBUG_ON else logging.ERROR
+            )
             # noinspection HttpUrlsUsage
             log_info(f"Starting web interface at http://{web_addr_port}")
             serve(self.gui, listen=web_addr_port)
