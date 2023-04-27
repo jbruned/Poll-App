@@ -20,23 +20,23 @@ build-front:
 build-image:
 	cd backend && docker build -t $(IMAGE_NAME) . && cd ..
 save-image:
-	ifndef FILE_NAME
+	ifndef $(FILE_NAME)
 		$(error FILE_NAME is undefined)
 	endif
 	docker save $(IMAGE_NAME) > $(IMAGE_NAME).tar && gzip -c $(IMAGE_NAME).tar > $(FILE_NAME).tar.gz
 deploy-local:
 	docker compose up --build
 push-ecr:
-	ifndef AWS_ACCOUNT_ID
+	ifndef $(AWS_ACCOUNT_ID)
 		$(error AWS_ACCOUNT_ID is undefined)
 	endif
-	ifndef AWS_REGION
+	ifndef $(AWS_REGION)
 		$(error AWS_REGION is undefined)
 	endif
-	ifndef AWS_ACCESS_KEY_ID
+	ifndef $(AWS_ACCESS_KEY_ID)
 		$(error AWS_ACCESS_KEY_ID is undefined)
 	endif
-	ifndef AWS_SECRET_ACCESS_KEY
+	ifndef $(AWS_SECRET_ACCESS_KEY)
 		$(error AWS_SECRET_ACCESS_KEY is undefined)
 	endif
 	aws ecr get-login-password --region $(AWS_REGION) | docker login --username AWS --password-stdin $(AWS_ACCOUNT_ID).dkr.ecr.$(AWS_REGION).amazonaws.com
