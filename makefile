@@ -16,7 +16,7 @@ linter-back:
 build:
 	make build-front && make build-image
 build-front:
-	cd frontend && npm install && npm run build && cd .. && cp -r frontend/build/* backend/pollapp/gui
+	cd frontend && npm install && npm run build && cd .. && mkdir -p backend/pollapp/gui && cp -r frontend/build/* backend/pollapp/gui
 build-image:
 	cd backend && docker build -t $(IMAGE_NAME) . && cd ..
 deploy-local:
