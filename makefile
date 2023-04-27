@@ -27,9 +27,6 @@ save-image:
 debug-pipeline:
 	echo $(TEST_VAR)
 	echo "TEST_VAR is $(TEST_VAR)"
-	ifeq ($(TEST_VAR),)
-		$(error TEST_VAR is undefined)
-	endif
 deploy-local:
 	docker compose up --build
 push-ecr:
