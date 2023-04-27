@@ -7,20 +7,9 @@ on:
     pull_request:
         branches: [ "main" ]
 jobs:
-    debug:
-        name: Debug  # Debug the pipeline
-        runs-on: ubuntu-latest
-        steps:
-            - name: Checkout repo
-              uses: actions/checkout@v3
-            - name: Check environment
-              run: make debug-pipeline
-              env:
-                TEST_VAR: ${{ vars.AWS_REGION }}
     linter:
         name: Linters  # Lint frontend and backend
         runs-on: ubuntu-latest  # Includes npm, docker and awscli as per the documentation
-        needs: [ debug ]  # TODO remove
         steps:
             - name: Checkout repo
               uses: actions/checkout@v3

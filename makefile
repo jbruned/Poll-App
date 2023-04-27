@@ -20,29 +20,25 @@ build-front:
 build-image:
 	cd backend && docker build -t $(IMAGE_NAME) . && cd ..
 save-image:
-	ifeq ($(FILE_NAME),)
-		$(error FILE_NAME is undefined)
-	endif
+# 	ifeq ($(FILE_NAME),)
+# 		$(error FILE_NAME is undefined)
+# 	endif
 	docker save $(IMAGE_NAME) > $(IMAGE_NAME).tar && gzip -c $(IMAGE_NAME).tar > $(FILE_NAME).tar.gz
-debug-pipeline:
-	echo $(TEST_VAR)
-	echo "TEST_VAR is $(TEST_VAR)"
-	if [ -z "$$(TEST_VAR)" ]; then $(error TEST_VAR is undefined); fi
 deploy-local:
 	docker compose up --build
 push-ecr:
-	ifeq ($(AWS_ACCOUNT_ID),)
-		$(error AWS_ACCOUNT_ID is undefined)
-	endif
-	ifeq ($(AWS_REGION),)
-		$(error AWS_REGION is undefined)
-	endif
-	ifeq ($(AWS_ACCESS_KEY_ID),)
-		$(error AWS_ACCESS_KEY_ID is undefined)
-	endif
-	ifeq ($(AWS_SECRET_ACCESS_KEY),)
-		$(error AWS_SECRET_ACCESS_KEY is undefined)
-	endif
+# 	ifeq ($(AWS_ACCOUNT_ID),)
+# 		$(error AWS_ACCOUNT_ID is undefined)
+# 	endif
+# 	ifeq ($(AWS_REGION),)
+# 		$(error AWS_REGION is undefined)
+# 	endif
+# 	ifeq ($(AWS_ACCESS_KEY_ID),)
+# 		$(error AWS_ACCESS_KEY_ID is undefined)
+# 	endif
+# 	ifeq ($(AWS_SECRET_ACCESS_KEY),)
+# 		$(error AWS_SECRET_ACCESS_KEY is undefined)
+# 	endif
 	aws ecr get-login-password --region $(AWS_REGION) | docker login --username AWS --password-stdin $(AWS_ACCOUNT_ID).dkr.ecr.$(AWS_REGION).amazonaws.com
 	docker tag $(IMAGE_NAME):latest $(AWS_ACCOUNT_ID).dkr.ecr.$(AWS_REGION).amazonaws.com/$(IMAGE_NAME):latest
 	docker push $(AWS_ACCOUNT_ID).dkr.ecr.$(AWS_REGION).amazonaws.com/$(IMAGE_NAME):latest
