@@ -6,8 +6,8 @@ on:
         branches: [ "**" ]
     pull_request:
         branches: [ "main" ]
-    tag:
-        branches: [ "main" ]
+    release:
+        types: [ "created" ]
 jobs:
     linter:
         name: Linters  # Lint frontend and backend
@@ -87,7 +87,7 @@ jobs:
     deploy:
         name: Deploy  # Deploy to AWS ECS using Terraform
         runs-on: ubuntu-latest
-        if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')  # Only deploy on tag push
+        if: github.event_name == 'release' && startsWith(github.ref, 'refs/tags/')  # Only deploy on release
         needs: [ publish ]
         steps:
             - name: Deploy ECR image
