@@ -42,10 +42,14 @@ jobs:
               run: make build-image
             # Now we could directly upload the image, but we want to learn how to use artifacts
             # that can be uploaded in another job
+            # - name: Save Docker image
+            #   run: docker save -o docker-image.tar
+            # - name: Compress Docker image
+            #   run: gzip -c docker-image.tar > docker-image.tar.gz
             - name: Save Docker image
-              run: docker save -o docker-image.tar
-            - name: Compress Docker image
-              run: gzip -c docker-image.tar > docker-image.tar.gz
+              run: make save-image
+              env:
+                FILE_NAME: "docker-image"
             - name: Upload artifact
               uses: actions/upload-artifact@v2
               with:

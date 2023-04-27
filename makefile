@@ -19,6 +19,8 @@ build-front:
 	cd frontend && npm install && npm run build && cd .. && mkdir -p backend/pollapp/gui && cp -r frontend/build/* backend/pollapp/gui
 build-image:
 	cd backend && docker build -t $(IMAGE_NAME) . && cd ..
+save-image:
+	docker save $(IMAGE_NAME) > $(IMAGE_NAME).tar && gzip -c $(IMAGE_NAME).tar > $(FILE_NAME).tar.gz
 deploy-local:
 	docker compose up --build
 push-ecr:
