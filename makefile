@@ -20,6 +20,9 @@ build-front:
 build-image:
 	cd backend && docker build -t $(IMAGE_NAME) . && cd ..
 save-image:
+	ifndef FILE_NAME
+		$(error FILE_NAME is undefined)
+	endif
 	docker save $(IMAGE_NAME) > $(IMAGE_NAME).tar && gzip -c $(IMAGE_NAME).tar > $(FILE_NAME).tar.gz
 deploy-local:
 	docker compose up --build
