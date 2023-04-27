@@ -24,6 +24,12 @@ save-image:
 		$(error FILE_NAME is undefined)
 	endif
 	docker save $(IMAGE_NAME) > $(IMAGE_NAME).tar && gzip -c $(IMAGE_NAME).tar > $(FILE_NAME).tar.gz
+debug-pipeline:
+	echo $(TEST_VAR)
+	echo "TEST_VAR is $(TEST_VAR)"
+	ifeq ($(TEST_VAR),)
+		$(error TEST_VAR is undefined)
+	endif
 deploy-local:
 	docker compose up --build
 push-ecr:
