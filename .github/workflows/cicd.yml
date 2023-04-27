@@ -67,8 +67,10 @@ jobs:
               with:
                 name: docker-image
                 path: ./docker-image.tar.gz
+            - name: Debug
+              run: ls -l && ls -l docker-image.tar.gz
             - name: Decompress Docker image
-              run: gzip -d docker-image.tar.gz
+              run: gzip -d docker-image.tar.gz -c > docker-image.tar
             - name: Load Docker image
               run: docker load -i docker-image.tar
             - name: Push image  # Tags the image, then logs in to AWS ECR and pushes it
