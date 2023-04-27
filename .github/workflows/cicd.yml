@@ -30,8 +30,8 @@ jobs:
     build:
         name: Build  # Build frontend and Docker image
         runs-on: ubuntu-latest
-        needs: [ linter, test ]
-        steps:
+        needs: [ linter, test ]  # Build could be run in parallel with linter and test
+        steps:                   # It could save some time, but also waste resources
             - name: Checkout repo
               uses: actions/checkout@v3
             - name: Install dependencies
@@ -66,9 +66,7 @@ jobs:
               uses: actions/download-artifact@v2
               with:
                 name: docker-image
-                path: ./docker-image.tar.gz
-            - name: Debug
-              run: ls -l && ls -l docker-image.tar.gz
+                path: .  # It's downloaded with the same name as it was uploaded (./docker-image.tar.gz)
             - name: Decompress Docker image
               run: gzip -d docker-image.tar.gz -c > docker-image.tar
             - name: Load Docker image
