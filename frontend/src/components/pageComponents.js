@@ -4,7 +4,6 @@ import {
 } from 'react';
 import {
     Outlet,
-    useNavigate,
     useParams,
     NavLink
 } from "react-router-dom";
@@ -85,7 +84,7 @@ export function PollMenu(props) {
         timestamp: 0
     })
     useEffect(() => {
-        apiRequest(`poll/${getId()}`)
+        apiRequest(`poll/${params.poll_id}`)
             .then(
                 (result) => {
                     setPoll(result)
@@ -98,7 +97,7 @@ export function PollMenu(props) {
                     })
                 }
             )
-    }, [])
+    }, [params.poll_id])
     return <>
         <TitleWithButtonBack text="All polls" mb="1" href="/">{poll.title}</TitleWithButtonBack>
         <p className="mb-3 p-0 text-muted">{poll.answers_count} answer{plural(poll.answers_count)} so far | Posted <TimeAgo timestamp={poll.timestamp} /></p>
@@ -122,9 +121,6 @@ export function PollResults(props) {
     const [isLoaded, setIsLoaded] = useState(false)
     const [poll, setPoll] = useState([])
     const params = useParams()
-    const [userHasAnswered, setUserHasAnswered] = useState(false)
-    const [selectedOption, setSelectedOption] = useState(null)
-    const navigate = useNavigate()
 
     useEffect(() => {
         setIsLoaded(false);
@@ -133,13 +129,10 @@ export function PollResults(props) {
                 (result) => {
                     setPoll(result)
                     setIsLoaded(true)
-                    setUserHasAnswered(result.user_answer !== undefined && result.user_answer !== null && result.user_answer !== false)
-                    setSelectedOption(result.user_answer ?? null)
                 },
                 (error) => {
                     setError(error)
                     setIsLoaded(true)
-                    setUserHasAnswered(false)
                 }
             )
     }, [params])
@@ -183,7 +176,6 @@ export function Poll(props) {
     const params = useParams()
     const [userHasAnswered, setUserHasAnswered] = useState(false)
     const [selectedOption, setSelectedOption] = useState(null)
-    const navigate = useNavigate()
 
     useEffect(() => {
         setIsLoaded(false);

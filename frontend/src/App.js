@@ -33,8 +33,9 @@ function App() {
 	const [darkMode, setDarkMode] = useState((localStorage.getItem('darkMode') ?? 'false') === 'true')
 
 	useEffect(() => {
-		doLogin()
-	}, [])
+		if (!userData)
+			doLogin()
+	}, [userData])
 
 	function doLogin(password) {
 		return new Promise((resolve, reject) => {
@@ -55,26 +56,11 @@ function App() {
 					(error) => {
 						reject()
 						setIsLoaded(true)
-						// setError(error)
+						setError(error)
 						setUserData({})
 					}
 				)
 		})
-	}
-	function doLogout() {
-		setIsLoaded(false);
-		apiRequest("logout")
-			.then(
-				(result) => {
-					setUserData(null)
-					setIsLoaded(true)
-				},
-				(error) => {
-					setError(error)
-					setUserData(null)
-					setIsLoaded(true)
-				}
-			)
 	}
 	function toggleDarkMode() {
 		setDarkMode(!darkMode)

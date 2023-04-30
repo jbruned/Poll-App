@@ -1,4 +1,8 @@
+"""
+This package contains the web GUI
+"""
 import json
+import traceback
 import uuid
 from logging import getLogger, CRITICAL, DEBUG
 
@@ -7,10 +11,12 @@ from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import create_engine
 from sqlalchemy_utils import database_exists, create_database
-from werkzeug.exceptions import Unauthorized, Forbidden, NotFound, Conflict, InternalServerError
+from werkzeug.exceptions import Unauthorized, Forbidden, \
+    NotFound, Conflict, InternalServerError
 
 from .config import Config
-from .db import AppSettings, Poll, Option, NotFoundException, AlreadyVotedException, insert_test_data
+from .db import AppSettings, Poll, Option, NotFoundException, \
+    AlreadyVotedException, insert_test_data
 
 
 class WebGUI(Flask):
@@ -21,12 +27,16 @@ class WebGUI(Flask):
     _SECRET_KEY = "b0928e1a460370d300c864856520f265"
     API_V1_PREFIX = "/api/v1"
 
-    def __init__(self, db: SQLAlchemy):
+    def __init__(self, database: SQLAlchemy):
         """
         Implementation of the WebGUI and all endpoints using Flask
-        @param db: database where all data is persisted
+        @param database: database where all data is persisted
         """
-        super().__init__(__name__, static_folder="gui/static", static_url_path="/static")
+        super().__init__(
+            __name__,
+            static_folder="gui/static",
+            static_url_path="/static"
+        )
 
         # Set debug mode and logging level
         if Config.DEBUG_ON:
@@ -39,7 +49,7 @@ class WebGUI(Flask):
         self.app_context().push()
 
         # Initialize the app
-        self.init_db(db)
+        self.init_db(database)
         self.settings = self.load_settings()
         self.init_gui()
         self.init_api()
@@ -48,12 +58,11 @@ class WebGUI(Flask):
         # Set the secret key for the Flask sessions
         self.secret_key = self._SECRET_KEY
 
-    def init_db(self, db: SQLAlchemy):
+    def init_db(self, database: SQLAlchemy):
         """
         Initializes the database
         """
-        self.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///flasksqlTest.db" if not Config.USE_POSTGRES else \
-            f"postgresql://{Config.DB_USER}:{Config.DB_PASSWORD}@{Config.DB_HOST}:{Config.DB_PORT}/{Config.DB_NAME}"
+        self.config['SQLALCHEMY_DATABASE_URI'] = Config.DB_URI
         self.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
         # Create database if it doesn't exist
@@ -63,13 +72,13 @@ class WebGUI(Flask):
                 create_database(engine.url)
 
         # Initialize database
-        db.init_app(self)
-        Migrate(self, db)
+        database.init_app(self)
+        Migrate(self, database)
         if Config.DROP_DB_AND_INSERT_TEST_DATA:
-            db.drop_all()
-            db.create_all()
+            database.drop_all()
+            database.create_all()
             insert_test_data()
-        db.create_all()
+        database.create_all()
 
     @staticmethod
     def load_settings():
@@ -77,13 +86,8 @@ class WebGUI(Flask):
         Loads the app settings from the database
         """
         if not AppSettings.is_initialized():
-            AppSettings.init()  # To restore default settings, run unconditionally
-        settings = AppSettings.query.first()
-        # Warn about the default password if needed
-        # if settings.is_password_correct(AppSettings.DEFAULT_ADMIN_PASSWORD):
-        #     log_warning(f"Admin password is set to default: {AppSettings.DEFAULT_ADMIN_PASSWORD}\n"
-        #                 "          Please change it from the GUI")
-        return settings
+            AppSettings.init()
+        return AppSettings.query.first()
 
     def init_gui(self):
         """
@@ -92,20 +96,20 @@ class WebGUI(Flask):
         @self.route("/")
         @self.route("/polls/<poll_id>")
         @self.route("/polls/<poll_id>/results")
-        def dashboard(poll_id=None):
+        def dashboard(poll_id=None):  # pylint: disable=unused-argument
             return send_file("gui/index.html")
 
-        @self.route('/<any("favicon.ico", "manifest.json", "robots.txt", "logo192.png", "logo512.png"):filename>')
+        @self.route('/<any("favicon.ico", "manifest.json", "robots.txt",'
+                    '"logo192.png", "logo512.png"):filename>')
         def other_static_files(filename):
             return send_file(f"gui/{filename}")
 
-    def init_api(self):
+    def init_api(self):  # pylint: disable=too-many-statements
         """
         Initializes the API endpoints
         """
         @self.route(f"{self.API_V1_PREFIX}/login", methods=['GET', 'POST'])
         def login():
-            # TODO replace by Kong API Gateway
             if request.method == "POST":
                 if self.settings.is_password_correct(request.json['password']):
                     session["admin"] = True
@@ -118,7 +122,8 @@ class WebGUI(Flask):
 
         @self.route(f"{self.API_V1_PREFIX}/password", methods=['POST'])
         def change_password():
-            if not request.form['old'] or len(request.form['new'] or '') < 5 or len(request.form['repeat'] or '') < 5 \
+            if not request.form['old'] or len(request.form['new'] or '') < 5 \
+                    or len(request.form['repeat'] or '') < 5 \
                     or request.form['new'] != request.form['repeat']:
                 abort(400, "Incomplete request")
             if not self.settings.is_password_correct(request.form['old']):
@@ -136,16 +141,19 @@ class WebGUI(Flask):
         def polls_actions():
             if request.method == 'GET':
                 return json.dumps(Poll.get_polls(as_dict=True), default=str)
-            elif request.method == 'POST':
+            if request.method == 'POST':
                 data = self.get_request_body(request)
                 if not data['title']:
                     abort(400, "Missing title")
                 return json.dumps(
-                    Poll.insert(title=data['title'], author=data['author'] or None)
+                    Poll.insert(title=data['title'],
+                                author=data['author'] or None)
                     .get_info(self.get_or_create_session_id()), default=str
                 ), 200
+            return abort(405, "Method not allowed")
 
-        @self.route(f"{self.API_V1_PREFIX}/poll/<poll_id>", methods=['GET', 'POST', 'DELETE'])
+        @self.route(f"{self.API_V1_PREFIX}/poll/<poll_id>",
+                    methods=['GET', 'POST', 'DELETE'])
         def poll_actions(poll_id=None):
             poll = Poll.get(int(poll_id))
             if request.method == 'GET':
@@ -156,18 +164,22 @@ class WebGUI(Flask):
                 data = self.get_request_body(request)
                 if not data['title']:
                     abort(400, "Missing title")
-                poll.update(title=data['title'], author=data['author'] or None)
+                poll.update(title=data['title'],
+                            author=data['author'] or None)
                 return self.success()
-            elif request.method == 'DELETE':
+            if request.method == 'DELETE':
                 poll.delete()
                 return self.success()
+            return abort(405, "Method not allowed")
 
-        @self.route(f"{self.API_V1_PREFIX}/poll/<poll_id>/options", methods=['GET', 'POST'])
+        @self.route(f"{self.API_V1_PREFIX}/poll/<poll_id>/options",
+                    methods=['GET', 'POST'])
         def options_actions(poll_id):
             poll = Poll.get(int(poll_id))
             if request.method == 'GET':
                 options = poll.get_options()
-                return json.dumps([option.to_dict() for option in options], default=str)
+                return json.dumps([option.to_dict() for option in options],
+                                  default=str)
             if not self.is_admin_logged_in(poll.author):
                 abort(401, "Not logged in")
             if request.method == 'POST':
@@ -177,8 +189,10 @@ class WebGUI(Flask):
                 return json.dumps(
                     Option.insert(text=data['text'], poll_id=poll.id).to_dict()
                 ), 200
+            return abort(405, "Method not allowed")
 
-        @self.route(f"{self.API_V1_PREFIX}/option/<option_id>", methods=['GET', 'POST', 'DELETE'])
+        @self.route(f"{self.API_V1_PREFIX}/option/<option_id>",
+                    methods=['GET', 'POST', 'DELETE'])
         def option_actions(option_id):
             option = Option.get(int(option_id))
             if request.method == 'GET':
@@ -191,9 +205,10 @@ class WebGUI(Flask):
                     abort(400, "Missing text")
                 option.update(text=data['text'])
                 return self.success()
-            elif request.method == 'DELETE':
+            if request.method == 'DELETE':
                 option.delete()
                 return self.success()
+            return abort(405, "Method not allowed")
 
         @self.route(f"{self.API_V1_PREFIX}/option/<option_id>/vote",
                     methods=['POST', 'DELETE'])
@@ -205,9 +220,10 @@ class WebGUI(Flask):
                 if result is None:
                     abort(409, "You have already voted!")
                 return self.success()
-            elif request.method == 'DELETE':
+            if request.method == 'DELETE':
                 option.remove_vote(str(session_id))
                 return self.success()
+            return abort(405, "Method not allowed")
 
     HTTP_ERRORS = {
         400: "Bad request",
@@ -239,22 +255,18 @@ class WebGUI(Flask):
             Handles errors
             """
             if debug:
-                print("Traceback")
-                import traceback
                 traceback.print_exc()
-            else:
-                print("no traceback")
             if message is not None and isinstance(code_or_exception, int):
                 return (
-                    json.dumps({
-                        "error": message
-                    }) if request.url.__contains__(self.API_V1_PREFIX) else message,
-                    code_or_exception
+                    json.dumps({"error": message})
+                    if self.API_V1_PREFIX in request.url
+                    else message, code_or_exception
                 )
 
             if isinstance(code_or_exception, int):
                 try:
-                    return handle_error(code_or_exception, self.HTTP_ERRORS[code_or_exception])
+                    return handle_error(code_or_exception,
+                                        self.HTTP_ERRORS[code_or_exception])
                 except KeyError:
                     return handle_error(500)
             if isinstance(code_or_exception, Exception):
@@ -269,6 +281,9 @@ class WebGUI(Flask):
 
     @staticmethod
     def get_or_create_session_id():
+        """
+        Manage the user's session ID
+        """
         if "id" not in session or session["id"] is None:
             session["id"] = str(uuid.uuid4())
         return session["id"]
@@ -280,11 +295,15 @@ class WebGUI(Flask):
         @return: True if the user is logged in
         """
         return session.get("admin") is True or (
-            session_id is not None and WebGUI.get_or_create_session_id() == session_id
+                session_id is not None
+                and WebGUI.get_or_create_session_id() == session_id
         )
 
     @staticmethod
     def success(message=True):
+        """
+        Default success response
+        """
         return json.dumps({
             "success": message
         }), 200

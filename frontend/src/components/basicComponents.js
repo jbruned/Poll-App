@@ -10,7 +10,6 @@ import {
 import {
     readableDateDiff,
     myAlert,
-    parseMarkdown,
     firstUpper,
     apiRequest
 } from '../util.js'
@@ -88,7 +87,7 @@ export function Loader(props) {
             });
             setLoading(props.loading);
         }
-    }, [props.loading]);
+    }, [props.loading, box]);
 
     if (props.keepSize ?? true)
         return <div style={(loadingPriv ?? false) ? style : {}} ref={box}>
@@ -161,7 +160,7 @@ export function Redirect(props) {
     const navigate = useNavigate();
     useEffect(() => {
         navigate(props.to ?? '/', props.replace ? { replace: props.replace } : {});
-    }, []);
+    }, [navigate, props.replace, props.to]);
 }
 
 export function LeftRightDivs(props) {
@@ -176,8 +175,8 @@ export function TitleWithButtonBack(props) {
     const navigate = useNavigate();
     return <div className={`mb-${props.mb ?? '3'}`}>
         {props.to
-            ? <a to={props.to} className="btn btn-primary" style={{ marginTop: '-20px' }}><Icon name="arrow-left" me="2" />{props.text || "Go back"}</a>
-            : <a onClick={() => navigate(props.href ?? -1)} className="btn btn-primary" style={{ marginTop: '-20px' }}><Icon name="arrow-left" me="2" />{props.text || "Go back"}</a>
+            ? <Link to={props.to} className="btn btn-primary" style={{ marginTop: '-20px' }}><Icon name="arrow-left" me="2" />{props.text || "Go back"}</Link>
+            : <button type="link" onClick={() => navigate(props.href ?? -1)} className="btn btn-primary" style={{ marginTop: '-20px' }}><Icon name="arrow-left" me="2" />{props.text || "Go back"}</button>
         }
         <h1 className='d-inline ms-md-3'>{props.children}</h1>
     </div>
