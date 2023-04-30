@@ -19,6 +19,7 @@ jobs:
           fetch-depth: 0
       - name: Lint Code Base
         uses: github/super-linter@v5
+        run: cat .github/super-linter.env >> "$GITHUB_ENV"
         env:
           VALIDATE_ALL_CODEBASE: true
           DEFAULT_BRANCH: main
