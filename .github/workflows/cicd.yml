@@ -1,13 +1,14 @@
-# CI/CD pipeline for the project using GitHub Actions
 name: CI/CD
-
 on:
   push:
-    branches: [ "**" ]
+    branches:
+      - "**"
   pull_request:
-    branches: [ "main" ]
+    branches:
+      - main
   release:
-    types: [ "created" ]
+    types:
+      - created
 jobs:
   lint:
     runs-on: ubuntu-latest
@@ -15,17 +16,15 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
         with:
-          # Full git history is needed to get a proper list of changed files within `super-linter`
           fetch-depth: 0
-
       - name: Lint Code Base
         uses: github/super-linter@v5
         env:
           VALIDATE_ALL_CODEBASE: true
-          DEFAULT_BRANCH: "main"
+          DEFAULT_BRANCH: main
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   test:
-    name: Tests  # Run tests for frontend and backend
+    name: Tests
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repo
@@ -33,11 +32,13 @@ jobs:
       - name: Not implemented
         run: echo "This phase has not been implemented (yet)"
   build:
-    name: Build  # Build frontend and Docker image
-    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')  # Only build on tag push
+    name: Build
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
     runs-on: ubuntu-latest
-    needs: [ lint, test ]  # Build could be run in parallel with linter and test
-    steps: # It could save some time, but also waste resources
+    needs:
+      - lint
+      - test
+    steps:
       - name: Checkout repo
         uses: actions/checkout@v3
       - name: Install dependencies
@@ -46,26 +47,21 @@ jobs:
         run: make build-front
       - name: Build Docker image
         run: make build-image
-      # Now we could directly upload the image, but we want to learn how to use artifacts
-      # that can be uploaded in another job
-      # - name: Save Docker image
-      #   run: docker save -o docker-image.tar pollapp
-      # - name: Compress Docker image
-      #   run: gzip -c docker-image.tar > docker-image.tar.gz
       - name: Save Docker image
         run: make save-image
         env:
-          FILE_NAME: "docker-image"
+          FILE_NAME: docker-image
       - name: Upload artifact
         uses: actions/upload-artifact@v3
         with:
           name: docker-image
           path: ./docker-image.tar.gz
   publish:
-    name: Publish  # Publish Docker image to AWS ECR
+    name: Publish
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')  # Only publish on tag push
-    needs: [ build ]
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
+    needs:
+      - build
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
@@ -73,12 +69,12 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: docker-image
-          path: .  # It's downloaded with the same name as it was uploaded (./docker-image.tar.gz)
+          path: .
       - name: Decompress Docker image
         run: gzip -d docker-image.tar.gz -c > docker-image.tar
       - name: Load Docker image
         run: docker load -i docker-image.tar
-      - name: Push image  # Tags the image, then logs in to AWS ECR and pushes it
+      - name: Push image
         run: make push-ecr
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -88,18 +84,20 @@ jobs:
           AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
           AWS_IMAGE_NAME: ${{ vars.AWS_IMAGE_NAME }}
   deploy-test:
-    name: Deploy (test env)  # Deploy to test environment
-    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')  # Only publish on tag push
+    name: Deploy (test env)
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
     runs-on: ubuntu-latest
-    needs: [ build ]
+    needs:
+      - build
     steps:
       - name: Deploy to test env
         run: echo "This phase has not been implemented (yet)"
   deploy-prod:
-    name: Deploy (production)  # Deploy to AWS ECS using Terraform
+    name: Deploy (production)
     runs-on: ubuntu-latest
-    if: github.event_name == 'release' && startsWith(github.ref, 'refs/tags/')  # Only deploy on release
-    needs: [ publish ]
+    if: github.event_name == 'release' && startsWith(github.ref, 'refs/tags/')
+    needs:
+      - publish
     steps:
       - name: Deploy ECR image
         run: echo "This phase has not been implemented (yet)"
