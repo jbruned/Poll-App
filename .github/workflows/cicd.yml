@@ -11,19 +11,16 @@ on:
       - created
 jobs:
   lint:
+    # Run GH Super-Linter against code base
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
+      - uses: actions/checkout@v3
+      - run: cat .github/super-linter.env >> "$GITHUB_ENV"
       - name: Lint Code Base
         uses: github/super-linter@v5
-        run: cat .github/super-linter.env >> "$GITHUB_ENV"
         env:
-          VALIDATE_ALL_CODEBASE: true
-          DEFAULT_BRANCH: main
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DEFAULT_BRANCH: develop
   test:
     name: Tests
     runs-on: ubuntu-latest
