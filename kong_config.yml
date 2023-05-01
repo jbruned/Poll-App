@@ -2,17 +2,17 @@ _format_version: "3.0"
 _transform: true
 
 services:
-- host: backend
-  name: flask
-  port: 9000
-  protocol: http
-  routes:
-  - name: flask
-    paths:
-    - /
+  - host: backend
+    name: flask
+    port: 9000
+    protocol: http
+    routes:
+      - name: flask
+        paths:
+          - /
 
 plugins:
-- name: file-log
-  config:
-    path: /logs/file-log.log
-    reopen: false
+  - name: file-log
+    config:
+      path: /logs/file-log.log
+      reopen: false

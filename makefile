@@ -1,18 +1,14 @@
 IMAGE_NAME = pollapp
 run:
-	make deps && make linters && make build
+	make deps && make lint && make build
 deps:
 	make deps-front && make deps-back
 deps-front:
 	cd frontend && npm install && cd ..
 deps-back:
 	cd backend && pip install -r requirements.txt && cd ..
-linters:
-	make linter-front && make linter-back
-linter-front:
-	cd frontend && npm run lint && cd ..
-linter-back:
-	cd backend && pylint *.py && pylint pollapp && cd ..
+lint:
+	docker run --rm -e RUN_LOCAL=true --env-file ".github/super-linter.env" -v /"$(PWD)":/tmp/lint github/super-linter
 build:
 	make build-front && make build-image
 build-front:
