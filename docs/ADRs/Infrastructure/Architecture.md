@@ -27,9 +27,8 @@ tomada.
     * [Tabla de contenidos](#tabla-de-contenidos)
 * [Factores en la Decisión](#factores-en-la-decisión)
 * [Opciones Consideradas](#opciones-consideradas)
-    * [Ventajas y Desventajas de las opciones](#ventajas-y-desventajas-de-las-opciones)
     * [Arquitectura basada en microservicios](#arquitectura-basada-en-microservicios)
-    * [Arquitecura de 3 capas](#arquitecura-de-3-capas)
+    * [Arquitectura de 3 capas](#arquitecura-de-3-capas)
     * [Arquitectura de 2 capas](#arquitectura-de-2-capas)
 * [Decisión](#decisión)
 
@@ -59,8 +58,6 @@ Tras un análisis de distintas arquitecturas, se han valorado las siguientes:
 * Arquitectura de 2 capas
 
 </div>
-
-## Ventajas y Desventajas de las opciones
 
 ## Arquitectura basada en microservicios
 
