@@ -3,6 +3,8 @@ on:
   push:
     branches:
       - "**"
+    tags:
+      - "**"
   pull_request:
     branches:
       - main
@@ -11,7 +13,6 @@ on:
       - created
 jobs:
   lint:
-    # Run GH Super-Linter against code base
     name: Lint
     runs-on: ubuntu-latest
     steps:
