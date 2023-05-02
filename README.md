@@ -2,7 +2,7 @@
 
 Poll app for the "Gestión de Tecnologías Informáticas en las Organizaciones" course.
 
-![CI/CD](https://github.com/jbruned/Poll-App/actions/workflows/cicd.yml/badge.svg)](https://github.com/jbruned/Poll-App/actions/workflows/cicd.yml)
+[![CI/CD](https://github.com/jbruned/Poll-App/actions/workflows/cicd.yml/badge.svg)](https://github.com/jbruned/Poll-App/actions/workflows/cicd.yml)
 
 ## Instructions
 
