@@ -29,15 +29,27 @@ Por tanto, no se considerarán otras opciones como despliegue *on-premise* o en 
 <!--[TOC] -->
 <!-- TOC -->
 
-* [ADR Arquitectura](#adr-arquitectura)
+* [ADR Despliegue](#adr-despliegue)
 * [Introducción](#introducción)
     * [Tabla de contenidos](#tabla-de-contenidos)
-* [Factores en la Decisión](#factores-en-la-decisión)
-* [Opciones Consideradas](#opciones-consideradas)
-    * [Arquitectura basada en microservicios](#arquitectura-basada-en-microservicios)
-    * [Arquitectura de 3 capas](#arquitecura-de-3-capas)
-    * [Arquitectura de 2 capas](#arquitectura-de-2-capas)
-* [Decisión](#decisión)
+    * [Factores en la decisión](#factores-en-la-decisión)
+* [Servidor web](#servidor-web)
+    * [API + Frontend en el mismo servicio](#api--frontend-en-el-mismo-servicio)
+    * [API y Frontend en servicios separados](#api-y-frontend-en-servicios-separados)
+    * [Decisión](#decisión)
+* [Base de datos](#base-de-datos)
+    * [Base de datos en el mismo servicio](#base-de-datos-en-el-mismo-servicio)
+    * [Base de datos PostgreSQL en servicio independiente](#base-de-datos-postgresql-en-servicio-independiente)
+    * [Base de datos nativa de AWS (RDS)](#base-de-datos-nativa-de-aws-rds)
+    * [Decisión](#decisión-1)
+* [API Gateway](#api-gateway)
+    * [Uso de API Gateway (Kong)](#uso-de-api-gateway-kong)
+    * [Redirección directa al servidor web](#redirección-directa-al-servidor-web)
+    * [Uso del API Gateway de AWS](#uso-del-api-gateway-de-aws)
+    * [Decisión](#decisión-2)
+* [Arquitectura resultante](#arquitectura-resultante)
+    * [Despliegue en AWS](#despliegue-en-aws)
+    * [Presupuesto](#presupuesto)
 
 <!-- TOC -->
 
