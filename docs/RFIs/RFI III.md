@@ -135,19 +135,20 @@ Cabe mencionar que se podrá desplegar en entornos diferentes, test y producció
 # Análisis final de las preguntas
 **Sin cambiar los apartados de "Ver xyz"**
 - ¿Cuáles son los procesos de CI?
-Ver [Microservicios](#microservicios)
+Ver [ADR Integración continua (CI)](../ADRs/Infrastructure/CI_CD.md)
 - ¿Cuáles son las herramientas CI?
-Ver [Microservicios](#microservicios)
+Ver [ADR Integración continua (CI)](../ADRs/Infrastructure/CI_CD.md)
 - ¿Cuál es la arquitectura en AWS de la solución?
-Ver [Arquitectura](#arquitectura)
+Ver [Arquitectura](#arquitectura-en-cloud)
 - ¿Qué servicios de AWS requiere el sistema?
-Ver [ADR Microservicios](../ADRs/Infrastructure/Microservices.md)
+Ver [ADR Deployment](../ADRs/Infrastructure/Deployment.md)
 - ¿Cuál es el plan de despliegue?
-Ver [README](../../README.md)
+Ver [ADR Integración continua (CI)](../ADRs/Infrastructure/CI_CD.md)
 - ¿Teneis alguna prueba de parte del sistema funcionando?
- Lanzar aplicación / usar Postman (Ver [ADR Microservicios](../ADRs/Infrastructure/Microservices.md))
+Lanzar pipelines / Lanzar aplicación
 - ¿Por qué es escalable y elástica la solución?
-Ver [ADR Microservicios](../ADRs/Infrastructure/Microservices.md)
+Ver [ADR Deployment](../ADRs/Infrastructure/Deployment.md)
+Ver [ADR Integración continua (CI)](../ADRs/Infrastructure/CI_CD.md)
 - ¿Cuáles serán los costes de la solución?
-Ver [Arquitectura](#arquitectura) y [Microservicios](#microservicios)
+Ver [ADR Deployment](../ADRs/Infrastructure/Deployment.md)
 
