@@ -1,10 +1,20 @@
 # Poll-App
 
-Poll app for the "Gestión de Tecnologías Informáticas en las Organizaciones" course.
-
 [![CI/CD](https://github.com/jbruned/Poll-App/actions/workflows/cicd.yml/badge.svg)](https://github.com/jbruned/Poll-App/actions/workflows/cicd.yml)
 
-## Instructions
+Poll app for the "Gestión de Tecnologías Informáticas en las Organizaciones" course.
+
+## Development workflow
+
+Some automations are included in a pipeline as follows. If you want to contribute, you must take them into account and follow the guidelines.
+
+- The **linters** and **tests** are run every time a commit is pushed. They have to pass in order to continue.
+- The project is **built**, **pushed to ECR** and **deployed to the dev environment** every time a tag is pushed.  
+  *Disclaimer: the environment variables and secrets have to be properly set and updated in the `AWS` environment.*
+- The project is *deployed to production* every time a release is published.  
+  *Disclaimer: deployment is not automated yet (as of the RFI III release).*
+
+## Instructions to deploy locally
 
 To build, deploy locally and run the app, you need to follow the next steps:
 
