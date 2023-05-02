@@ -38,8 +38,37 @@ alcance y funcionamiento.
 
 ## Tabla de contenidos
 
-[TOC]
+<!--[TOC] -->
+<!-- TOC -->
 
+- [ADR **CI/CD**](#adr-cicd)
+- [Introducción](#introducción)
+  - [Tabla de contenidos](#tabla-de-contenidos)
+- [Factores en la Decisión](#factores-en-la-decisión)
+- [Componentes considerados](#componentes-considerados)
+  - [Linting](#linting)
+    - [Ventajas](#ventajas)
+    - [Inconvenientes](#inconvenientes)
+    - [Opciones consideradas](#opciones-consideradas)
+  - [Testing](#testing)
+    - [Ventajas](#ventajas-1)
+    - [Inconvenientes](#inconvenientes-1)
+    - [Opciones consideradas](#opciones-consideradas-1)
+  - [Build](#build)
+    - [Ventajas](#ventajas-2)
+    - [Inconvenientes](#inconvenientes-2)
+    - [Opciones consideradas](#opciones-consideradas-2)
+  - [Publish](#publish)
+    - [Ventajas](#ventajas-3)
+    - [Inconvenientes](#inconvenientes-3)
+    - [Opciones consideradas](#opciones-consideradas-3)
+  - [Deploy](#deploy)
+    - [Ventajas](#ventajas-4)
+    - [Inconvenientes](#inconvenientes-4)
+    - [Opciones consideradas](#opciones-consideradas-4)
+- [Pipeline creado](#pipeline-creado)
+
+<!-- TOC -->
 # Factores en la Decisión
 
 <div style="text-align: justify!important">
@@ -384,5 +413,10 @@ siguientes pasos en orden de ejecución:
 5. **Publish**: Solo se activa si se pasa el build. Publica el artefacto Docker en el registro de imágenes de AWS ECR.
 6. **Deploy (entorno de producción)**: Fase en blanco de cara a la siguiente release. Solo se activa si se pasa el
    publish **y en caso de crear una release**.
+
+El flujo de ejecución resultante en GitHub Actions sería el siguiente (no se ha pusheado ninguna tag ni creado ninguna
+release):
+
+![Flujo del pipeline](../../img/Diagrama_pipeline.jpg "Flujo de ejecución del pipeline de CI/CD (no se ha pusheado ninguna tag ni creado ninguna release)")
 
 </div>
