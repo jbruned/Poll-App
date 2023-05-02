@@ -24,8 +24,16 @@ coste nulo y a su integración con la herramienta que utilizamos para el control
 ventajas y ningún inconveniente. Utilizar otras herramientas como Jenkins sería más costoso y no aportaría ninguna
 ventaja dentro del contexto de este proyecto.
 
-Por tanto, este documento se basará más en detallar qué componentes se han considerado para el pipeline así como su
+También cabe destacar que como sustituto a los componentes de un pipeline y al pipeline en sí, casi siempre es posible
+idear una solución manual o semiautomática basada en scripts o similares. Sin embargo, por su poca escalabilidad y
+mantenibilidad, no se considera una opción viable en ningún caso.
+
+En cuanto al entorno cloud que se va a utilizar es AWS, por ser requisito de la asignatura y por ofrecer
+recursos gratuitos para estudiantes.
+
+Por tanto, este documento se centra en detallar qué componentes se han considerado para el pipeline así como su
 alcance y funcionamiento.
+
 </div>
 
 ## Tabla de contenidos
@@ -207,9 +215,10 @@ errores.
 
 * Aumenta la velocidad de desarrollo, puesto que el desarrollador no tiene que preocuparse de compilar el código
   manualmente.
-* Reduce la probabilidad de introducir bugs al código, al automatizar un proceso que, de hacerse manualmente, podría
+* Reduce la probabilidad de errores, al automatizar un proceso que, de hacerse manualmente, podría
   introducir errores.
-* Si se automatiza, se garantiza que el ejecutable esté siempre en la última versión y se logra agilidad.
+* Aumenta la disponibilidad del sistema, ya que no hace falta esperar a que un desarrollador compile el código para
+  poder ejecutarlo, se hará de forma automática. Esto también aporta agilidad.
 
 </div>
 
@@ -220,36 +229,51 @@ errores.
 * Reduce la velocidad de incorporación de cambios, puesto que la compilación podría ser un proceso lento, especialmente
   si se trata de un proyecto grande. El pipeline no finalizaría hasta que termine la compilación, por lo que habría que
   esperar.
-* Puede aumentar el coste del pipeline, al tratarse de un componente más.
+* Puede aumentar el coste del sistema, por dos motivos. Por un lado, los requerimientos del pipeline aumentan y, por
+  otro, se requiere de espacio de almacenamiento de artefactos, que suele ser caro y reducido (tómese como ejemplo
+  GitHub, que permite hasta 500 MB gratuitos).
+* Aumenta la complejidad del sistema (sobre todo inicialmente), puesto que es necesario implementar el proceso de
+  compilación además del producto software en sí.
 
 </div>
 
 ### Opciones consideradas
 
 <div style="text-align: justify!important">
-TODO
-* **Acción de GitHub Actions**: Se utilizan acciones como Docker Image disponibles en GitHub Actions
+
+* **Acción de GitHub Actions**: Se utilizan acciones como *Docker Image* disponibles en en el listado de Workflows
+  de GitHub Actions.
 * **Integración manual con makefile**: Se crean comandos en el makefile del proyecto que pueden invocarse desde el
   fichero yml de configuración de GitHub Actions.
 
 De estas dos opciones se ha optado por la segunda, puesto que no requiere conocimiento específico de acciones concretas
-del listado de Workflows de GitHub Actions y puede configurarse a nuestro gusto. Además, dado que habrá que modificar el
-fichero yml de configuración de GitHub Actions servirá para adquirir conocimiento sobre estos ficheros.
-TODO
+del listado de Workflows de GitHub Actions y puede configurarse de acuerdo a nuestras necesidades.
+
 </div>
 
 ## Publish
 
 <div style="text-align: justify!important">
 
-TODO
+La publicación de software es el proceso mediante el cual el software pasa a estar disponible para el uso externo. De
+forma similar al proceso de compilación, es un proceso que puede automatizarse para ahorrar tiempo al
+desarrollador y evitar errores, aunque en este caso, el proceso suele ser algo más complejo y algo menos predecible que
+el de compilación.
+
+En este documento, se entiende despliegue como el proceso de subir o *pushear* el artefacto generado por el proceso de
+build al entorno cloud de AWS.
+
 </div>
 
 ### Ventajas
 
 <div style="text-align: justify!important">
 
-* TODO
+* Aumenta la velocidad de desarrollo, puesto que el desarrollador no tiene que preocuparse de desplegar el código
+  manualmente.
+* Reduce la probabilidad de errores humanos al desplegar.
+* Habilita el versionado y facilita el mantenimiento del proceso de despliegue, al incorporarse como un componente del
+  pipeline, que puede configurarse con una utilidad software dedicada en lugar de utilizar scripts.
 
 </div>
 
@@ -257,7 +281,11 @@ TODO
 
 <div style="text-align: justify!important">
 
-* TODO
+* Puede aumentar el coste del sistema, por dos motivos análogos al componente de *Build* descrito previamente: el
+  pipeline debe ser más complejo y se requiere almacenamiento en AWS, en este caso.
+* Al igual que el resto de componentes de un pipeline, aumenta la complejidad de implementación del sistema (sobre todo
+  inicialmente), puesto que además de desarrollar el producto en sí también hay que desarrollar el pipeline, aunque a la
+  larga se reduce la complejidad con respecto a utilizar soluciones como scripts.
 
 </div>
 
@@ -265,9 +293,13 @@ TODO
 
 <div style="text-align: justify!important">
 
-* TODO
+* **Acción de GitHub Actions**: Se utilizan acciones como *Deploy to Amazon ECS* disponibles en el listado de Workflows
+  de GitHub Actions.
+* **Edición manual de fichero yml de GitHub Actions**: Se edita manualmente el fichero yml de configuración de GitHub
+  Actions para incluir el proceso de despliegue.
 
-De estas tres opciones se ha optado por TODO
+De estas dos opciones, bastante similares, se ha optado por la segunda, puesto que no requiere conocimiento específico
+de acciones concretas del listado de Workflows de GitHub Actions y puede configurarse de acuerdo a nuestras necesidades.
 
 </div>
 
@@ -275,14 +307,22 @@ De estas tres opciones se ha optado por TODO
 
 <div style="text-align: justify!important">
 
-TODO
+El proceso de despliegue y el de publicación son muy similares y a menudo se toman como equivalentes. Sin embargo, en
+este documento se entiende despliegue como el proceso de levantar la infraestructura en el entorno cloud de AWS para
+servir los artefactos generados y subidos a AWS en el proceso de publish.
 </div>
 
 ### Ventajas
 
 <div style="text-align: justify!important">
 
-* TODO
+* Aumenta la velocidad de despliegue, puesto que el desarrollador no tiene que preocuparse de desplegar el código
+  manualmente.
+* Reduce la probabilidad de errores humanos al desplegar.
+* Si se utilizan herramientas específicas, se habilita el versionado y facilita el mantenimiento del proceso de
+  despliegue, al incorporarse como un componente del pipeline, que puede configurarse con una utilidad software dedicada
+  en lugar de utilizar scripts. Esto también facilita mucho la escalabilidad y adaptabilidad del sistema, puesto que se
+  permite un despliegue rápido en casi cualquier momento y entorno.
 
 </div>
 
@@ -290,7 +330,11 @@ TODO
 
 <div style="text-align: justify!important">
 
-* TODO
+* Puede aumentar el coste del sistema, principalmente debido a la complejidad añadida del pipeline.
+* Al igual que el resto de componentes de un pipeline, aumenta la complejidad de implementación del sistema (sobre todo
+  inicialmente), puesto que además de desarrollar el producto en sí también hay que desarrollar el pipeline.
+* En algunos casos no puede pensarse que el despliegue en producción puede automatizarse, ya que no siempre es posible.
+  Por tanto, el equipo debe ser capaz de desplegar de forma manual dentro de un tiempo razonable en esos casos.
 
 </div>
 
@@ -298,23 +342,47 @@ TODO
 
 <div style="text-align: justify!important">
 
-* TODO
+* **Acción de GitHub Actions**: Se utilizan acciones como *Deploy to Amazon ECS* disponibles en el listado de Workflows
+  de GitHub Actions.
+* **Uso de herramientas adicionales**: Se utilizan herramientas adicionales como Terraform o Jenkins para el proceso de
+  despliegue.
 
-De estas tres opciones se ha optado por TODO
+De las dos opciones mencionadas, se ha optado por la segunda, en concreto por el uso de Terraform, puesto que es un
+requisito de la asignatura, es popular y es gratuito. Además, es una solución más escalable y adaptable que la primera,
+que únicamente puede aplicarse en GitHub.
+
+No obstante, en la fase actual del proyecto no se ha implementado el despliegue tal y como se entiende en este
+documento. Sin embargo, de cara al futuro y a la siguiente entrega se han definido dos fases de despliegue en blanco que
+se ejecutan en el pipeline de CI/CD:
+
+1. **Deploy (entorno de test)**: La idea es que se despliegue el código en un entorno interno de test que será lo más
+   parecido posible al de producción, pero sin serlo. De esta forma, el equipo de desarrollo puede probar el código en
+   un entorno controlado antes de desplegarlo en producción.
+2. **Deploy (entorno de producción)**: proceso de despliegue en el entorno de producción. En el contexto del proyecto y
+   la asignatura, se entiende que el entorno de producción es el que se utiliza para servir el producto al docente, esto
+   es, AWS. Por tanto, se implementará para la siguiente entrega.
 
 </div>
 
-# Pipeline creada
+# Pipeline creado
 
 <div style="text-align: justify!important">
 
-De entre todas las opciones barajadas y descritas previamente, finalmente se ha optado por crear una GitHub Action con
-los siguientes pasos (en orden de ejecución):
+A lo largo de este documento se han presentado una serie de componentes que pueden formar parte de un pipeline de CI/CD.
+Así pues, queda detallar qué componentes se han utilizado en el pipeline de CI/CD del proyecto y cómo se comunican entre
+sí.
+
+El pipeline de CI/CD del proyecto se ha implementado como un Workflow personalizado de GitHub Actions que consta de los
+siguientes pasos en orden de ejecución:
 
 1. **Linting**: Se utiliza Super-linter para validar el código según el alcance establecido en la sección
-   de [Linting](#linting).
-2. **Test**: Fase en blanco de cara al futuro. Siempre se supera.
-3. **Build**: Solo se activa si se pasa el linting y los test. Crea el artefacto Docker.
-   TODO: Añadir el resto de pasos.
+   de [Linting](#linting). Se lanza tras cualquier commit, push y pull request.
+2. **Test**: Fase en blanco de cara al futuro. Siempre se supera. Se lanza tras cualquier commit, push y pull request.
+3. **Build**: Solo se activa si se pasa el linting y los test y en caso de pushear un tag. Crea el artefacto Docker.
+4. **Deploy (entorno de test)**: Fase en blanco de cara al futuro. Solo se activa si se pasa el build **y en caso de
+   pushear un tag**. Despliega el artefacto Docker en un hipotético entorno de test.
+5. **Publish**: Solo se activa si se pasa el build. Publica el artefacto Docker en el registro de imágenes de AWS ECR.
+6. **Deploy (entorno de producción)**: Fase en blanco de cara a la siguiente release. Solo se activa si se pasa el
+   publish **y en caso de crear una release**.
 
 </div>
