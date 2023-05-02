@@ -23,10 +23,7 @@ Por tanto, no se considerarán otras opciones como despliegue *on-premise* o en 
 
 ## Tabla de contenidos
 
-<!--[TOC] -->
 <!-- TOC -->
-
-* [ADR Despliegue](#adr-despliegue)
 * [Introducción](#introducción)
     * [Tabla de contenidos](#tabla-de-contenidos)
     * [Factores en la decisión](#factores-en-la-decisión)
@@ -47,7 +44,6 @@ Por tanto, no se considerarán otras opciones como despliegue *on-premise* o en 
 * [Arquitectura resultante](#arquitectura-resultante)
     * [Despliegue en AWS](#despliegue-en-aws)
     * [Presupuesto](#presupuesto)
-
 <!-- TOC -->
 
 ## Factores en la decisión

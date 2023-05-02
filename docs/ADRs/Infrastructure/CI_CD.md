@@ -26,10 +26,7 @@ Por tanto, este documento se centra en detallar qué componentes se han consider
 
 ## Tabla de contenidos
 
-<!--[TOC] -->
 <!-- TOC -->
-
-- [ADR **CI/CD**](#adr-cicd)
 - [Introducción](#introducción)
   - [Tabla de contenidos](#tabla-de-contenidos)
 - [Factores en la Decisión](#factores-en-la-decisión)
@@ -54,8 +51,7 @@ Por tanto, este documento se centra en detallar qué componentes se han consider
     - [Ventajas](#ventajas-4)
     - [Inconvenientes](#inconvenientes-4)
     - [Opciones consideradas](#opciones-consideradas-4)
-- [Pipeline creado](#pipeline-creado)
-
+- [Pipeline resultante](#pipeline-resultante)
 <!-- TOC -->
 # Factores en la Decisión
 
@@ -299,7 +295,7 @@ No obstante, en la fase actual del proyecto no se ha implementado el despliegue 
 
 </div>
 
-# Pipeline creado
+# Pipeline resultante
 
 <div style="text-align: justify!important">
 

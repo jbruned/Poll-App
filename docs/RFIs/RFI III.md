@@ -7,17 +7,22 @@ En este documento se recoge la información relativa a las decisiones tomadas en
     
 ## Tabla de contenidos
 
-<!-- [TOC] -->
-**TODOTODOTODOTODOTODOTODOTODOTODOTODO**
-- [Documento RFI II](#documento-rfi-ii)
-  - [Tabla de contenidos](#tabla-de-contenidos)
-- [Introducción](#introducción)
-- [Arquitectura](#arquitectura)
-- [Microservicios](#microservicios)
-  - [Base de datos](#base-de-datos)
-  - [Backend](#backend)
-  - [API Gateway](#api-gateway)
-- [Análisis final de las preguntas](#análisis-final-de-las-preguntas)
+<!-- TOC -->
+* [Introducción](#introducción)
+* [Arquitectura en Cloud](#arquitectura-en-cloud)
+  * [Resumen arquitectura previa](#resumen-arquitectura-previa)
+  * [Evaluación alternativas en Cloud](#evaluación-alternativas-en-cloud)
+    * [Servidor web (API + Frontend)](#servidor-web-api--frontend)
+    * [Base de datos](#base-de-datos)
+    * [API Gateway](#api-gateway)
+* [Integración continua (CI)](#integración-continua-ci)
+  * [Linting](#linting)
+  * [Testing](#testing)
+  * [Build](#build)
+  * [Publish](#publish)
+  * [Deploy](#deploy)
+* [Análisis final de las preguntas](#análisis-final-de-las-preguntas)
+<!-- TOC -->
 
 # Introducción
 
