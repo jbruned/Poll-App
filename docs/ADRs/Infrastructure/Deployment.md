@@ -12,12 +12,9 @@
 <div style="text-align: justify!important">
 
 En este documento se recoge la información relativa a las decisiones iniciales en cuanto a la arquitectura en la nube del sistema.
-Para cada decisión,
-se listan las opciones consideradas junto a una breve descripción, ventajas y contras, así como la decisión final
-tomada.
+Para cada decisión, se listan las opciones consideradas junto a una breve descripción, ventajas y contras, así como la decisión final tomada.
 
-El formato a seguir será una sección para cada uno de los microservicios que componen el sistema, así como una sección
-para la integración de los mismos.
+El formato a seguir será una sección para cada uno de los microservicios que componen el sistema, así como una sección para la integración de los mismos.
 
 Además, se parte de la base de que el despliegue se hará en la nube, concretamente en AWS, por requisito del cliente.
 Por tanto, no se considerarán otras opciones como despliegue *on-premise* o en otras plataformas como Azure o Google Cloud.
@@ -70,8 +67,7 @@ Para tomar la decisión se han priorizado los siguientes factores:
 
 <div style="text-align: justify!important">
 
-Este servicio es totalmente imprescindible. En nuestro caso, se han contemplado dos opciones, que se describen a 
-continuación.
+Este servicio es totalmente imprescindible. En nuestro caso, se han contemplado dos opciones, que se describen a continuación.
 
 </div>
 
@@ -79,8 +75,7 @@ continuación.
 
 <div style="text-align: justify!important">
 
-En esta opción, el servidor web contendría tanto la API como el frontend. Esto es, el servidor web se encargaría de
-servir los archivos estáticos del frontend en la raíz `/`, así como de redirigir las peticiones a la API en la ruta `/api`.
+En esta opción, el servidor web contendría tanto la API como el frontend. Esto es, el servidor web se encargaría de servir los archivos estáticos del frontend en la raíz `/`, así como de redirigir las peticiones a la API en la ruta `/api`.
 
 - Ventajas:
     - Sencillez de configuración
@@ -120,9 +115,7 @@ a cada uno de los servicios.
 <div style="text-align: justify!important">
 
 Se ha optado por la primera opción, ya que es más sencilla de configurar y desplegar, y además es más barata.
-Además, se ajusta más a la arquitectura actual desplegada en local y no se considera necesario escalar de forma
-independiente el frontend y la API a corto plazo. Sería relativamente sencillo cambiar a la segunda opción en el
-futuro si fuera necesario.
+Además, se ajusta más a la arquitectura actual desplegada en local y no se considera necesario escalar de forma independiente el frontend y la API a corto plazo. Sería relativamente sencillo cambiar a la segunda opción en el futuro si fuera necesario.
 
 </div>
 
@@ -130,9 +123,7 @@ futuro si fuera necesario.
 
 <div style="text-align: justify!important">
 
-La base de datos es el segundo de los servicios desplegados en local. Sin embargo, existe la opción de desplegarla
-en el mismo servicio que el API o en un servicio separado. También se ha considerado la posibilidad de usar la base
-de datos de AWS. A continuación, se presentan y describen las opciones consideradas.
+La base de datos es el segundo de los servicios desplegados en local. Sin embargo, existe la opción de desplegarla en el mismo servicio que el API o en un servicio separado. También se ha considerado la posibilidad de usar la base de datos de AWS. A continuación, se presentan y describen las opciones consideradas.
 
 </div>
 
@@ -198,13 +189,7 @@ En esta opción, la base de datos se desplegaría en un servicio de AWS, concret
 
 <div style="text-align: justify!important">
 
-Se ha optado por la segunda opción, ya que es más sencilla de configurar y desplegar, además de que ya está
-desplegada en local. Además, se ajusta más a la arquitectura actual desplegada en local y no se considera necesario
-utilizar RDS en las circunstancias actuales. Sin embargo, a fecha de hoy (entrega del RFI III), se ha desplegado
-la base de datos junto al API (primera opción), ya que se ha considerado que es más importante tener el servicio
-desplegado cuanto antes y en las próximas semanas se realizará el cambio a la segunda opción, que simplemente
-requiere crear el servicio de PostgreSQL y configurar las variables de entorno mencionadas anteriormente. Así mismo,
-no nos cerramos a la posibilidad de utilizar RDS en el futuro, si se considera necesario.
+Se ha optado por la segunda opción, ya que es más sencilla de configurar y desplegar, además de que ya está desplegada en local. Además, se ajusta más a la arquitectura actual desplegada en local y no se considera necesario utilizar RDS en las circunstancias actuales. Sin embargo, a fecha de hoy (entrega del RFI III), se ha desplegado la base de datos junto al API (primera opción), ya que se ha considerado que es más importante tener el servicio desplegado cuanto antes y en las próximas semanas se realizará el cambio a la segunda opción, que  implemente requiere crear el servicio de PostgreSQL y configurar las variables de entorno mencionadas anteriormente. Así mismo, no nos cerramos a la posibilidad de utilizar RDS en el futuro, si se considera necesario.
 
 </div>
 
@@ -212,8 +197,7 @@ no nos cerramos a la posibilidad de utilizar RDS en el futuro, si se considera n
 
 <div style="text-align: justify!important">
 
-El API Gateway es el tercer servicio desplegado en local. Sin embargo, es un servicio prescindible, ya que se pueden
-dirigir las peticiones al servidor web directamente. También podríamos utilizar el API Gateway de AWS. A continuación,
+El API Gateway es el tercer servicio desplegado en local. Sin embargo, es un servicio prescindible, ya que se pueden dirigir las peticiones al servidor web directamente. También podríamos utilizar el API Gateway de AWS. A continuación,
 se presentan y describen las opciones consideradas.
 
 </div>
@@ -277,12 +261,7 @@ En esta opción, se utilizaría el API Gateway de AWS, que es un servicio que of
 
 <div style="text-align: justify!important">
 
-Al igual que en el caso de la base de datos, hemos decidido mantener por el momento la arquitectura actual desplegada
-en local, es decir, replicaríamos la arquitectura actual desplegada en local. Sin embargo, a fecha de hoy (entrega del
-RFI III), no se ha desplegado el API Gateway, ya que se ha considerado que es más importante tener el servicio
-desplegado cuanto antes y en las próximas semanas se realizará el cambio a la primera opción, que simplemente
-requiere crear el servicio de API Gateway y configurar las rutas. Así mismo, no nos cerramos a la posibilidad de utilizar
-el API Gateway de AWS en el futuro, si se considera necesario.
+Al igual que en el caso de la base de datos, hemos decidido mantener por el momento la arquitectura actual desplegada en local, es decir, replicaríamos la arquitectura actual desplegada en local. Sin embargo, a fecha de hoy (entrega del RFI III), no se ha desplegado el API Gateway, ya que se ha considerado que es más importante tener el servicio desplegado cuanto antes y en las próximas semanas se realizará el cambio a la primera opción, que simplemente requiere crear el servicio de API Gateway y configurar las rutas. Así mismo, no nos cerramos a la posibilidad de utilizar     el API Gateway de AWS en el futuro, si se considera necesario.
 
 </div>
 
@@ -327,28 +306,31 @@ pipeline de CI/CD de *Github Actions*.
 
 A continuación, se presenta el presupuesto de la arquitectura de AWS detallada anteriormente durante un año:
 
-**TODO** aquí hay que poner el presupuesto de la arquitectura de AWS, pego la información que ha encontrado Iñaki:
+### Web server (API + Front)
+Se ha hecho uso de AWS Fargate por lo que los factores a considerar serán los siguientes:
+* Precio por CPU virtual por hora: 0,04656 USD 
+* Precio por GB por hora: 0,00511 USD
+* Configuración actual: 0.5 vCPUs, 1GB
 
-Web server (API + Front)
-> https://aws.amazon.com/es/fargate/pricing/  
-> https://aws.amazon.com/es/ec2/pricing/  
-> AWS Fargate  
->     Por CPU virtual por hora: 0,04656 USD (En nuestro caso la mitad por utilizar 0.5 vCPUs)  
->	      Por GB por hora 0,00511 USD (En nuestro caso lo mismo por utilizar 1GB)  
-> AWS EC2  
->     Gratuito 750 horas al mes de uso de instancias t2.micro o t3.micro
+Con estas consideraciones, el precio anual final para este servicio sería:
+(0.04656 x 0.5 + 0.00511) x 24 x 365 = 248.70 USD/año (a considerar el número de tareas activas)
 
-Base de datos
-> Tarea propia usando PostgreSQL  
->   Mismas consideraciones que para "Web server"  
-> Amazon RDS  
->   https://aws.amazon.com/es/rds/pricing/  
->   Gratuito  
->       750 horas mensuales (31 x 24 = 744 horas como máximo al mes)  
->       20 GB almacenamiento  
->       20 GB copias de seguridad
+En este caso, y para el siguiente RFI, se considerará la opción de hacer uso de EC2 debido a su gratuidad de 750 horas mensuales para ciertas instancias. Se valorará teniendo en cuenta la complejidad de su implementación respecto a lo ya implementado actualmente.
 
-API Gateway
-> Mismas consideraciones que para "Web server"
+### Base de datos
+Suponiendo el uso de un servicio propio tendría el mismo coste que el Web server.
 
+En el caso de hacer uso de las tecnologías de AWS, Amazon RDS, sería gratuito ya que, de nuevo, se cubren un total de 750 horas mensuales, 20 GB de almacenamiento y 20GB de copias de seguridad.
+
+### API Gateway
+Suponiendo el uso de un servicio propio tendría el mismo coste que el Web server.
+
+### Presupuesto final
+Se detalla a continuación una horquilla de presupuesto entre el mínimo y el máximo posible que se podría llegar a tener.
+
+**Mínimo presupuesto anual:** en el caso de hacer uso de AWS Fargate para el Web server, un servicio propio también en Fargate para la base de datos y otro para el API Gateway.
+(0.04656 x 0.5 + 0.00511) x 24 x 365 x 3 = **746.10 USD/año** (a considerar el número de tareas activas)
+
+**Máximo presupuesto anual:** en el caso de hacer uso de AWS EC2 en lugar de AWS Fargate para el Web server, la tecnología RDS de Amazon para la base de datos y no dedicar un servicio propio al API Gateway.
+ **0 USD/año** (a considerar el número de tareas activas)
 </div>
