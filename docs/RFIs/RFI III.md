@@ -138,7 +138,6 @@ Cabe mencionar que se podrá desplegar en entornos diferentes, test y producció
 → ***[Ver ADR correspondiente](../ADRs/Infrastructure/CI_CD.md)***
 
 # Análisis final de las preguntas
-**Sin cambiar los apartados de "Ver xyz"**
 - ¿Cuáles son los procesos de CI?
 Ver [ADR Integración continua (CI)](../ADRs/Infrastructure/CI_CD.md)
 - ¿Cuáles son las herramientas CI?
