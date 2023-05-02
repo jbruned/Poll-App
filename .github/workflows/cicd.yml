@@ -11,6 +11,10 @@ on:
   release:
     types:
       - created
+      - edited
+      - published
+      - prereleased
+      - released
 jobs:
   lint:
     name: Lint
