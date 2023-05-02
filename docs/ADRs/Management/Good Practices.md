@@ -15,18 +15,18 @@ En este documento se recoge la información relativa a las decisiones iniciales 
 
 ## Tabla de contenidos
 
-<!-- [TOC] -->
+<!-- TOC -->
 - [Introducción](#introducción)
   - [Tabla de contenidos](#tabla-de-contenidos)
-- [Factores en la Decisión](#factores-en-la-decisión)
-- [Opciones Consideradas](#opciones-consideradas)
-  - [Ventajas y Desventajas de las opciones](#ventajas-y-desventajas-de-las-opciones)
-  - [Gestionar repositorio Git](#gestionar-repositorio-git)
-  - [Releases y tags](#releases-y-tags)
-  - [Uso de pipelines](#uso-de-pipelines)
-  - [Documentación de las APIs](#documentación-de-las-apis)
-- [Enlaces ](#enlaces-)
-
+* [Factores en la Decisión](#factores-en-la-decisión)
+* [Opciones Consideradas](#opciones-consideradas)
+  * [Ventajas y Desventajas de las opciones](#ventajas-y-desventajas-de-las-opciones)
+  * [Gestionar repositorio Git](#gestionar-repositorio-git)
+  * [Releases y tags](#releases-y-tags)
+  * [Uso de pipelines](#uso-de-pipelines)
+  * [Documentación de las APIs](#documentación-de-las-apis)
+* [Enlaces](#enlaces)
+<!-- TOC -->
 
 
 # Factores en la Decisión
@@ -135,7 +135,7 @@ Como puntos negativos, destacan los siguientes:
 </div>
 
 
-# Enlaces <!-- opcional -->
+# Enlaces
 <div style="text-align: justify!important">
 
 * [Swagger](https://swagger.io/)

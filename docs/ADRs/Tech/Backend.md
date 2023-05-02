@@ -16,7 +16,7 @@ Para cada decisión, se listan las opciones consideradas junto a una breve descr
 
 ## Tabla de contenidos
 
-<!-- [TOC] -->
+<!-- TOC -->
 - [Introducción](#introducción)
   - [Tabla de contenidos](#tabla-de-contenidos)
 - [Factores en la decisión](#factores-en-la-decisión)
@@ -26,6 +26,7 @@ Para cada decisión, se listan las opciones consideradas junto a una breve descr
   - [Python + Flask](#python--flask)
 - [Decisión](#decisión)
 - [Referencias](#referencias)
+<!-- TOC -->
 
 # Factores en la decisión
 <div style="text-align: justify!important">

@@ -19,10 +19,7 @@ tomada.
 
 ## Tabla de contenidos
 
-<!--[TOC] -->
 <!-- TOC -->
-
-* [ADR Arquitectura](#adr-arquitectura)
 * [Introducción](#introducción)
     * [Tabla de contenidos](#tabla-de-contenidos)
 * [Factores en la Decisión](#factores-en-la-decisión)
@@ -31,7 +28,6 @@ tomada.
     * [Arquitectura de 3 capas](#arquitecura-de-3-capas)
     * [Arquitectura de 2 capas](#arquitectura-de-2-capas)
 * [Decisión](#decisión)
-
 <!-- TOC -->
 
 # Factores en la Decisión

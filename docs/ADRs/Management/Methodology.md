@@ -21,7 +21,7 @@ Cabe destacar que de partida, se ha decidido hacer uso de una metodología ágil
 </div>
 
 ## Tabla de contenidos
-<!-- [TOC] -->
+<!-- TOC -->
 - [Introducción](#introducción)
   - [Tabla de contenidos](#tabla-de-contenidos)
 - [Factores en la decisión](#factores-en-la-decisión)
@@ -31,6 +31,7 @@ Cabe destacar que de partida, se ha decidido hacer uso de una metodología ágil
 - [Decisión](#decisión)
   - [Reuniones/Seguimiento](#reunionesseguimiento)
   - [Buenas prácticas](#buenas-prácticas)
+<!-- TOC -->
 
 # Factores en la decisión
 <div style="text-align: justify!important">

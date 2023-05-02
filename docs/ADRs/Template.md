@@ -15,8 +15,8 @@ En este documento se recoge la información relativa a las decisiones iniciales 
 
 ## Tabla de contenidos
 
-[TOC]
-
+<!-- TOC -->
+<!-- TOC -->
 
 # Factores en la Decisión
 <div style="text-align: justify!important">
