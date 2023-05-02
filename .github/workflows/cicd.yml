@@ -12,6 +12,7 @@ on:
 jobs:
   lint:
     # Run GH Super-Linter against code base
+    name: Lint
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
