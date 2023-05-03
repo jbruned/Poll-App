@@ -12,15 +12,16 @@ En este documento se recoge la información relativa a las decisiones tomadas en
 * [Arquitectura en Cloud](#arquitectura-en-cloud)
   * [Resumen arquitectura previa](#resumen-arquitectura-previa)
   * [Evaluación alternativas en Cloud](#evaluación-alternativas-en-cloud)
-    * [Servidor web (API + Frontend)](#servidor-web-api--frontend)
+    * [Servidor web (API + Frontend)](#servidor-web--api--frontend-)
     * [Base de datos](#base-de-datos)
     * [API Gateway](#api-gateway)
-* [Integración continua (CI)](#integración-continua-ci)
+* [Integración continua (CI)](#integración-continua--ci-)
   * [Linting](#linting)
   * [Testing](#testing)
   * [Build](#build)
   * [Publish](#publish)
   * [Deploy](#deploy)
+* [Coste de la solución](#coste-de-la-solución)
 * [Análisis final de las preguntas](#análisis-final-de-las-preguntas)
 <!-- TOC -->
 
@@ -136,6 +137,15 @@ Cabe mencionar que se podrá desplegar en entornos diferentes, test y producció
 </div>
 
 → ***[Ver ADR correspondiente](../ADRs/Infrastructure/CI_CD.md)***
+
+# Coste de la solución
+<div style="text-align: justify">
+
+Se detalla de una mejor manera en el ADR correspondiente. No obstante, y a modo de resumen, el coste total de nuestra solución variaría entre la siguiente horquilla:
+**237.72 USD/año** ↔ **983.81 USD/año**
+
+→ ***[Ver ADR correspondiente](../ADRs/Infrastructure/Deployment.md)***
+</div>
 
 # Análisis final de las preguntas
 - ¿Cuáles son los procesos de CI?
