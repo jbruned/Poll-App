@@ -127,9 +127,7 @@ La base de datos es el segundo de los servicios desplegados en local. Sin embarg
 
 <div style="text-align: justify!important">
 
-En esta opción, la base de datos se desplegaría en el mismo servicio que el API. Esto es fácilmente realizable ya que
-disponemos de una variable de entorno `USE_POSTGRES`, que en caso de ser `False` utiliza una base de datos de SQLite
-por defecto dentro del propio servicio. En caso de ser `True`, se utiliza una base de datos de PostgreSQL.
+En esta opción, la base de datos se desplegaría en el mismo servicio que el API. Esto es fácilmente realizable ya que disponemos de una variable de entorno `USE_POSTGRES`, que en caso de ser `False` utiliza una base de datos de SQLite por defecto dentro del propio servicio. En caso de ser `True`, se utiliza una base de datos de PostgreSQL.
 
 - Ventajas:
     - Sencillez de configuración
@@ -257,7 +255,7 @@ En esta opción, se utilizaría el API Gateway de AWS, que es un servicio que of
 
 <div style="text-align: justify!important">
 
-Al igual que en el caso de la base de datos, hemos decidido mantener por el momento la arquitectura actual desplegada en local, es decir, replicaríamos la arquitectura actual desplegada en local. Sin embargo, a fecha de hoy (entrega del RFI III), no se ha desplegado el API Gateway, ya que se ha considerado que es más importante tener el servicio desplegado cuanto antes y en las próximas semanas se realizará el cambio a la primera opción, que simplemente requiere crear el servicio de API Gateway y configurar las rutas. Así mismo, no nos cerramos a la posibilidad de utilizar     el API Gateway de AWS en el futuro, si se considera necesario.
+Al igual que en el caso de la base de datos, hemos decidido mantener por el momento la arquitectura actual desplegada en local, es decir, replicaríamos la arquitectura actual desplegada en local. Sin embargo, a fecha de hoy (entrega del RFI III), no se ha desplegado el API Gateway, ya que se ha considerado que es más importante tener el servicio desplegado cuanto antes y en las próximas semanas se realizará el cambio a la primera opción, que simplemente requiere crear el servicio de API Gateway y configurar las rutas. Así mismo, no nos cerramos a la posibilidad de utilizar el API Gateway de AWS en el futuro, si se considera necesario.
 
 </div>
 
@@ -283,16 +281,10 @@ se configurará el API gateway.
 
 <div style="text-align: justify!important">
 
-Para automatizar el despliegue de la arquitectura en AWS, se utilizará *Terraform*, por ser la herramienta más
-extendida y, al mismo tiempo, un requisito del cliente. Además, se utilizarán imágenes de *Docker* para desplegar
-los servicios; concretamente, para el servicio con el API y el frontend se utilizará la imagen de *Docker* que ya se
-ha creado en anteriores iteraciones del desarrollo. Para el servicio de base de datos, se utilizará la imagen
-oficial de *PostgreSQL* y para el servicio de API Gateway, se utilizará la imagen oficial de *Kong*.
+Para automatizar el despliegue de la arquitectura en AWS, se utilizará *Terraform*, por ser la herramienta más extendida y, al mismo tiempo, un requisito del cliente. Además, se utilizarán imágenes de *Docker* para desplegar los servicios; concretamente, para el servicio con el API y el frontend se utilizará la imagen de *Docker* que ya se ha creado en anteriores iteraciones del desarrollo. Para el servicio de base de datos, se utilizará la imagen oficial de *PostgreSQL* y para el servicio de API Gateway, se utilizará la imagen oficial de *Kong*.
 
 La automatización del despliegue se incorporará a la versión final del proyecto, y se incluirá en el pipeline de CI/CD.
-En este RFI, se ha realizado el despliegue manualmente, para comprobar que la arquitectura funciona correctamente. La
-única parte que ya se ha automatizado es la publicación de la imagen de *Docker* del servidor web en *ECR* desde la
-pipeline de CI/CD de *Github Actions*.
+En este RFI, se ha realizado el despliegue manualmente, para comprobar que la arquitectura funciona correctamente. La única parte que ya se ha automatizado es la publicación de la imagen de *Docker* del servidor web en *ECR* desde la pipeline de CI/CD de *Github Actions*.
 
 </div>
 
@@ -321,12 +313,25 @@ En el caso de hacer uso de las tecnologías de AWS, Amazon RDS, sería gratuito 
 ### API Gateway
 Suponiendo el uso de un servicio propio tendría el mismo coste que el Web server.
 
+### Otros aspectos - Balanceador de carga
+Actualmente estamos usando un balanceador de carga de aplicaciones. El coste del mismo se ha considerado a largo plazo, es decir, sin tener en cuenta que se dispondría de los 12 primeros meses gratuitos. A partir del primer año el coste sería de:
+* Precio por balanceador de carga de aplicaciones por hora: 0,027 USD
+
+Con lo que supondría un total de 0.027 x 24 x 365 = 236.52 USD/año
+
+### Otros aspectos - ECR
+En el caso de hacer uso de repositorios públicos el coste sería 0, ya que el nivel gratuito permanente de AWS cubre hasta 50GB/mes.
+Sin embargo, se está haciendo uso de repositorios privados por lo que el coste a considerar sería:
+* Precio por GB por mes: 0.10 USD
+
+Con lo que el coste anual sería de 0.10 x 12 = 1.2 USD/año
+
 ### Presupuesto final
 Se detalla a continuación una horquilla de presupuesto entre el mínimo y el máximo posible que se podría llegar a tener.
 
 **Mínimo presupuesto anual:** en el caso de hacer uso de AWS Fargate para el Web server, un servicio propio también en Fargate para la base de datos y otro para el API Gateway.
-(0.04656 x 0.5 + 0.00511) x 24 x 365 x 3 = **746.10 USD/año** (a considerar el número de tareas activas)
+(0.04656 x 0.5 + 0.00511) x 24 x 365 x 3 + 236.52 + 1.2 = **983.81 USD/año** (a considerar el número de tareas activas)
 
 **Máximo presupuesto anual:** en el caso de hacer uso de AWS EC2 en lugar de AWS Fargate para el Web server, la tecnología RDS de Amazon para la base de datos y no dedicar un servicio propio al API Gateway.
- **0 USD/año** (a considerar el número de tareas activas)
+0 + 236.52 + 1.2 = **237.72 USD/año** (a considerar el número de tareas activas)
 </div>

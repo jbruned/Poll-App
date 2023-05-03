@@ -137,6 +137,15 @@ Cabe mencionar que se podrá desplegar en entornos diferentes, test y producció
 
 → ***[Ver ADR correspondiente](../ADRs/Infrastructure/CI_CD.md)***
 
+# Coste de la solución
+<div style="text-align: justify">
+
+Se detalla de una mejor manera en el ADR correspondiente. No obstante, y a modo de resumen, el coste total de nuestra solución variaría entre la siguiente horquilla:
+**237.72 USD/año** ↔ **983.81 USD/año**
+
+→ ***[Ver ADR correspondiente](../ADRs/Infrastructure/Deployment.md)***
+</div>
+
 # Análisis final de las preguntas
 - ¿Cuáles son los procesos de CI?
 Ver [ADR Integración continua (CI)](../ADRs/Infrastructure/CI_CD.md)
