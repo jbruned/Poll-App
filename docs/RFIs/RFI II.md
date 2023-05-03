@@ -7,9 +7,7 @@ En este documento se recoge la información relativa a las decisiones tomadas en
     
 ## Tabla de contenidos
 
-<!-- [TOC] -->
-- [Documento RFI II](#documento-rfi-ii)
-  - [Tabla de contenidos](#tabla-de-contenidos)
+<!-- TOC -->
 - [Introducción](#introducción)
 - [Arquitectura](#arquitectura)
 - [Microservicios](#microservicios)
@@ -17,6 +15,7 @@ En este documento se recoge la información relativa a las decisiones tomadas en
   - [Backend](#backend)
   - [API Gateway](#api-gateway)
 - [Análisis final de las preguntas](#análisis-final-de-las-preguntas)
+<!-- TOC -->
 
 # Introducción
 

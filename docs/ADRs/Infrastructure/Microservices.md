@@ -18,24 +18,19 @@ funcionalidad.
 
 ## Tabla de contenidos
 
-**TODO ACTUALIZAR**
-
-<!--[TOC] -->
 <!-- TOC -->
-- [ADR Microservicios](#adr-microservicios)
 - [Introducción](#introducción)
   - [Tabla de contenidos](#tabla-de-contenidos)
-- [Factores en la Decisión](#factores-en-la-decisión)
-- [Listado de microservicios](#listado-de-microservicios)
-  - [Funcionalidad \& Alternativas en el desarrollo](#funcionalidad--alternativas-en-el-desarrollo)
-  - [Base de datos](#base-de-datos)
-  - [Backend](#backend)
-  - [API Gateway](#api-gateway)
-  - [Autorización y Autenticación](#autorización-y-autenticación)
-- [Comunicación entre microservicios](#comunicación-entre-microservicios)
-- [Despliegue local de los microservicios](#despliegue-local-de-los-microservicios)
-- [Prueba de funcionalidad del sistema en entorno de test local](#prueba-de-funcionalidad-del-sistema-en-entorno-de-test-local)
-
+* [Factores en la Decisión](#factores-en-la-decisión)
+* [Listado de microservicios](#listado-de-microservicios)
+    * [Funcionalidad & Alternativas en el desarrollo](#funcionalidad--alternativas-en-el-desarrollo)
+    * [Base de datos](#base-de-datos)
+    * [Backend](#backend)
+    * [API Gateway](#api-gateway)
+    * [Autorización y Autenticación](#autorización-y-autenticación)
+* [Comunicación entre microservicios](#comunicación-entre-microservicios)
+* [Despliegue local de los microservicios](#despliegue-local-de-los-microservicios)
+* [Prueba de funcionalidad del sistema en entorno de test local](#prueba-de-funcionalidad-del-sistema-en-entorno-de-test-local)
 <!-- TOC -->
 
 # Factores en la Decisión

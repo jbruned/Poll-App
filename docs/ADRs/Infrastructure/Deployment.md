@@ -5,7 +5,7 @@
     * Unai Biurrun Villacorta
     * Jorge Bruned Alamán
     * Iñaki Velasco Rodríguez
-* Fecha 01-05-2023
+* Fecha: 01-05-2023
 
 # Introducción
 

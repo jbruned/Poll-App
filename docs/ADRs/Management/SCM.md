@@ -15,7 +15,7 @@ En este documento se recoge la información relativa a las decisiones iniciales 
 
 ## Tabla de contenidos
 
-<!-- [TOC] -->
+<!-- TOC -->
 - [Introducción](#introducción)
   - [Tabla de contenidos](#tabla-de-contenidos)
 - [Factores en la Decisión](#factores-en-la-decisión)
@@ -24,6 +24,7 @@ En este documento se recoge la información relativa a las decisiones iniciales 
   - [GitLab](#gitlab)
 - [Decisión](#decisión)
   - [Herramientas de gestión](#herramientas-de-gestión)
+<!-- TOC -->
 
 # Factores en la Decisión
 <div style="text-align: justify!important">

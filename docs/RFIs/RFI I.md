@@ -7,9 +7,7 @@ En este documento se recoge la información relativa a las decisiones iniciales 
     
 ## Tabla de contenidos
 
-<!-- [TOC] -->
-- [Documento RFI I](#documento-rfi-i)
-  - [Tabla de contenidos](#tabla-de-contenidos)
+<!-- TOC -->
 - [Introducción](#introducción)
 - [Estructura organizacional](#estructura-organizacional)
   - [Roles](#roles)
@@ -25,6 +23,7 @@ En este documento se recoge la información relativa a las decisiones iniciales 
     - [Base de datos](#base-de-datos)
     - [Frontend](#frontend)
   - [Despliegue](#despliegue)
+<!-- TOC -->
     
 # Introducción
 
