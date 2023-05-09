@@ -6,7 +6,7 @@ deps:
 deps-front:
 	cd frontend && npm install && cd ..
 deps-back:
-	cd backend && pip install -r requirements.txt && cd ..
+	cd backend && pip install --user -r requirements.txt && cd ..
 lint:
 	docker run --rm -e RUN_LOCAL=true --env-file ".github/super-linter.env" -v /"$(PWD)":/tmp/lint github/super-linter
 build:
