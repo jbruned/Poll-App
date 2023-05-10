@@ -15,9 +15,9 @@ services:
       - name: flask
         paths:
           - /
-      - name: flask-login
+      - name: vote
         paths:
-          - /api/v1/login
+          - /api/v1/option/
 
 plugins:
   - name: file-log
@@ -26,7 +26,7 @@ plugins:
       reopen: false
 
   - name: key-auth
-    route: flask-login
+    route: vote
     config:
       key_in_header: true
       key_names:
