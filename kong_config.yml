@@ -15,9 +15,16 @@ services:
       - name: flask
         paths:
           - /
+      - name: options
+        paths:
+          - /api/v1/option/protected
+        strip_path: true
+        methods:
+          - POST
+          - DELETE
       - name: vote
         paths:
-          - /api/v1/option/
+          - /api/v1/option/(?<id>\d+)/vote
 
 plugins:
   - name: file-log
@@ -26,7 +33,7 @@ plugins:
       reopen: false
 
   - name: key-auth
-    route: vote
+    route: options
     config:
       key_in_header: true
       key_names:
