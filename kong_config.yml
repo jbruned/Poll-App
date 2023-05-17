@@ -17,14 +17,20 @@ services:
           - /
       - name: options
         paths:
-          - /api/v1/option/protected
-        strip_path: true
+          - /api/v1/option/
         methods:
           - POST
           - DELETE
-      - name: vote
+        strip_path: false
+
+      - name: options-vote
         paths:
           - /api/v1/option/(?<id>\d+)/vote
+        methods:
+          - POST
+          - DELETE
+          - GET
+        strip_path: false
 
 plugins:
   - name: file-log
