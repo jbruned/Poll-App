@@ -9,27 +9,23 @@ class Config:  # pylint: disable=too-few-public-methods
     """
     App configuration
     """
-    BACKEND_PORT = int(os.getenv("BACKEND_PORT", '9000'))
+    BACKEND_PORT = int(os.getenv("BACKEND_PORT", '80'))
     DEBUG_ON = os.getenv("DEBUG_ON", 'False').lower() in ('true', '1', 't')
-    # USE_POSTGRES = os.getenv("USE_POSTGRES", 'False') \
-    #    .lower() in ('true', '1', 't')
+    LOG_FILENAME = os.getenv("LOG_FILENAME", "pollapp.log")
+
     DB_HOST = os.getenv("DB_HOST", None)  # if USE_POSTGRES else None
-    DB_PORT = os.getenv("DB_PORT")  # if USE_POSTGRES else None
-    DB_NAME = os.getenv("DB_NAME")  # if USE_POSTGRES else None
-    DB_USER = os.getenv("DB_USER")  # if USE_POSTGRES else None
-    DB_PASSWORD = os.getenv("DB_PASSWORD")  # if USE_POSTGRES else None
+    DB_PORT = os.getenv("DB_PORT", None)  # if USE_POSTGRES else None
+    DB_NAME = os.getenv("DB_NAME", None)  # if USE_POSTGRES else None
+    DB_USER = os.getenv("DB_USER", None)  # if USE_POSTGRES else None
+    DB_PASSWORD = os.getenv("DB_PASSWORD", None)  # if USE_POSTGRES else None
     USE_POSTGRES = all([
         DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_PASSWORD
     ])
-    # if USE_POSTGRES and not all([
-    #     DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_PASSWORD
-    # ]):
-    #     raise ValueError("Invalid DB config in ENV variables")
     DROP_DB_AND_INSERT_TEST_DATA = os.getenv(
         "DROP_DB_AND_INSERT_TEST_DATA",
         "True" if DEBUG_ON else "False"
     ).lower() in ('true', '1', 't')
-    LOG_FILENAME = os.getenv("LOG_FILENAME", "pollapp.log")
+
     SQLITE_URI = "sqlite:///flasksqlTest.db"
     POSTGRES_URI = "postgresql://" + \
         f"{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
