@@ -13,11 +13,11 @@ class Config:  # pylint: disable=too-few-public-methods
     DEBUG_ON = os.getenv("DEBUG_ON", 'False').lower() in ('true', '1', 't')
     LOG_FILENAME = os.getenv("LOG_FILENAME", "pollapp.log")
 
-    DB_HOST = os.getenv("DB_HOST", None)  # if USE_POSTGRES else None
-    DB_PORT = os.getenv("DB_PORT", None)  # if USE_POSTGRES else None
-    DB_NAME = os.getenv("DB_NAME", None)  # if USE_POSTGRES else None
-    DB_USER = os.getenv("DB_USER", None)  # if USE_POSTGRES else None
-    DB_PASSWORD = os.getenv("DB_PASSWORD", None)  # if USE_POSTGRES else None
+    DB_HOST = os.getenv("DB_HOST", None)
+    DB_PORT = os.getenv("DB_PORT", None)
+    DB_NAME = os.getenv("DB_NAME", None)
+    DB_USER = os.getenv("DB_USER", None)
+    DB_PASSWORD = os.getenv("DB_PASSWORD", None)
     DB_TIMEOUT = int(os.getenv("DB_TIMEOUT", '5'))  # In seconds
     USE_POSTGRES = all([
         DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_PASSWORD
