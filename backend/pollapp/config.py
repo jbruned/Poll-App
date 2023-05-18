@@ -18,6 +18,7 @@ class Config:  # pylint: disable=too-few-public-methods
     DB_NAME = os.getenv("DB_NAME", None)  # if USE_POSTGRES else None
     DB_USER = os.getenv("DB_USER", None)  # if USE_POSTGRES else None
     DB_PASSWORD = os.getenv("DB_PASSWORD", None)  # if USE_POSTGRES else None
+    DB_TIMEOUT = int(os.getenv("DB_TIMEOUT", '5'))  # In seconds
     USE_POSTGRES = all([
         DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_PASSWORD
     ])
