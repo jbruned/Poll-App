@@ -42,7 +42,7 @@ def _log(message: str, log_type: str = "Log", console_file=stdout):
 
 def log_error(message: str):
     """
-    Log an error to the console and/or log file (depending on LOG_LEVEL
+    Log an error to the console and/or log file (depending on LOG_LEVEL)
     @param message: error message to log
     """
     if LOG_LEVEL >= LOG_LEVEL_ERROR:
@@ -51,7 +51,7 @@ def log_error(message: str):
 
 def log_warning(message: str):
     """
-    Log a warning to the console and/or log file (depending on LOG_LEVEL
+    Log a warning to the console and/or log file (depending on LOG_LEVEL)
     @param message: warning message to log
     """
     if LOG_LEVEL >= LOG_LEVEL_WARNING:

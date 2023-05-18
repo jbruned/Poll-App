@@ -65,6 +65,17 @@ class WebGUI(Flask):
         self.config['SQLALCHEMY_DATABASE_URI'] = Config.DB_URI
         self.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
+        # Set timeout for queries
+        if Config.USE_POSTGRES and Config.DB_TIMEOUT:
+            self.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
+                'connect_args': {'options': f"-c statement_timeout={Config.DB_TIMEOUT * 1000}"},
+                # 'pool_pre_ping': True,
+                # 'pool_recycle': 300,
+                # 'pool_timeout': 30,
+                # 'pool_size': 10,
+                # 'max_overflow': 20,
+            }
+
         # Create database if it doesn't exist
         if Config.USE_POSTGRES:
             engine = create_engine(self.config['SQLALCHEMY_DATABASE_URI'])
