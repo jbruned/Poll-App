@@ -2,6 +2,20 @@
 backend/pollapp/gui/
 logs/
 
+# Terraform
+*.terraform
+*.tfstate
+*.tfstate.*
+*.lock.hcl
+
+# Ignore deployment symlinks
+**common.tf
+**bastion.tf
+**core.tf
+!/deployment/common/*
+!/deployment/bastion/bastion.tf
+!/deployment/core/core.tf
+
 # NPM packages from the root folder are not relevant to the project
 package.json
 package-lock.json
