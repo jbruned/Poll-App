@@ -126,8 +126,8 @@ resource "aws_ecs_task_definition" "main" {
               "value": "True"
             },
             {
-              "name": "DROP_DB_AND_INSERT_TEST_DATA",
-              "value": "False"
+              "name": "INSERT_TEST_DATA",
+              "value": "True"
             },
             {
               "name": "DB_HOST",
