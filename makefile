@@ -7,7 +7,13 @@ deps-front:
 	cd frontend && npm install && cd ..
 deps-back:
 	cd backend && pip install -r requirements.txt && cd ..
-lint:
+linters:
+	make lint-front && make lint-back
+lint-front:
+	cd frontend && npm run lint && cd ..
+lint-back:
+	cd backend && pylint *.py && pylint pollapp && cd ..
+super-linter:
 	docker run --rm -e RUN_LOCAL=true --env-file ".github/super-linter.env" -v /"$(PWD)":/tmp/lint github/super-linter
 build:
 	make build-front && make build-image
@@ -23,33 +29,8 @@ save-image:
 deploy-local:
 	docker compose up --build
 push-ecr:
-# 	ifeq ($(AWS_ACCOUNT_ID),)
-# 		$(error AWS_ACCOUNT_ID is undefined)
-# 	endif
-# 	ifeq ($(AWS_REGION),)
-# 		$(error AWS_REGION is undefined)
-# 	endif
-# 	ifeq ($(AWS_ACCESS_KEY_ID),)
-# 		$(error AWS_ACCESS_KEY_ID is undefined)
-# 	endif
-# 	ifeq ($(AWS_SECRET_ACCESS_KEY),)
-# 		$(error AWS_SECRET_ACCESS_KEY is undefined)
-# 	endif
 	aws ecr get-login-password --region $(AWS_REGION) | docker login --username AWS --password-stdin $(AWS_ACCOUNT_ID).dkr.ecr.$(AWS_REGION).amazonaws.com
 	docker tag $(IMAGE_NAME):latest $(AWS_ACCOUNT_ID).dkr.ecr.$(AWS_REGION).amazonaws.com/$(AWS_IMAGE_NAME):latest
 	docker push $(AWS_ACCOUNT_ID).dkr.ecr.$(AWS_REGION).amazonaws.com/$(AWS_IMAGE_NAME):latest
 deploy-ecs:
-	echo "Not implemented yet"
-# 	ifndef AWS_ACCOUNT_ID
-# 		$(error AWS_ACCOUNT_ID is undefined)
-# 	endif
-# 	ifndef AWS_REGION
-# 		$(error AWS_REGION is undefined)
-# 	endif
-# 	ifndef AWS_ACCESS_KEY_ID
-# 		$(error AWS_ACCESS_KEY_ID is undefined)
-# 	endif
-# 	ifndef AWS_SECRET_ACCESS_KEY
-# 		$(error AWS_SECRET_ACCESS_KEY is undefined)
-# 	endif
-# 	aws ecs update-service --cluster pollapp-cluster --service pollapp-service --force-new-deployment
+	cd deployment && bash deploy.sh
