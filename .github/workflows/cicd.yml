@@ -142,5 +142,5 @@ jobs:
       TF_VAR_AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
       TF_VAR_PREFIX: ${{ vars.AWS_PREFIX }}
       TF_VAR_DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-      TF_VAR_KONG_PASSWORD: ${{ secrets.KONG_PASSWORD }}
+      TF_VAR_KONG_DB_PASSWORD: ${{ secrets.KONG_PASSWORD }}
       TF_VAR_RDS_PASSWORD: ${{ secrets.RDS_PASSWORD }}
