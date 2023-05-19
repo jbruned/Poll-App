@@ -54,6 +54,13 @@ resource "aws_ecs_service" "main" {
 	launch_type          = "FARGATE"
 	force_new_deployment = true
 
+	// autoscale
+	deployment_maximum_percent = 200
+	deployment_minimum_healthy_percent = 100
+	deployment_controller {
+		type = "CODE_DEPLOY"
+	}
+
 	network_configuration {
 		subnets          = [data.aws_subnet.private.id, data.aws_subnet.private2.id]
 		security_groups  = [data.aws_security_group.private_sg.id]
@@ -151,11 +158,13 @@ resource "aws_ecs_task_definition" "main" {
 resource "null_resource" "wait_for_web" {
 	triggers = {
 		url = aws_lb.main.dns_name
+		run_always = timestamp()
 	}
+	depends_on = [aws_lb.main, aws_ecs_service.main]
 	provisioner "local-exec" {
-		# Wait until a request returns a 200 response with a 5 minute timeout
+		# Wait until a request returns a 200 response
 		# If the timeout is reached, the resource is marked as errored
-		command = "curl --retry 5 --retry-delay 3 --retry-connrefused http://${aws_lb.main.dns_name}"
+		command = "curl --fail --retry-all-errors --silent --output /dev/null --retry 20 --retry-delay 5 --retry-connrefused http://${aws_lb.main.dns_name}:${var.EXPOSED_PORT}"
 	}
 }
 

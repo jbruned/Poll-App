@@ -1,6 +1,6 @@
 IMAGE_NAME = pollapp
 run:
-	make deps && make lint && make build
+	make deps && make lint && make build && make deploy-local
 deps:
 	make deps-front && make deps-back
 deps-front:
