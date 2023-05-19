@@ -22,8 +22,8 @@ class Config:  # pylint: disable=too-few-public-methods
     USE_POSTGRES = all([
         DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_PASSWORD
     ])
-    DROP_DB_AND_INSERT_TEST_DATA = os.getenv(
-        "DROP_DB_AND_INSERT_TEST_DATA",
+    INSERT_TEST_DATA = os.getenv(
+        "INSERT_TEST_DATA",
         "True" if DEBUG_ON else "False"
     ).lower() in ('true', '1', 't')
 

@@ -7,6 +7,9 @@ ln -f -s ../common/common.tf app/common.tf
 ln -f -s ../common/core.tf app/core.tf
 ln -f -s ../common/common.tf bastion/common.tf
 ln -f -s ../common/core.tf bastion/core.tf
+ln -f -s ../common/bastion.tf import/bastion.tf
+ln -f -s ../common/core.tf import/core.tf
+ln -f -s ../common/common.tf import/common.tf
 
 echo "Loading environment variables"
 # source .env

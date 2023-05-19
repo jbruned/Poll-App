@@ -85,11 +85,11 @@ class WebGUI(Flask):
         # Initialize database
         database.init_app(self)
         Migrate(self, database)
-        if Config.DROP_DB_AND_INSERT_TEST_DATA:
+        database.create_all()
+        if Config.INSERT_TEST_DATA or Poll.query.count() == 0:
             database.drop_all()
             database.create_all()
             insert_test_data()
-        database.create_all()
 
     @staticmethod
     def load_settings():

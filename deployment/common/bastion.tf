@@ -4,3 +4,7 @@ data "aws_instance" "bastion" {
 		values = [local.BASTION_HOST_NAME]
 	}
 }
+
+output "aws_instance--bastion" {
+	value = data.aws_instance.bastion.id
+}

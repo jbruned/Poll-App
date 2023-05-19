@@ -57,9 +57,9 @@ resource "aws_ecs_service" "main" {
 	// autoscale
 	deployment_maximum_percent = 200
 	deployment_minimum_healthy_percent = 100
-	deployment_controller {
+	/*deployment_controller {
 		type = "CODE_DEPLOY"
-	}
+	}*/
 
 	network_configuration {
 		subnets          = [data.aws_subnet.private.id, data.aws_subnet.private2.id]
@@ -126,7 +126,7 @@ resource "aws_ecs_task_definition" "main" {
               "value": "True"
             },
             {
-              "name": "DROP_DB_AND_INSERT_TEST_DATA",
+              "name": "INSERT_TEST_DATA",
               "value": "True"
             },
             {
