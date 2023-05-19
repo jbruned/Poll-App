@@ -21,9 +21,9 @@ jobs:
       - name: Install dependencies
         run: make deps
       - name: Lint React app
-        run: make linter-front
+        run: make lint-front
       - name: Lint Python app
-        run: make linter-back
+        run: make lint-back
   super-lint:
     name: Lint (Super Linter)
     runs-on: ubuntu-latest
