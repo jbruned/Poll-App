@@ -24,18 +24,18 @@ jobs:
         run: make lint-front
       - name: Lint Python app
         run: make lint-back
-  super-lint:
-    name: Lint (Super Linter)
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - run: cat .github/super-linter.env >> "$GITHUB_ENV"
-      - name: Lint Code Base
-        uses: github/super-linter@v5
-        continue-on-error: true
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          DEFAULT_BRANCH: develop
+#  super-lint:
+#    name: Lint (Super Linter)
+#    runs-on: ubuntu-latest
+#    steps:
+#      - uses: actions/checkout@v3
+#      - run: cat .github/super-linter.env >> "$GITHUB_ENV"
+#      - name: Lint Code Base
+#        uses: github/super-linter@v5
+#        continue-on-error: true
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#          DEFAULT_BRANCH: develop
   test:
     name: Tests
     runs-on: ubuntu-latest
