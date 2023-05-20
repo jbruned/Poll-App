@@ -88,6 +88,11 @@ variable "PREFIX" {
 	default = "pollapp"
 }
 
+variable "DISPOSABLE_BASTION_ID" {
+	type    = string
+	default = "host"
+}
+
 locals {
 	ROLE_ARN  = "arn:aws:iam::${var.AWS_ACCOUNT_ID}:role/LabRole"
 	IMAGE_URL = "${var.AWS_ACCOUNT_ID}.dkr.ecr.${var.AWS_REGION}.amazonaws.com/${var.AWS_IMAGE_NAME}:latest"
@@ -104,7 +109,7 @@ locals {
 	PUBLIC_SG_NAME         = "${local.PREFIX}-public-sg"
 	RDS_SG_NAME            = "${local.PREFIX}-rds-sg"
 	RDS_SUBNET_GROUP_NAME  = "${local.PREFIX}-rds-subnet-group"
-	BASTION_HOST_NAME      = "${local.PREFIX}-bastion"
+	BASTION_HOST_NAME      = "${local.PREFIX}-bastion-${var.DISPOSABLE_BASTION_ID}"
 }
 
 provider "aws" {

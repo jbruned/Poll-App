@@ -141,6 +141,7 @@ jobs:
       TF_VAR_DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
       TF_VAR_KONG_DB_PASSWORD: ${{ secrets.KONG_PASSWORD }}
       TF_VAR_RDS_PASSWORD: ${{ secrets.RDS_PASSWORD }}
+      TF_VAR_BASTION_DISPOSABLE_ID: ${{ github.run_id }}
   deploy-dev:
     name: Deploy (development env)
     if: github.event_name == 'release' || (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/'))
@@ -183,3 +184,4 @@ jobs:
       TF_VAR_DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
       TF_VAR_KONG_DB_PASSWORD: ${{ secrets.KONG_PASSWORD }}
       TF_VAR_RDS_PASSWORD: ${{ secrets.RDS_PASSWORD }}
+      TF_VAR_BASTION_DISPOSABLE_ID: ${{ github.run_id }}
