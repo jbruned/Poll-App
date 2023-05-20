@@ -72,7 +72,6 @@ jobs:
   publish:
     name: Publish
     runs-on: ubuntu-latest
-    environment: AWS
     if: github.event_name == 'release' || (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/'))
     needs:
       - build
@@ -142,10 +141,11 @@ jobs:
       TF_VAR_DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
       TF_VAR_KONG_DB_PASSWORD: ${{ secrets.KONG_PASSWORD }}
       TF_VAR_RDS_PASSWORD: ${{ secrets.RDS_PASSWORD }}
+      TF_VAR_BASTION_HOST_NAME: ${{ github.job }}
       TF_VAR_BASTION_DISPOSABLE_ID: ${{ github.run_id }}
       IONOS_API_KEY: ${{ secrets.IONOS_API_KEY }}
-      TF_VAR_DOMAIN: ${{ vars.DNS_DOMAIN }}
-      TF_VAR_SUBDOMAIN: ${{ vars.DNS_SUBDOMAIN }}
+      TF_VAR_DOMAIN: ${{ vars.DOMAIN }}
+      TF_VAR_SUBDOMAIN: ${{ vars.SUBDOMAIN }}
   deploy-dev:
     name: Deploy (development env)
     if: github.event_name == 'release' || (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/'))
@@ -188,4 +188,5 @@ jobs:
       TF_VAR_DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
       TF_VAR_KONG_DB_PASSWORD: ${{ secrets.KONG_PASSWORD }}
       TF_VAR_RDS_PASSWORD: ${{ secrets.RDS_PASSWORD }}
+      TF_VAR_BASTION_HOST_NAME: ${{ github.job }}
       TF_VAR_BASTION_DISPOSABLE_ID: ${{ github.run_id }}

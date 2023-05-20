@@ -88,9 +88,14 @@ variable "PREFIX" {
 	default = "pollapp"
 }
 
-variable "DISPOSABLE_BASTION_ID" {
+variable "BASTION_HOST_NAME" {
 	type    = string
 	default = "host"
+}
+
+variable "BASTION_DISPOSABLE_ID" {
+	type    = string
+	default = ""
 }
 
 locals {
@@ -109,7 +114,7 @@ locals {
 	PUBLIC_SG_NAME         = "${local.PREFIX}-public-sg"
 	RDS_SG_NAME            = "${local.PREFIX}-rds-sg"
 	RDS_SUBNET_GROUP_NAME  = "${local.PREFIX}-rds-subnet-group"
-	BASTION_HOST_NAME      = "${local.PREFIX}-bastion-${var.DISPOSABLE_BASTION_ID}"
+	BASTION_HOST_NAME      = "${local.PREFIX}-bastion-${var.BASTION_HOST_NAME}${var.BASTION_DISPOSABLE_ID}"
 }
 
 provider "aws" {
