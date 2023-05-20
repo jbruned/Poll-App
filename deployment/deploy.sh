@@ -48,13 +48,17 @@ if [ "$#" -eq 0 ] || [ "$1" = "app" ]; then
 	cd ..
 fi
 if [ "$#" -eq 0 ] || [ "$1" = "domain" ]; then
-	echo "Deploying domain"
-	cd domain
-	terraform init
-	if [ -f import.sh ] && [ ! -f terraform.tfstate ]; then
-		bash import.sh && rm import.sh
+	if [ -z "$IONOS_API_KEY" ]; then
+		echo "DOMAIN environment variable is not set"
+	else
+		echo "Deploying domain"
+		cd domain
+		terraform init
+		if [ -f import.sh ] && [ ! -f terraform.tfstate ]; then
+			bash import.sh && rm import.sh
+		fi
+		terraform apply -auto-approve -compact-warnings -input=false
+		cd ..
 	fi
-	terraform apply -auto-approve -compact-warnings -input=false
-	cd ..
 fi
 echo "Done deploying"
