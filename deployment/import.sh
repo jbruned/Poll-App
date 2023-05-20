@@ -21,8 +21,9 @@ if [ "$#" -eq 0 ] || [ "$1" = "core" ]; then
 	echo "Creating core import script..."
 	cd core
 	terraform init
-	terraform apply -auto-approve || echo "The core module is not yet deployed"
-	terraform output | grep -v -E '^(::debug::|\[command\])' | sed -e 's/--/./g' -e 's/ = / /g' -e 's/\"//g' -e 's/^/terraform import /' > ../../core/import.sh
+	(terraform apply -auto-approve -compact-warnings -input=false &&
+		terraform output | grep -v -E '^(::debug::|\[command\])' | sed -e 's/--/./g' -e 's/ = / /g' -e 's/\"//g' -e 's/^/terraform import /' > ../../core/import.sh) \
+		|| echo "The core module is not yet deployed"
 	cd ..
 	echo "Done creating core import script"
 fi
@@ -30,8 +31,9 @@ if [ "$#" -eq 0 ] || [ "$1" = "bastion" ]; then
 	echo "Creating bastion import script..."
 	cd bastion
 	terraform init
-	terraform apply -auto-approve || echo "The bastion host doesn't currently exist"
-	terraform output | grep -v -E '^(::debug::|\[command\])' | sed -e 's/--/./g' -e 's/ = / /g' -e 's/\"//g' -e 's/^/terraform import /' > ../../bastion/import.sh
+	(terraform apply -auto-approve -compact-warnings -input=false &&
+		terraform output | grep -v -E '^(::debug::|\[command\])' | sed -e 's/--/./g' -e 's/ = / /g' -e 's/\"//g' -e 's/^/terraform import /' > ../../bastion/import.sh) \
+		|| echo "The bastion host doesn't currently exist"
 	cd ..
 	echo "Done creating bastion import script"
 fi
@@ -39,8 +41,9 @@ if [ "$#" -eq 0 ] || [ "$1" = "db" ]; then
 	echo "Creating db import script..."
 	cd db
 	terraform init
-	terraform apply -auto-approve || echo "The databases and users aren't setup yet"
-	terraform output | sed -e 's/--/./g' -e 's/ = / /g' -e 's/\"//g' -e 's/^/terraform import /' -e 's/$/ || echo "Resource not found"/' > ../../db/import.sh
+	(terraform apply -auto-approve -compact-warnings -input=false &&
+		terraform output | sed -e 's/--/./g' -e 's/ = / /g' -e 's/\"//g' -e 's/^/terraform import /' -e 's/$/ || echo "Resource not found"/' > ../../db/import.sh) \
+		|| echo "The databases and users aren't setup yet"
 	cd ..
 	echo "Done creating db import script"
 fi
@@ -48,8 +51,9 @@ if [ "$#" -eq 0 ] || [ "$1" = "app" ]; then
 	echo "Creating app import script..."
 	cd app
 	terraform init
-	terraform apply -auto-approve || echo "The app isn't deployed yet"
-	terraform output | sed -e 's/--/./g' -e 's/ = / /g' -e 's/\"//g' -e 's/^/terraform import /' > ../../app/import.sh
+	(terraform apply -auto-approve -compact-warnings -input=false &&
+		terraform output | sed -e 's/--/./g' -e 's/ = / /g' -e 's/\"//g' -e 's/^/terraform import /' > ../../app/import.sh) \
+		|| echo "The app isn't deployed yet"
 	cd ..
 	echo "Done creating app import script"
 fi
