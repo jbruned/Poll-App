@@ -1,65 +1,12 @@
-resource "aws_lb" "main" {
-	name               = "${local.PREFIX}-load-balancer"
-	internal           = false
-	load_balancer_type = "application"
-	security_groups    = [data.aws_security_group.public_sg.id]
-	subnets            = [data.aws_subnet.public.id, data.aws_subnet.public2.id]
-
-	tags = {
-		Name = "${local.PREFIX}-load-balancer"
-	}
-}
-
-resource "aws_lb_target_group" "main" {
-	name        = "${local.PREFIX}-target-group"
-	port        = var.EXPOSED_PORT
-	protocol    = "HTTP"
-	vpc_id      = data.aws_vpc.main.id
-	target_type = "ip"
-
-	health_check {
-		enabled             = true
-		interval            = 30
-		path                = "/"
-		timeout             = 5
-		healthy_threshold   = 3
-		unhealthy_threshold = 3
-	}
-}
-
-resource "aws_lb_listener" "main" {
-	load_balancer_arn = aws_lb.main.arn
-	port              = var.EXPOSED_PORT
-	protocol          = "HTTP"
-
-	default_action {
-		type             = "forward"
-		target_group_arn = aws_lb_target_group.main.arn
-	}
-}
-
-resource "aws_ecs_cluster" "cluster" {
-	name = "${local.PREFIX}-ecs-cluster"
-
-	tags = {
-		Name = "${local.PREFIX}-ecs-cluster"
-	}
-}
-
 resource "aws_ecs_service" "main" {
 	name                 = "${local.PREFIX}-ecs-service"
-	cluster              = aws_ecs_cluster.cluster.id
+	cluster              = data.aws_ecs_cluster.cluster.id
 	task_definition      = aws_ecs_task_definition.main.arn
 	desired_count        = 2
 	launch_type          = "FARGATE"
 	force_new_deployment = true
-
-	// autoscale
 	deployment_maximum_percent = 200
 	deployment_minimum_healthy_percent = 100
-	/*deployment_controller {
-		type = "CODE_DEPLOY"
-	}*/
 
 	network_configuration {
 		subnets          = [data.aws_subnet.private.id, data.aws_subnet.private2.id]
@@ -68,12 +15,12 @@ resource "aws_ecs_service" "main" {
 	}
 
 	load_balancer {
-		target_group_arn = aws_lb_target_group.main.arn
+		target_group_arn = data.aws_lb_target_group.main.arn
 		container_name   = var.CONTAINER_NAME
 		container_port   = var.EXPOSED_PORT
 	}
 
-	depends_on = [aws_lb_listener.main]
+	depends_on = [data.aws_lb_listener.main]
 }
 
 resource "aws_cloudwatch_log_group" "ecs" {
@@ -84,7 +31,6 @@ resource "aws_cloudwatch_log_group" "ecs" {
 resource "aws_ecs_task_definition" "main" {
 	family                   = "${local.PREFIX}-flask-task"
 	execution_role_arn       = local.ROLE_ARN
-	// task_role_arn            = local.ROLE_ARN
 	network_mode             = "awsvpc"
 	requires_compatibilities = ["FARGATE"]
 	cpu                      = var.CPU
@@ -157,18 +103,18 @@ resource "aws_ecs_task_definition" "main" {
 
 resource "null_resource" "wait_for_web" {
 	triggers = {
-		url = aws_lb.main.dns_name
+		url = data.aws_lb.main.dns_name
 		run_always = timestamp()
 	}
-	depends_on = [aws_lb.main, aws_ecs_service.main]
+	depends_on = [data.aws_lb.main, aws_ecs_service.main]
 	provisioner "local-exec" {
 		# Wait until a request returns a 200 response
 		# If the timeout is reached, the resource is marked as errored
-		command = "curl --fail --retry-all-errors --silent --output /dev/null --retry 20 --retry-delay 5 --retry-connrefused http://${aws_lb.main.dns_name}:${var.EXPOSED_PORT}"
+		command = "curl --fail --retry-all-errors --silent --output /dev/null --retry 20 --retry-delay 5 --retry-connrefused http://${data.aws_lb.main.dns_name}:${var.EXPOSED_PORT}"
 	}
 }
 
 output "url" {
-	value      = "http://${aws_lb.main.dns_name}"
+	value      = "http://${data.aws_lb.main.dns_name}"
 	depends_on = [null_resource.wait_for_web]
 }
