@@ -13,10 +13,13 @@ logs/
 **bastion.tf
 **core.tf
 **import.sh
+**/deployment/import/*
 !/deployment/common/*
 !/deployment/bastion/bastion.tf
 !/deployment/core/core.tf
 !/deployment/import.sh
+!/deployment/import/app.tf
+!/deployment/import/db.tf
 
 # NPM packages from the root folder are not relevant to the project
 package.json

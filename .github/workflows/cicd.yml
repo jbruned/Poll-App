@@ -119,6 +119,8 @@ jobs:
         uses: actions/checkout@v3
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
+      - name: Test AWS CLI login
+        run: (aws sts get-caller-identity > /dev/null && echo "Successfully logged in") || (echo "Error while logging in" && exit 1)
       - name: Import existing infrastructure
         run: cd deployment && bash import.sh
       - name: Deploy core
