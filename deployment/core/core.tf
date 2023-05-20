@@ -154,6 +154,12 @@ resource "aws_db_instance" "postgres" {
 	skip_final_snapshot    = true
 	publicly_accessible    = true
 
+	lifecycle {
+		# Avoid modifications after importing the resource
+		#     (the password is not imported)
+		ignore_changes = [password, apply_immediately]
+	}
+
 	tags = {
 		Name = "${local.PREFIX}-postgres"
 	}

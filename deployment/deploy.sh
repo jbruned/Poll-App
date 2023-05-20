@@ -12,7 +12,7 @@ if [ "$#" -eq 0 ] || [ "$1" = "core" ]; then
 		bash import.sh
 		rm import.sh
 	fi
-    terraform apply -auto-approve
+    terraform apply -auto-approve -compact-warnings -input=false
     cd ..
 fi
 if [ "$#" -eq 0 ] || [ "$1" = "bastion" ]; then
@@ -23,7 +23,7 @@ if [ "$#" -eq 0 ] || [ "$1" = "bastion" ]; then
 		bash import.sh
 		rm import.sh
 	fi
-	terraform apply -auto-approve
+	terraform apply -auto-approve -compact-warnings -input=false
 	cd ..
 fi
 if [ "$#" -eq 0 ] || [ "$1" = "db" ]; then
@@ -34,7 +34,7 @@ if [ "$#" -eq 0 ] || [ "$1" = "db" ]; then
 		bash import.sh
 		rm import.sh
 	fi
-	terraform apply -auto-approve
+	terraform apply -auto-approve -compact-warnings -input=false
 	cd ..
 fi
 if [ "$#" -eq 0 ] || [ "$1" = "app" ]; then
@@ -44,7 +44,7 @@ if [ "$#" -eq 0 ] || [ "$1" = "app" ]; then
 	if [ -f import.sh ] && [ ! -f terraform.tfstate ]; then
 		bash import.sh && rm import.sh
 	fi
-	terraform apply -auto-approve
+	terraform apply -auto-approve -compact-warnings -input=false
 	cd ..
 fi
 echo "Done deploying"

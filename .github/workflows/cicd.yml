@@ -13,7 +13,7 @@ on:
       - published
 jobs:
   lint:
-    name: Lint (Python & JS)
+    name: Linters
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repo
@@ -97,20 +97,10 @@ jobs:
           AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
           AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
           AWS_IMAGE_NAME: ${{ vars.AWS_IMAGE_NAME }}
-  deploy-test:
-    name: Deploy (test env)
-    if: github.event_name == 'release' || (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/'))
-    runs-on: ubuntu-latest
-    environment: AWS
-    needs:
-      - publish
-    steps:
-      - name: Deploy to development env
-        run: echo "This phase has not been implemented (yet)"
   deploy-prod:
-    name: Deploy (production)
+    name: Deploy (production env)
     runs-on: ubuntu-latest
-    environment: AWS
+    environment: AWS (prod)
     if: github.event_name == 'release' && startsWith(github.ref, 'refs/tags/')
     needs:
       - publish
@@ -119,6 +109,8 @@ jobs:
         uses: actions/checkout@v3
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
+      - name: Test AWS CLI login
+        run: (aws sts get-caller-identity > /dev/null && echo "Successfully logged in") || (echo "Error while logging in" && exit 1)
       - name: Import existing infrastructure
         run: cd deployment && bash import.sh
       - name: Deploy core
@@ -133,7 +125,52 @@ jobs:
         run: cd deployment && bash destroy.sh bastion
         continue-on-error: true
       - name: Output app URL
-        run: cd deployment && terraform output url
+        run: cd deployment/app && terraform output url
+      - name: Update domain DNS
+        # TODO: use Ionos' API (docs: https://developer.hosting.ionos.es/docs/dns)
+        run: echo "This phase has to be done manually (for now)"
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_REGION: ${{ vars.AWS_REGION }}
+      AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
+      AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
+      AWS_IMAGE_NAME: ${{ vars.AWS_IMAGE_NAME }}
+      TF_VAR_AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
+      TF_VAR_PREFIX: ${{ vars.AWS_PREFIX }}
+      TF_VAR_DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+      TF_VAR_KONG_DB_PASSWORD: ${{ secrets.KONG_PASSWORD }}
+      TF_VAR_RDS_PASSWORD: ${{ secrets.RDS_PASSWORD }}
+  deploy-dev:
+    name: Deploy (development env)
+    if: github.event_name == 'release' || (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/'))
+    runs-on: ubuntu-latest
+    environment: AWS (dev)
+    needs:
+      - publish
+    steps:
+      # Exactly the same as deploy-prod, except for the environment
+      - name: Checkout repo
+        uses: actions/checkout@v3
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+      - name: Test AWS CLI login
+        run: (aws sts get-caller-identity > /dev/null && echo "Successfully logged in") || (echo "Error while logging in" && exit 1)
+      - name: Import existing infrastructure
+        run: cd deployment && bash import.sh
+      - name: Deploy core
+        run: cd deployment && bash deploy.sh core
+      - name: Create bastion host
+        run: cd deployment && bash deploy.sh bastion
+      - name: Create databases and users
+        run: cd deployment && bash deploy.sh db
+      - name: Deploy app
+        run: cd deployment && bash deploy.sh app
+      - name: Destroy bastion host
+        run: cd deployment && bash destroy.sh bastion
+        continue-on-error: true
+      - name: Output app URL
+        run: cd deployment/app && terraform output url
     env:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
