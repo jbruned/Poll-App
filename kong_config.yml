@@ -15,19 +15,10 @@ services:
       - name: flask
         paths:
           - /
-      - name: options-vote
+      - name: protected
         paths:
-          - /api/v1/option/(?<id>\d+)/vote
-        methods:
-          - POST
-          - DELETE
-          - GET
-        strip_path: false
-        regex_priority: 1
-
-      - name: options
-        paths:
-          - /api/v1/option/
+          - /api/v1/option
+          - /api/v1/poll
         methods:
           - POST
           - DELETE

@@ -93,6 +93,7 @@ class WebGUI(Flask):
         """
         Initializes the GUI (frontend) endpoints
         """
+
         @self.route("/")
         @self.route("/polls/<poll_id>")
         @self.route("/polls/<poll_id>/results")
@@ -108,6 +109,7 @@ class WebGUI(Flask):
         """
         Initializes the API endpoints
         """
+
         @self.route(f"{self.API_V1_PREFIX}/login", methods=['GET', 'POST'])
         def login():
             if request.method == "POST":
@@ -210,9 +212,9 @@ class WebGUI(Flask):
                 return self.success()
             return abort(405, "Method not allowed")
 
-        @self.route(f"{self.API_V1_PREFIX}/option/<option_id>/vote",
+        @self.route(f"{self.API_V1_PREFIX}/vote/<option_id>",
                     methods=['POST', 'DELETE'])
-        def answers_actions(option_id):
+        def votes_actions(option_id):
             option = Option.get(int(option_id))
             session_id = self.get_or_create_session_id()
             if request.method == 'POST':
@@ -249,6 +251,7 @@ class WebGUI(Flask):
         """
         Initializes the error handler
         """
+
         @self.errorhandler(Exception)
         def handle_error(code_or_exception=500, message=None, debug=False):
             """

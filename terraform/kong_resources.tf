@@ -5,23 +5,14 @@ resource "kong_route" "flask" {
   protocols  = ["http"]
 }
 
-resource "kong_route" "options-vote" {
+resource "kong_route" "protected" {
   service_id     = kong_service.flask.id
-  name           = "options-vote"
-  paths          = ["/api/v1/option/(?<id>\\d+)/vote"]
+  name           = "protected"
+  paths          = ["/api/v1/option", "/api/v1/poll"]
+  methods        = ["POST", "DELETE"]
   protocols      = ["http"]
-  methods        = ["POST", "DELETE", "GET"]
   strip_path     = false
   regex_priority = 1
-}
-
-resource "kong_route" "options" {
-  service_id = kong_service.flask.id
-  name       = "options"
-  paths      = ["/api/v1/option(\\d+)?/?(?!.*vote).*"]
-  methods    = ["POST", "DELETE"]
-  protocols  = ["http"]
-  strip_path = false
 }
 
 resource "kong_consumer" "admin" {
@@ -31,7 +22,7 @@ resource "kong_consumer" "admin" {
 
 resource "kong_plugin" "key_auth_plugin" {
   name        = "key-auth"
-  route_id    = kong_route.options.id
+  route_id    = kong_route.protected.id
   config_json = <<EOT
   {
     "key_in_header": true,
@@ -53,7 +44,6 @@ resource "kong_service" "flask" {
   port     = 9000
 }
 
-
 resource "kong_plugin" "file_log" {
   name        = "file-log"
   config_json = <<EOT
@@ -63,5 +53,3 @@ resource "kong_plugin" "file_log" {
   }
 EOT
 }
-
-
