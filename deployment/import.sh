@@ -23,7 +23,7 @@ if [ "$#" -eq 0 ] || [ "$1" = "core" ]; then
 	terraform init
 	terraform apply -auto-approve
 	terraform output | grep -v -E '^(::debug::|\[command\])' | sed -e 's/--/./g' -e 's/ = / /g' -e 's/\"//g' -e 's/^/terraform import /' > ../../core/import.sh
-	cd
+	cd ..
 	echo "Done creating core import script"
 fi
 if [ "$#" -eq 0 ] || [ "$1" = "bastion" ]; then
