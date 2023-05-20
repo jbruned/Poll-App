@@ -15,6 +15,7 @@ ln -f -s ../common.tf db/common.tf
 ln -f -s ../db.tf db/db.tf
 mkdir -p app
 ln -f -s ../common.tf app/common.tf
+ln -f -s ../core.tf app/core.tf
 ln -f -s ../app.tf app/app.tf
 
 if [ "$#" -eq 0 ] || [ "$1" = "core" ]; then
