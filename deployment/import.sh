@@ -42,7 +42,7 @@ if [ "$#" -eq 0 ] || [ "$1" = "db" ]; then
 	cd db
 	terraform init
 	(terraform apply -auto-approve -compact-warnings -input=false &&
-		terraform output | sed -e 's/--/./g' -e 's/ = / /g' -e 's/\"//g' -e 's/^/terraform import /' -e 's/$/ || echo "Resource not found"/' > ../../db/import.sh) \
+		terraform output | grep -v -E '^(::debug::|\[command\])' | sed -e 's/--/./g' -e 's/ = / /g' -e 's/\"//g' -e 's/^/terraform import /' -e 's/$/ || echo "Resource not found"/' > ../../db/import.sh) \
 		|| echo "The databases and users aren't setup yet"
 	cd ..
 	echo "Done creating db import script"
@@ -52,7 +52,7 @@ if [ "$#" -eq 0 ] || [ "$1" = "app" ]; then
 	cd app
 	terraform init
 	(terraform apply -auto-approve -compact-warnings -input=false &&
-		terraform output | sed -e 's/--/./g' -e 's/ = / /g' -e 's/\"//g' -e 's/^/terraform import /' > ../../app/import.sh) \
+		terraform output | grep -v -E '^(::debug::|\[command\])' | sed -e 's/--/./g' -e 's/ = / /g' -e 's/\"//g' -e 's/^/terraform import /' > ../../app/import.sh) \
 		|| echo "The app isn't deployed yet"
 	cd ..
 	echo "Done creating app import script"
