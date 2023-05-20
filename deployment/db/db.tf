@@ -11,7 +11,7 @@ terraform {
 resource "null_resource" "wait_for_bastion" {
 	depends_on = [data.aws_instance.bastion]
 	provisioner "local-exec" {
-		command = "until nc -z ${data.aws_instance.bastion.public_ip} ${var.POSTGRES_PORT}; do sleep 1; done"
+		command = "for i in $(seq 1 60); do nc -z ${data.aws_instance.bastion.public_ip} ${var.POSTGRES_PORT} && echo \"Port is open\" && exit 0; sleep 5; done; echo \"Port is not open after 5 minutes\" && exit 1"
 	}
 	triggers = {
 		instance_id = data.aws_instance.bastion.id

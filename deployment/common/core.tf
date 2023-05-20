@@ -113,3 +113,36 @@ data "aws_db_subnet_group" "rds_subnet_group" {
 output "aws_db_subnet_group--rds_subnet_group" {
 	value = data.aws_db_subnet_group.rds_subnet_group.id
 }
+
+data "aws_lb" "main" {
+	name = "${local.PREFIX}-load-balancer"
+}
+
+output "aws_lb--main" {
+	value = data.aws_lb.main.id
+}
+
+data "aws_lb_target_group" "main" {
+	name = "${local.PREFIX}-target-group"
+}
+
+output "aws_lb_target_group--main" {
+	value = data.aws_lb_target_group.main.id
+}
+
+data "aws_lb_listener" "main" {
+	load_balancer_arn = data.aws_lb.main.arn
+	port              = var.EXPOSED_PORT
+}
+
+output "aws_lb_listener--main" {
+	value = data.aws_lb_listener.main.id
+}
+
+data "aws_ecs_cluster" "cluster" {
+	cluster_name = "${local.PREFIX}-ecs-cluster"
+}
+
+output "aws_ecs_cluster--cluster" {
+	value = data.aws_ecs_cluster.cluster.cluster_name
+}
