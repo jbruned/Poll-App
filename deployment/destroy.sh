@@ -27,4 +27,10 @@ if [ "$#" -eq 0 ] || [ "$1" = "core" ]; then
     terraform init && terraform destroy -auto-approve
     cd ..
 fi
+if [ "$#" -eq 0 ] || [ "$1" = "domain" ]; then
+	echo "Destroying domain"
+	cd domain
+	terraform init && terraform destroy -auto-approve
+	cd ..
+fi
 echo "Done destroying"

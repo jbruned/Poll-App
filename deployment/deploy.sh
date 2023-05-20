@@ -47,4 +47,14 @@ if [ "$#" -eq 0 ] || [ "$1" = "app" ]; then
 	terraform apply -auto-approve -compact-warnings -input=false
 	cd ..
 fi
+if [ "$#" -eq 0 ] || [ "$1" = "domain" ]; then
+	echo "Deploying domain"
+	cd domain
+	terraform init
+	if [ -f import.sh ] && [ ! -f terraform.tfstate ]; then
+		bash import.sh && rm import.sh
+	fi
+	terraform apply -auto-approve -compact-warnings -input=false
+	cd ..
+fi
 echo "Done deploying"
