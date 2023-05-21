@@ -22,6 +22,8 @@ save-image:
 	docker save $(IMAGE_NAME) > $(IMAGE_NAME).tar && gzip -c $(IMAGE_NAME).tar > $(FILE_NAME).tar.gz
 deploy-local:
 	docker compose up --build
+debug-local:
+	make build && docker compose up --build
 push-ecr:
 # 	ifeq ($(AWS_ACCOUNT_ID),)
 # 		$(error AWS_ACCOUNT_ID is undefined)
