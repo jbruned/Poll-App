@@ -17,7 +17,8 @@ resource "aws_instance" "bastion" {
 
 resource "null_resource" "wait_for_postgres" {
 	provisioner "local-exec" {
-		command = "until nc -z ${aws_instance.bastion.public_ip} ${var.POSTGRES_PORT}; do sleep 1; done"
+		// command = "until nc -z ${aws_instance.bastion.public_ip} ${var.POSTGRES_PORT}; do sleep 1; done"
+		command = "for i in $(seq 1 60); do nc -z ${aws_instance.bastion.public_ip} ${var.POSTGRES_PORT} && echo \"Port is open\" && exit 0; sleep 5; done; echo \"Port is not open after 5 minutes\" && exit 1"
 	}
 }
 
