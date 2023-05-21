@@ -23,7 +23,7 @@ save-image:
 deploy-local:
 	docker compose up --build
 debug-local:
-	make build && docker compose up --build
+	make build && deploy-local
 push-ecr:
 # 	ifeq ($(AWS_ACCOUNT_ID),)
 # 		$(error AWS_ACCOUNT_ID is undefined)
