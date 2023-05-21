@@ -6,7 +6,7 @@ deps:
 deps-front:
 	cd frontend && npm install && cd ..
 deps-back:
-	cd backend && pip install -r requirements.txt && cd ..
+	cd backend && pip install --user -r requirements.txt && cd ..
 linters:
 	make lint-front && make lint-back
 lint-front:
@@ -28,6 +28,8 @@ save-image:
 	docker save $(IMAGE_NAME) > $(IMAGE_NAME).tar && gzip -c $(IMAGE_NAME).tar > $(FILE_NAME).tar.gz
 deploy-local:
 	docker compose up --build
+debug-local:
+	make build && deploy-local
 push-ecr:
 	aws ecr get-login-password --region $(AWS_REGION) | docker login --username AWS --password-stdin $(AWS_ACCOUNT_ID).dkr.ecr.$(AWS_REGION).amazonaws.com
 	docker tag $(IMAGE_NAME):latest $(AWS_ACCOUNT_ID).dkr.ecr.$(AWS_REGION).amazonaws.com/$(AWS_IMAGE_NAME):latest

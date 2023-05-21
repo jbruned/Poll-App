@@ -1,6 +1,11 @@
 _format_version: "3.0"
 _transform: true
 
+consumers:
+  - username: admin
+    custom_id: admin
+    keyauth_credentials:
+      - key: admin
 services:
   - host: backend
     name: flask
@@ -10,9 +15,25 @@ services:
       - name: flask
         paths:
           - /
+      - name: protected
+        paths:
+          - /api/v1/option
+          - /api/v1/poll
+        methods:
+          - POST
+          - DELETE
+        strip_path: false
 
 plugins:
   - name: file-log
     config:
       path: /logs/file-log.log
       reopen: false
+
+  - name: key-auth
+    route: options
+    config:
+      key_in_header: true
+      key_names:
+        - apikey
+      hide_credentials: false

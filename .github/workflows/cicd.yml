@@ -51,6 +51,8 @@ jobs:
     needs:
       - lint
       - test
+    env:
+      BACKEND_PORT_INTERNAL: 80
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3

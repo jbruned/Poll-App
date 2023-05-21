@@ -197,7 +197,7 @@ export function Poll(props) {
 
     function doVote() {
         if (selectedOption !== null) {
-            apiRequest(`option/${selectedOption}/vote`, 'POST')
+            apiRequest(`vote/${selectedOption}`, 'POST')
                 .then(
                     (result) => {
                         setUserHasAnswered(true)

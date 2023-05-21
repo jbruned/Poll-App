@@ -104,6 +104,7 @@ class WebGUI(Flask):
         """
         Initializes the GUI (frontend) endpoints
         """
+
         @self.route("/")
         @self.route("/polls/<poll_id>")
         @self.route("/polls/<poll_id>/results")
@@ -119,34 +120,6 @@ class WebGUI(Flask):
         """
         Initializes the API endpoints
         """
-        @self.route(f"{self.API_V1_PREFIX}/login", methods=['GET', 'POST'])
-        def login():
-            if request.method == "POST":
-                if self.settings.is_password_correct(request.json['password']):
-                    session["admin"] = True
-                else:
-                    abort(401, "Incorrect password")
-            return json.dumps({
-                "is_admin": self.is_admin_logged_in(),
-                "session_id": self.get_or_create_session_id()
-            })
-
-        @self.route(f"{self.API_V1_PREFIX}/password", methods=['POST'])
-        def change_password():
-            if not request.form['old'] or len(request.form['new'] or '') < 5 \
-                    or len(request.form['repeat'] or '') < 5 \
-                    or request.form['new'] != request.form['repeat']:
-                abort(400, "Incomplete request")
-            if not self.settings.is_password_correct(request.form['old']):
-                abort(401, "Old password is incorrect")
-            self.settings.set(request.form['new'])
-            return self.success()
-
-        @self.route(f"{self.API_V1_PREFIX}/logout")
-        def logout():
-            session.pop("admin", None)
-            session.pop("id", None)
-            return self.success()
 
         @self.route(f"{self.API_V1_PREFIX}/polls/", methods=['GET', 'POST'])
         def polls_actions():
@@ -169,8 +142,6 @@ class WebGUI(Flask):
             poll = Poll.get(int(poll_id))
             if request.method == 'GET':
                 return json.dumps(poll.get_info(), default=str)
-            if not self.is_admin_logged_in(poll.author):
-                abort(401, "Not logged in")
             if request.method == 'POST':
                 data = self.get_request_body(request)
                 if not data['title']:
@@ -191,8 +162,6 @@ class WebGUI(Flask):
                 options = poll.get_options()
                 return json.dumps([option.to_dict() for option in options],
                                   default=str)
-            if not self.is_admin_logged_in(poll.author):
-                abort(401, "Not logged in")
             if request.method == 'POST':
                 data = self.get_request_body(request)
                 if not data['text']:
@@ -208,8 +177,6 @@ class WebGUI(Flask):
             option = Option.get(int(option_id))
             if request.method == 'GET':
                 return json.dumps(option.to_dict())
-            if not self.is_admin_logged_in(option.get_poll().author):
-                abort(401, "Not logged in")
             if request.method == 'POST':
                 data = self.get_request_body(request)
                 if not data['text']:
@@ -221,9 +188,9 @@ class WebGUI(Flask):
                 return self.success()
             return abort(405, "Method not allowed")
 
-        @self.route(f"{self.API_V1_PREFIX}/option/<option_id>/vote",
+        @self.route(f"{self.API_V1_PREFIX}/vote/<option_id>",
                     methods=['POST', 'DELETE'])
-        def answers_actions(option_id):
+        def votes_actions(option_id):
             option = Option.get(int(option_id))
             session_id = self.get_or_create_session_id()
             if request.method == 'POST':
@@ -260,6 +227,7 @@ class WebGUI(Flask):
         """
         Initializes the error handler
         """
+
         @self.errorhandler(Exception)
         def handle_error(code_or_exception=500, message=None, debug=False):
             """
@@ -298,17 +266,6 @@ class WebGUI(Flask):
         if "id" not in session or session["id"] is None:
             session["id"] = str(uuid.uuid4())
         return session["id"]
-
-    @staticmethod
-    def is_admin_logged_in(session_id=None) -> bool:
-        """
-        Checks if the user has started a session by entering the password
-        @return: True if the user is logged in
-        """
-        return session.get("admin") is True or (
-                session_id is not None
-                and WebGUI.get_or_create_session_id() == session_id
-        )
 
     @staticmethod
     def success(message=True):

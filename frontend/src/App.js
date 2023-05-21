@@ -9,9 +9,6 @@ import React, {
 	useEffect
 } from 'react'
 import {
-	apiRequest
-} from './util.js'
-import {
 	Spinner
 } from './components/basicComponents.js'
 import {
@@ -27,41 +24,15 @@ import {
 
 function App() {
 
-	const [userData, setUserData] = useState(null)
-	const [error, setError] = useState(null)
+	const [userData] = useState(null)
+	const [error] = useState(null)
 	const [isLoaded, setIsLoaded] = useState(false)
 	const [darkMode, setDarkMode] = useState((localStorage.getItem('darkMode') ?? 'false') === 'true')
 
 	useEffect(() => {
-		if (!userData)
-			doLogin()
+		setIsLoaded(true)
 	}, [userData])
 
-	function doLogin(password) {
-		return new Promise((resolve, reject) => {
-			apiRequest("login", password ? 'POST' : 'GET', password ? {
-				password: password
-			} : null)
-				.then(
-					(result) => {
-						resolve()
-						if (result.session_id) {
-							setUserData({
-								is_admin: result.is_admin ?? false,
-								session_id: result.session_id ?? null
-							})
-						}
-						setIsLoaded(true)
-					},
-					(error) => {
-						reject()
-						setIsLoaded(true)
-						setError(error)
-						setUserData({})
-					}
-				)
-		})
-	}
 	function toggleDarkMode() {
 		setDarkMode(!darkMode)
 		localStorage.setItem('darkMode', !darkMode ? 'true' : 'false')
@@ -71,7 +42,7 @@ function App() {
 		{!isLoaded ? <BasicLayout><Spinner /></BasicLayout> :
 			(error ? <BasicLayout title="Error" icon="exclamation-triangle-fill" subtitle="Couldn't authenticate">{error ?? ""}</BasicLayout> :
 				<Routes>
-					<Route path="/" element={<MainLayout darkMode={darkMode} toggleDarkMode={toggleDarkMode} />}>{/*admin={...} doLogin={doLogin} doLogout={doLogout}*/}
+					<Route path="/" element={<MainLayout darkMode={darkMode} toggleDarkMode={toggleDarkMode} />}>
 						<Route path="/" element={<Home />} />
 						<Route path="polls" element={<Home />} />
 						<Route path="polls/:poll_id/" element={<PollMenu />}>
