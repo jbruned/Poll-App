@@ -4,6 +4,7 @@ WORKDIR /app
 
 COPY . .
 
+ARG BACKEND_PORT_INTERNAL=80
 EXPOSE ${BACKEND_PORT_INTERNAL}
 RUN pip install --no-cache-dir -r requirements.txt
 
