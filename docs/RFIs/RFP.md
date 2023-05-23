@@ -47,7 +47,7 @@ A modo de resumen, se presenta la siguiente tabla de presupuestos:
 
 Como se puede observar, se han planteado tres entornos a desplegar: desarrollo, preproducción y producción. Cada uno de ellos tiene un coste asociado, que se detalla en la tabla anterior. Además, se han añadido costes generales asociados a recursos humanos, licencias o infraestructuras.
 
-Con ello, se obtiene un coste total de 784,90\$ para el primer año de los entornos y un total de 9.139,06\$ totales para los cinco primeros años.
+Con ello, se obtiene un coste total de 1.784,90\$ para el primer año de los entornos y un total de 9.139,06\$ totales para los cinco primeros años.
 
 Por otro lado, los costes generales ascienden a 140.400,00\$ para el primer año y 702.432,00\$ para los cinco primeros años.
 
