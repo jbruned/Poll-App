@@ -9,12 +9,12 @@ from logging import getLogger, CRITICAL, DEBUG
 from flask import Flask, send_file, abort, request, session
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, exc
 from sqlalchemy_utils import database_exists, create_database
 from werkzeug.exceptions import Unauthorized, Forbidden,  NotFound, Conflict, InternalServerError
 
 from .config import Config
-from .db import Poll, Option, NotFoundException, AlreadyVotedException, insert_test_data
+from .db import Poll, Option, NotFoundException, AlreadyVotedException, insert_test_data, handle_database_reconnect
 
 
 class WebGUI(Flask):
@@ -235,6 +235,12 @@ class WebGUI(Flask):
                                         self.HTTP_ERRORS[code_or_exception])
                 except KeyError:
                     return handle_error(500)
+                
+            if isinstance(code_or_exception, exc.OperationalError):
+                print("Database connection lost. Attempting to reconnect...")
+                handle_database_reconnect()
+                return handle_error(500) 
+
             if isinstance(code_or_exception, Exception):
                 try:
                     return handle_error(
@@ -271,3 +277,4 @@ class WebGUI(Flask):
         @return: the data contained in the request body
         """
         return req.json if req.is_json else req.form
+    
