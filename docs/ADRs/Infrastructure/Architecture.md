@@ -25,7 +25,7 @@ tomada.
 * [Factores en la Decisión](#factores-en-la-decisión)
 * [Opciones Consideradas](#opciones-consideradas)
     * [Arquitectura basada en microservicios](#arquitectura-basada-en-microservicios)
-    * [Arquitectura de 3 capas](#arquitecura-de-3-capas)
+    * [Arquitectura de 3 capas](#arquitectura-de-3-capas)
     * [Arquitectura de 2 capas](#arquitectura-de-2-capas)
 * [Decisión](#decisión)
 <!-- TOC -->
@@ -113,7 +113,7 @@ La arquitectura de 3 capas tiene varias ventajas. Algunas de ellas son:
 * Simplicidad: en general, la arquitectura de 3 capas es más sencilla de implementar que la arquitectura de
   microservicios, en especial debido a la compleja comunicación que puede darse entre microservicios. Esto trae consigo
   una mayor velocidad de desarrollo.
-* Ahorro de costes operacionales y de desplielgue: al tratarse de una arquitectura monolítica, no hay que contar con el
+* Ahorro de costes operacionales y de despliegue: al tratarse de una arquitectura monolítica, no hay que contar con el
   sobrecoste de mantener múltiples servicios.
 
 Sin embargo, también tiene algunas desventajas. He aquí algunas de ellas:
