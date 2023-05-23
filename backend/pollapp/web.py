@@ -11,12 +11,10 @@ from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import create_engine
 from sqlalchemy_utils import database_exists, create_database
-from werkzeug.exceptions import Unauthorized, Forbidden, \
-    NotFound, Conflict, InternalServerError
+from werkzeug.exceptions import Unauthorized, Forbidden,  NotFound, Conflict, InternalServerError
 
 from .config import Config
-from .db import AppSettings, Poll, Option, NotFoundException, \
-    AlreadyVotedException, insert_test_data
+from .db import Poll, Option, NotFoundException, AlreadyVotedException, insert_test_data
 
 
 class WebGUI(Flask):
@@ -50,7 +48,6 @@ class WebGUI(Flask):
 
         # Initialize the app
         self.init_db(database)
-        self.settings = self.load_settings()
         self.init_gui()
         self.init_api()
         self.init_error_handler()
@@ -86,19 +83,9 @@ class WebGUI(Flask):
         database.init_app(self)
         Migrate(self, database)
         database.create_all()
-        if Config.INSERT_TEST_DATA or Poll.query.count() == 0:
-            database.drop_all()
+        if Config.INSERT_TEST_DATA and Poll.query.count() == 0:
             database.create_all()
             insert_test_data()
-
-    @staticmethod
-    def load_settings():
-        """
-        Loads the app settings from the database
-        """
-        if not AppSettings.is_initialized():
-            AppSettings.init()
-        return AppSettings.query.first()
 
     def init_gui(self):
         """
