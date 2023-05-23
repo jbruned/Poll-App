@@ -2,8 +2,6 @@
 This package contains the database models and exceptions
 for the Poll App
 """
-import hashlib
-
 from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
