@@ -86,19 +86,9 @@ class WebGUI(Flask):
         database.init_app(self)
         Migrate(self, database)
         database.create_all()
-        if Config.INSERT_TEST_DATA or Poll.query.count() == 0:
-            database.drop_all()
+        if Config.INSERT_TEST_DATA and Poll.query.count() == 0:
             database.create_all()
             insert_test_data()
-
-    @staticmethod
-    def load_settings():
-        """
-        Loads the app settings from the database
-        """
-        if not AppSettings.is_initialized():
-            AppSettings.init()
-        return AppSettings.query.first()
 
     def init_gui(self):
         """
