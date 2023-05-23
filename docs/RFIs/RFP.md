@@ -73,7 +73,11 @@ De esta forma, el presupuesto presentado total, en el que se incluyen costes des
 # Trabajo futuro o desarrollos pendientes
 <div style="text-align: justify">
   
-TODO
+A continuación se presentan, a modo de lista, varios puntos posibles de mejora o desarrollo futuro:
+- Despliegue en otros proveedores: se ha realizado un despliegue en AWS, pero se podría desplegar en otros proveedores como por ejemplo Azure o Google Cloud. Realmente, tampoco se ha llegado a hacer el estudio de alternativas a AWS debido a los requerimientos de la asignatura.
+- Métricas/logs: se ha optado por CloudWatch, pero se podría mejorar la monitorización del sistema con otras herramientas como Prometheus o Grafana con el objetivo de obtener una mayor y más completa visibilidad del sistema.
+- Coste de la solución: se ha realizado un presupuesto aproximado, pero se podría realizar un estudio más detallado de los costes planteando diferentes escenarios, financiaciones, etc.
+
 </div>
 
 # Análisis final de las preguntas
