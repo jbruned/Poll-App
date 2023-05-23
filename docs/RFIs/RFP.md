@@ -35,7 +35,19 @@ TODO
 # Métricas/logs
 <div style="text-align: justify">
   
-TODO
+En cuanto a las métricas también se nos han presentado varias opciones. No obstante, y debido principalmente a los plazos, se ha optado por emplear el sistema de monitorización integrado de AWS: CloudWatch.
+Con esta herramienta podremos crear los dashboards que necesitemos para monitorizar el sistema, así como crear alarmas que nos avisen en caso de que se produzca algún error o se sobrepase algún umbral.
+
+Otras opciones a las que se podría haber recurrido son:
+- Prometheus: sistema de monitorización de código abierto que permite la monitorización de métricas y logs.
+- Grafana: herramienta de visualización de datos que permite crear dashboards para monitorizar el sistema.
+- ELK: conjunto de herramientas que permite la monitorización de logs.
+- Datadog: herramienta de monitorización de logs y métricas.
+- New Relic: herramienta de monitorización de logs y métricas.
+
+Como se ha mencionado, CloudWatch será la herramienta a utilizar. A continuación se puede observar un ejemplo de visualización obtenido a partir de CloudWatch:
+
+TODO INSERTAR CAPTURA DE ALGO DE MONITORIZACION DE CLOUDWATCH
 </div>
 
 # Coste de la solución
