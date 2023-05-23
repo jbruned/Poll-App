@@ -4,8 +4,7 @@ WORKDIR /app
 
 COPY . .
 
-ARG BACKEND_PORT_INTERNAL=80
-EXPOSE ${BACKEND_PORT_INTERNAL}
+EXPOSE 80
 RUN pip install --no-cache-dir -r requirements.txt
 
-CMD ["sh", "-c", "python3 main.py 0.0.0.0:$BACKEND_PORT_INTERNAL"]
+CMD ["sh", "-c", "python3 main.py 0.0.0.0:80"]
