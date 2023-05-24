@@ -292,46 +292,57 @@ En este RFI, se ha realizado el despliegue manualmente, para comprobar que la ar
 
 <div style="text-align: justify!important">
 
-A continuación, se presenta el presupuesto de la arquitectura de AWS detallada anteriormente durante un año:
+A continuación se detallan los costes para la solución propuesta de manera desglosada. Se han hecho estimaciones incluyendo varios aspectos y considerando tanto el primer año como los 5 primeros. Esto se debe a que el coste del primer año podría ser reducido gracias al nivel gratuito de AWS, pero en los años siguientes se tendría que pagar el coste completo.
 
-### Web server (API + Front)
-Se ha hecho uso de AWS Fargate por lo que los factores a considerar serán los siguientes:
-* Precio por CPU virtual por hora: 0,04656 USD 
-* Precio por GB por hora: 0,00511 USD
-* Configuración actual: 0.5 vCPUs, 1GB
+Habrá dos aspectos principales a tener en cuenta: los entornos a desplegar, con todo lo que ello requiere, y otros aspectos generales como podrían ser el coste de los salarios de los desarrolladores, el coste de la infraestructura, etc.
 
-Con estas consideraciones, el precio anual final para este servicio sería:
-(0.04656 x 0.5 + 0.00511) x 24 x 365 = 248.70 USD/año (a considerar el número de tareas activas)
+### Entornos
+Se han considerado tres entornos: desarrollo, preproducción y producción.
 
-En este caso, y para el siguiente RFI, se considerará la opción de hacer uso de EC2 debido a su gratuidad de 750 horas mensuales para ciertas instancias. Se valorará teniendo en cuenta la complejidad de su implementación respecto a lo ya implementado actualmente.
+El entorno de desarrollo se utilizará por el equipo de desarrollo para probar los cambios realizados en el código, realizar nuevas implementaciones, etc, y no se espera que tenga un uso intensivo. Además que un fallo en este entorno no supondría un gran problema, ya que no se vería afectado el servicio en producción.
 
-### Base de datos
-Suponiendo el uso de un servicio propio tendría el mismo coste que el Web server.
+De manera similar, el entorno de preproducción tendrá la misma capacidad que el de desarrollo y será en el que se realicen las pruebas de aceptación por parte del cliente.
+Ambos entornos dispondrán de una capacidad menor que el de producción. 
 
-En el caso de hacer uso de las tecnologías de AWS, Amazon RDS, sería gratuito ya que, de nuevo, se cubren un total de 750 horas mensuales, 20 GB de almacenamiento y 20GB de copias de seguridad.
+Finalmente, el entorno de producción contendrá la aplicación funcional y todo lo necesario para que funcione correctamente. Este entorno tendrá una capacidad mayor que los anteriores.
 
-### API Gateway
-Suponiendo el uso de un servicio propio tendría el mismo coste que el Web server.
+Para todos ellos habrá que tener en cuenta los siguientes puntos a la hora de calcular el coste:
+* Servicio aplicación
+* Servicio API Gateway
+* RDS
+* Load Balancer
+* Almacenamiento en ECR
+* Dominio (en el caso del entorno de producción)
 
-### Otros aspectos - Balanceador de carga
-Actualmente estamos usando un balanceador de carga de aplicaciones. El coste del mismo se ha considerado a largo plazo, es decir, sin tener en cuenta que se dispondría de los 12 primeros meses gratuitos. A partir del primer año el coste sería de:
-* Precio por balanceador de carga de aplicaciones por hora: 0,027 USD
+Cada uno de los puntos previos se facturará en función de las características correspondientes: CPU, memoria, almacenamiento, etc. Además, se tendrá en cuenta el tiempo de uso de cada uno de ellos que, en el caso de esta propuesta, está contemplado como un servicio disponible 24/7 durante todo el año.
 
-Con lo que supondría un total de 0.027 x 24 x 365 = 236.52 USD/año
+### Costes generales
 
-### Otros aspectos - ECR
-En el caso de hacer uso de repositorios públicos el coste sería 0, ya que el nivel gratuito permanente de AWS cubre hasta 50GB/mes.
-Sin embargo, se está haciendo uso de repositorios privados por lo que el coste a considerar sería:
-* Precio por GB por mes: 0.10 USD
+Para esta propuesta se han considerado los siguientes costes generales:
+* Coste humano: 3 desarrolladores a un coste medio de 3500$ mensuales para la empresa.
+* Coste de licencias: tan solo se requerirá de GitHub Pro.
+* Coste de infraestructura: se ha optado por el alquiler de una oficina de trabajo suficiente para todo el equipo
 
-Con lo que el coste anual sería de 0.10 x 12 = 1.2 USD/año
+### Extras
+
+A pesar de que no supongan ningun coste para esta propuesta, en el desarrollo de un proyecto similar también habría que tener en cuenta los siguientes aspectos:
+* Bastion host: se emplea durante el despliegue y se destuye una vez finalizado por lo que se ha considerado un coste despreciable.
+* CloudWatch: se emplea para monitorizar los servicios y, en nuestro caso, está cubierto completamente por el nivel gratuito de AWS.
 
 ### Presupuesto final
-Se detalla a continuación una horquilla de presupuesto entre el mínimo y el máximo posible que se podría llegar a tener.
 
-**Mínimo presupuesto anual:** en el caso de hacer uso de AWS Fargate para el Web server, un servicio propio también en Fargate para la base de datos y otro para el API Gateway.
-(0.04656 x 0.5 + 0.00511) x 24 x 365 x 3 + 236.52 + 1.2 = **983.81 USD/año** (a considerar el número de tareas activas)
+En la siguiente tabla se detalla el coste desglosado en base a lo comentado anteriormente:
 
-**Máximo presupuesto anual:** en el caso de hacer uso de AWS EC2 en lugar de AWS Fargate para el Web server, la tecnología RDS de Amazon para la base de datos y no dedicar un servicio propio al API Gateway.
-0 + 236.52 + 1.2 = **237.72 USD/año** (a considerar el número de tareas activas)
+![Presupuesto solución](../../img/presupuesto.jpg)
+
+Como se puede observar, la mayor parte corresponde al pago de los desarrolladores.
+
+Dejando de lado los costes generales y centrándonos en los entornos, el coste del balanceador de carga destaca por encima del resto, pero se considera un elemento imprescindible y con dificil remplazo. Por otro lado, el coste más bajo correspondería al almacenamiento de imágenes propias en ECR, con un total de 1,20\$ anuales.
+
+Finalmente, el coste total de los entornos para el primer año sería de 1.784,90\$ y de 9.139,06\$ totales para los cinco primeros años.
+Los costes generales (recursos humanos, licencias e infraestructura) supondrían un total de 140.400,00\$ para el primer año y 702.432,00\$ para los cinco primeros años.
+
+Con ello, el presupuesto presentado total sería de:
+* 142.184,90\$ para el primer año
+* 711.571,06\$ para los cinco primeros años
 </div>
