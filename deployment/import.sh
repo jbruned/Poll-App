@@ -17,6 +17,11 @@ mkdir -p app
 ln -f -s ../common.tf app/common.tf
 ln -f -s ../core.tf app/core.tf
 ln -f -s ../app.tf app/app.tf
+mkdir -p kong_init
+ln -f -s ../common.tf kong_init/common.tf
+ln -f -s ../core.tf kong_init/core.tf
+ln -f -s ../bastion.tf kong_init/bastion.tf
+ln -f -s ../kong_init.tf kong_init/kong_init.tf
 
 if [ "$#" -eq 0 ] || [ "$1" = "core" ]; then
 	echo "Creating core import script..."
@@ -51,6 +56,17 @@ if [ "$#" -eq 0 ] || [ "$1" = "db" ]; then
 	cd ..
 	echo "Done creating db import script"
 fi
+if [ "$#" -eq 0 ] || [ "$1" = "kong_init" ]; then
+	echo "Creating kong_init import script..."
+	cd kong_init
+	rm ../../kong_init/import.sh && echo "Deleted old import script"
+	terraform init
+	(terraform apply -auto-approve -compact-warnings -input=false &&
+		terraform output | grep -E '^([A-Za-z0-9_]+)--([A-Za-z0-9_]+) = "([^"]*)"$' | sed -e 's/--/./g' -e 's/ = / /g' -e 's/\"//g' -e 's/^/terraform import /' > ../../kong_init/import.sh) \
+		|| echo "Kong is not yet deployed"
+	cd ..
+	echo "Done creating kong_init import script"
+fi
 if [ "$#" -eq 0 ] || [ "$1" = "app" ]; then
 	echo "Creating app import script..."
 	cd app
@@ -62,5 +78,6 @@ if [ "$#" -eq 0 ] || [ "$1" = "app" ]; then
 	cd ..
 	echo "Done creating app import script"
 fi
+# Import kong module
 
 echo "Done importing"

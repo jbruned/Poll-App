@@ -15,6 +15,7 @@ resource "null_resource" "wait_for_bastion" {
 	}
 	triggers = {
 		instance_id = data.aws_instance.bastion.id
+		always_run  = timestamp()
 	}
 }
 

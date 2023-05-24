@@ -20,8 +20,7 @@ if [ "$#" -eq 0 ] || [ "$1" = "bastion" ]; then
 	cd bastion
 	terraform init
 	if [ -f import.sh ] && [ ! -f terraform.tfstate ]; then
-		bash import.sh
-		rm import.sh
+		bash import.sh && rm import.sh
 	fi
 	terraform apply -auto-approve -compact-warnings -input=false
 	cd ..
@@ -31,8 +30,17 @@ if [ "$#" -eq 0 ] || [ "$1" = "db" ]; then
     cd db
     terraform init
 	if [ -f import.sh ] && [ ! -f terraform.tfstate ]; then
-		bash import.sh
-		rm import.sh
+		bash import.sh && rm import.sh
+	fi
+	terraform apply -auto-approve -compact-warnings -input=false
+	cd ..
+fi
+if [ "$#" -eq 0 ] || [ "$1" = "kong_init" ]; then
+	echo "Creating and initializing Kong"
+	cd kong_init
+	terraform init
+	if [ -f import.sh ] && [ ! -f terraform.tfstate ]; then
+		bash import.sh && rm import.sh
 	fi
 	terraform apply -auto-approve -compact-warnings -input=false
 	cd ..
@@ -40,6 +48,16 @@ fi
 if [ "$#" -eq 0 ] || [ "$1" = "app" ]; then
 	echo "Deploying app"
 	cd app
+	terraform init
+	if [ -f import.sh ] && [ ! -f terraform.tfstate ]; then
+		bash import.sh && rm import.sh
+	fi
+	terraform apply -auto-approve -compact-warnings -input=false
+	cd ..
+fi
+if [ "$#" -eq 0 ] || [ "$1" = "kong" ]; then
+	echo "Deploying Kong"
+	cd kong
 	terraform init
 	if [ -f import.sh ] && [ ! -f terraform.tfstate ]; then
 		bash import.sh && rm import.sh

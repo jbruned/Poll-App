@@ -139,10 +139,35 @@ output "aws_lb_listener--main" {
 	value = data.aws_lb_listener.main.id
 }
 
+data "aws_lb_target_group" "kong_admin" {
+	name = "${local.PREFIX}-kong-admin-tg"
+}
+
+output "aws_lb_target_group--kong_admin" {
+	value = data.aws_lb_target_group.kong_admin.id
+}
+
+data "aws_lb_listener" "kong_admin" {
+	load_balancer_arn = data.aws_lb.main.arn
+	port              = var.KONG_ADMIN_PORT
+}
+
+output "aws_lb_listener--kong_admin" {
+	value = data.aws_lb_listener.kong_admin.id
+}
+
 data "aws_ecs_cluster" "cluster" {
 	cluster_name = "${local.PREFIX}-ecs-cluster"
 }
 
 output "aws_ecs_cluster--cluster" {
 	value = data.aws_ecs_cluster.cluster.cluster_name
+}
+
+data "aws_cloudwatch_log_group" "ecs" {
+	name = "${local.PREFIX}-ecs-logs"
+}
+
+output "aws_cloudwatch_log_group--ecs" {
+	value = data.aws_cloudwatch_log_group.ecs.name
 }
