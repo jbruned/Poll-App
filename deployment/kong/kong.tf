@@ -10,10 +10,23 @@ terraform {
 provider "kong" {
 	# kong_admin_uri = "http://${data.aws_instance.bastion.public_ip}:${var.KONG_ADMIN_PORT}"
 	# kong_admin_uri = "http://${data.aws_instance.bastion.public_ip}:${var.KONG_ADMIN_PORT}"
-	kong_admin_uri = "http://${data.aws_lb.main.dns_name}:${var.KONG_ADMIN_PORT}"
+	# kong_admin_uri = "http://${data.aws_lb.main.dns_name}:${var.KONG_ADMIN_PORT}"
+	kong_admin_uri      = "http://${data.aws_lb.main.dns_name}${var.KONG_ADMIN_ROUTE}"
 	#  kong_api_key      = "admin" # Replace with your actual API key
 	#  kong_admin_tenant = "default"
 }
+
+/*locals {
+  kong_headers = {
+    apikey = var.KONG_ADMIN_PASSWORD
+  }
+}
+
+resource "null_resource" "set_kong_headers" {
+  provisioner "local-exec" {
+    command = "export KONG_HEADERS='${jsonencode(local.kong_headers)}'"
+  }
+}*/
 
 resource "kong_certificate" "ssl" {
 	count       = local.USE_SSL ? 1 : 0
@@ -26,6 +39,7 @@ resource "kong_service" "flask" {
 	protocol = "http"
 	host     = data.aws_lb.backend.dns_name
 	port     = var.EXPOSED_PORT
+	//depends_on = [null_resource.set_kong_headers]
 }
 
 resource "kong_route" "flask" {
@@ -52,6 +66,7 @@ resource "kong_route" "protected" {
 }
 
 resource "kong_service" "admin" {
+	//depends_on = [null_resource.set_kong_headers]
 	name     = "admin"
 	protocol = "http"
 	host     = "localhost"
@@ -77,9 +92,9 @@ resource "kong_plugin" "key_auth_plugin" {
 	route_id    = kong_route.protected.id
 	config_json = <<EOT
     {
-      "key_in_header": true,
-      "key_names": ["apikey"],
-      "hide_credentials": false
+		"key_in_header": true,
+		"key_names": ["apikey"],
+		"hide_credentials": false
     }
   EOT
 }
@@ -89,9 +104,9 @@ resource "kong_plugin" "admin_login" {
 	route_id    = kong_route.admin.id
 	config_json = <<EOT
     {
-      "key_in_header": true,
-      "key_names": ["apikey"],
-      "hide_credentials": false
+		"key_in_header": true,
+		"key_names": ["apikey"],
+		"hide_credentials": false
     }
   EOT
 }

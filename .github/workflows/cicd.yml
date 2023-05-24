@@ -132,14 +132,14 @@ jobs:
         run: cd deployment && bash destroy.sh bastion
         continue-on-error: true
       - name: Output app URL
-        run: cd deployment/kong && terraform output url
+        run: cd deployment/core && terraform output url
       - name: Get Terraform Output URL
         id: terraform_output
-        run: cd deployment/kong && echo "::set-output name=url::$(terraform output -raw url)"
+        run: cd deployment/core && echo "::set-output name=url::$(terraform output -raw url)"
       - name: Update domain DNS
         run: cd deployment && bash deploy.sh domain
       - name: Output public URL
-        run: cd deployment/domain && terraform output public_url
+        run: cd deployment/domain && terraform output public_url || echo "No public URL"
     env:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -194,10 +194,10 @@ jobs:
         run: cd deployment && bash destroy.sh bastion
         continue-on-error: true
       - name: Output app URL
-        run: cd deployment/kong && terraform output url
+        run: cd deployment/core && terraform output url
       - name: Get Terraform Output URL
         id: terraform_output
-        run: cd deployment/kong && echo "::set-output name=url::$(terraform output -raw url)"
+        run: cd deployment/core && echo "::set-output name=url::$(terraform output -raw url)"
     env:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}

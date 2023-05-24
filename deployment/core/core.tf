@@ -307,3 +307,7 @@ resource "aws_cloudwatch_dashboard" "main" {
 	}
 	EOF
 }
+
+output "url" {
+	value = aws_lb.main.dns_name
+}

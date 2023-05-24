@@ -62,7 +62,7 @@ if [ "$#" -eq 0 ] || [ "$1" = "kong" ]; then
 	if [ -f import.sh ] && [ ! -f terraform.tfstate ]; then
 		bash import.sh && rm import.sh
 	fi
-	terraform apply -auto-approve -compact-warnings -input=false
+	terraform apply -auto-approve -compact-warnings -input=false || echo "Kong already deployed"
 	cd ..
 fi
 if [ "$#" -eq 0 ] || [ "$1" = "domain" ]; then

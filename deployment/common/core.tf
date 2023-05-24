@@ -139,7 +139,7 @@ output "aws_lb_listener--main" {
 	value = data.aws_lb_listener.main.id
 }
 
-data "aws_lb_target_group" "kong_admin" {
+/*data "aws_lb_target_group" "kong_admin" {
 	name = "${local.PREFIX}-kong-admin-tg"
 }
 
@@ -154,7 +154,7 @@ data "aws_lb_listener" "kong_admin" {
 
 output "aws_lb_listener--kong_admin" {
 	value = data.aws_lb_listener.kong_admin.id
-}
+}*/
 
 data "aws_ecs_cluster" "cluster" {
 	cluster_name = "${local.PREFIX}-ecs-cluster"

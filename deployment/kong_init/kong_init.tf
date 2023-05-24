@@ -42,12 +42,6 @@ resource "aws_ecs_service" "kong" {
 		container_port   = var.KONG_DEFAULT_PORT
 	}
 
-	load_balancer {
-		target_group_arn = data.aws_lb_target_group.kong_admin.arn
-		container_name   = var.KONG_CONTAINER_NAME
-		container_port   = var.KONG_ADMIN_PORT
-	}
-
 	depends_on = [data.aws_lb_listener.main, null_resource.setup_kong_db]
 }
 
@@ -145,7 +139,24 @@ resource "aws_ecs_task_definition" "kong" {
 resource "null_resource" "wait_for_kong" {
 	depends_on = [aws_ecs_service.kong, null_resource.setup_kong_db]
 	provisioner "local-exec" {
-		command = "for i in $(seq 1 60); do wget -q ${data.aws_lb.main.dns_name}${var.KONG_ADMIN_ROUTE} && echo \"Port is open\" && exit 0; sleep 5; done; echo \"Port is not open after 5 minutes\" && exit 1"
+		# command = "for i in $(seq 1 60); do wget -q ${data.aws_lb.main.dns_name}${var.KONG_ADMIN_ROUTE} && echo \"Port is open\" && exit 0; sleep 5; done; echo \"Port is not open after 5 minutes\" && exit 1"
+		# "for i in $(seq 1 60); do wget -q ${data.aws_lb.main.dns_name}${var.KONG_ADMIN_ROUTE} && echo \"Port is open\" && exit 0; sleep 5; done; echo \"Port is not open after 5 minutes\" && exit 1"
+		command = <<EOT
+		#!/bin/bash
+		for i in $(seq 1 60); do
+			url="${data.aws_lb.main.dns_name}${var.KONG_ADMIN_ROUTE}"
+			response=$(wget --no-check-certificate --auth-no-challenge --user=admin --password=secret --server-response --spider "$url" 2>&1)
+			http_code=$(echo "$response" | awk '/^  HTTP/{print $2}')
+			echo "HTTP code: $http_code"
+			if [ "$http_code" = "200" ] || [ "$http_code" = "401" ]; then
+				echo "Port is open"
+				exit 0
+			fi
+			sleep 5
+		done
+		echo "Port is not open after 5 minutes"
+		exit 1
+		EOT
 	}
 	triggers = {
 		always_run = timestamp()
