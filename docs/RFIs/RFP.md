@@ -24,10 +24,14 @@ Además, aparecen dos nuevos puntos a tratar: el despliegue total del sistema en
 En este documento se plasma el resultado de los RFIs anteriores que derivarán en aspectos como el despliegue en AWS, las métricas/logs y el coste de la solución, todos ellos explicados en los siguientes apartados.
 Además, se deja abierto a futuros desarrollos una serie de puntos especificados en el apartado [Trabajo futuro o desarrollos pendientes](#trabajo-futuro-o-desarrollos-pendientes).
 
+</div>
+
 # Despliegue en AWS
 <div style="text-align: justify">
-    
-TODO
+
+En general, la arquitectura y configuración de AWS es similar a la que se planteó en el [ADR de despliegue](../ADRs/Infrastructure/Deployment.md) del RFI III.
+Sin embargo, hay alguna diferencia. En particular, finalmente se ha optado por implementar una BDD nativa de AWS en lugar de configurar una BDD PostgreSQL en un servicio independiente, con el ahorro de costes y escalabilidad que ello conlleva.
+
 </div>
 
 → ***[Ver ADR correspondiente](../ADRs/Infrastructure/Deployment.md)***
@@ -45,9 +49,14 @@ Otras opciones a las que se podría haber recurrido son:
 - Datadog: herramienta de monitorización de logs y métricas.
 - New Relic: herramienta de monitorización de logs y métricas.
 
-Como se ha mencionado, CloudWatch será la herramienta a utilizar. A continuación se puede observar un ejemplo de visualización obtenido a partir de CloudWatch:
+Como se ha mencionado, CloudWatch será la herramienta a utilizar. A continuación se puede observar algunos ejemplos de visualización obtenidos a partir de CloudWatch:
+- Panel de monitorización de la BDD: 
 
-TODO INSERTAR CAPTURA DE ALGO DE MONITORIZACION DE CLOUDWATCH
+    ![Panel de monitorización de la BDD](../img/BDD metrics.png "Panel de monitorización de la BDD")
+- Uso de CPU del clúster:
+
+    ![Uso de CPU del clúster](../img/Cluster cpu usage.png "Uso de CPU del clúster")
+
 </div>
 
 # Coste de la solución
