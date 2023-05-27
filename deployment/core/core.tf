@@ -230,34 +230,6 @@ resource "aws_lb_listener" "main" {
 	}
 }
 
-resource "aws_lb_target_group" "kong_admin" {
-	name        = "${local.PREFIX}-kong-admin-tg"
-	port        = var.KONG_ADMIN_PORT
-	protocol    = "HTTP"
-	vpc_id      = aws_vpc.main.id
-	target_type = "ip"
-
-	health_check {
-		enabled             = true
-		interval            = 30
-		path                = "/"
-		timeout             = 5
-		healthy_threshold   = 3
-		unhealthy_threshold = 3
-	}
-}
-
-resource "aws_lb_listener" "kong_admin" {
-	load_balancer_arn = aws_lb.main.arn
-	port              = var.KONG_ADMIN_PORT
-	protocol          = "HTTP"
-
-	default_action {
-		type             = "forward"
-		target_group_arn = aws_lb_target_group.kong_admin.arn
-	}
-}
-
 resource "aws_ecs_cluster" "cluster" {
 	name = "${local.PREFIX}-ecs-cluster"
 
@@ -271,7 +243,7 @@ resource "aws_cloudwatch_log_group" "ecs" {
 	retention_in_days = 7
 }
 
-resource "aws_cloudwatch_dashboard" "main" {
+/*resource "aws_cloudwatch_dashboard" "main" {
 	dashboard_name = "${local.PREFIX}-dashboard"
 	dashboard_body = <<EOF
 	{
@@ -306,7 +278,7 @@ resource "aws_cloudwatch_dashboard" "main" {
 		]
 	}
 	EOF
-}
+}*/
 
 output "url" {
 	value = aws_lb.main.dns_name

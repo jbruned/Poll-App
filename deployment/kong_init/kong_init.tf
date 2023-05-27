@@ -11,9 +11,10 @@ resource "null_resource" "setup_kong_db" {
 				-e "KONG_PG_PASSWORD=${var.KONG_DB_PASSWORD}" \
 				-e "KONG_PG_DATABASE=${var.KONG_DB_NAME}" \
 				kong/kong-gateway:${var.KONG_VERSION} /bin/bash -c \
-				'kong migrations bootstrap | grep "already bootstrapped" > /dev/null || (printf "_format_version: \"1.1\"\nservices:\n- name: kong-admin\n  url: http://localhost:${var.KONG_ADMIN_PORT}\n  routes:\n  - name: kong-admin\n    strip_path: true\n    paths:\n    - ${var.KONG_ADMIN_ROUTE}\n    protocols:\n    - http" > /tmp/tmp.yml && cat /tmp/tmp.yml && kong config db_import /tmp/tmp.yml)'
+				'kong migrations bootstrap && (printf "_format_version: \"1.1\"\nservices:\n- name: kong-admin\n  url: http://localhost:${var.KONG_ADMIN_PORT}\n  routes:\n  - name: kong-admin\n    strip_path: true\n    paths:\n    - ${var.KONG_ADMIN_ROUTE}\n    protocols:\n    - http" > /tmp/tmp.yml && cat /tmp/tmp.yml && kong config db_import /tmp/tmp.yml)'
 		EOT
 	}
+	# 				'kong migrations bootstrap | grep "already bootstrapped" > /dev/null || (printf "_format_version: \"1.1\"\nservices:\n- name: kong-admin\n  url: http://localhost:${var.KONG_ADMIN_PORT}\n  routes:\n  - name: kong-admin\n    strip_path: true\n    paths:\n    - ${var.KONG_ADMIN_ROUTE}\n    protocols:\n    - http" > /tmp/tmp.yml && cat /tmp/tmp.yml && kong config db_import /tmp/tmp.yml)'
 	triggers = {
 		always_run = timestamp()
 	}

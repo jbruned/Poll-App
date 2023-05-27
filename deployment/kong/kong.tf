@@ -8,25 +8,10 @@ terraform {
 }
 
 provider "kong" {
-	# kong_admin_uri = "http://${data.aws_instance.bastion.public_ip}:${var.KONG_ADMIN_PORT}"
-	# kong_admin_uri = "http://${data.aws_instance.bastion.public_ip}:${var.KONG_ADMIN_PORT}"
-	# kong_admin_uri = "http://${data.aws_lb.main.dns_name}:${var.KONG_ADMIN_PORT}"
 	kong_admin_uri      = "http://${data.aws_lb.main.dns_name}${var.KONG_ADMIN_ROUTE}"
-	#  kong_api_key      = "admin" # Replace with your actual API key
-	#  kong_admin_tenant = "default"
+	# kong_api_key      = "admin"
+	# kong_admin_token  = "admin"
 }
-
-/*locals {
-  kong_headers = {
-    apikey = var.KONG_ADMIN_PASSWORD
-  }
-}
-
-resource "null_resource" "set_kong_headers" {
-  provisioner "local-exec" {
-    command = "export KONG_HEADERS='${jsonencode(local.kong_headers)}'"
-  }
-}*/
 
 resource "kong_certificate" "ssl" {
 	count       = local.USE_SSL ? 1 : 0
@@ -66,7 +51,6 @@ resource "kong_route" "protected" {
 }
 
 resource "kong_service" "admin" {
-	//depends_on = [null_resource.set_kong_headers]
 	name     = "admin"
 	protocol = "http"
 	host     = "localhost"
