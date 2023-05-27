@@ -61,7 +61,7 @@ if [ "$#" -eq 0 ] || [ "$1" = "kong" ]; then
 	if [ -f $IMPORT ]; then
 		bash $IMPORT && rm $IMPORT
 	fi
-	terraform apply -auto-approve -compact-warnings -input=false || echo "Kong already deployed"
+	terraform apply -auto-approve -compact-warnings -input=false || echo "Kong was probably already deployed so an API key is needed to access the Admin API"
 	cd ..
 fi
 if [ "$#" -eq 0 ] || [ "$1" = "domain" ]; then

@@ -19,7 +19,7 @@ for file in ../*.tf; do
 	echo -n "> Importing $file... "
 	(
 		terraform init > /dev/null && terraform apply -auto-approve -compact-warnings -input=false > /dev/null 2>&1 && \
-		terraform output | grep -E '^([A-Za-z0-9_]+)--([A-Za-z0-9_]+) = "([^"]*)"$' | sed -e 's/--/./g' -e 's/ = / /g' -e 's/\"//g' -e 's/^/terraform import /' -e 's/$/ || echo "Resource not found"/' >> ../$IMPORT && \
+		terraform output | grep -E '^([A-Za-z0-9_]+)--([A-Za-z0-9_]+) = "([^"]*)"$' | sed -e 's/--/./g' -e 's/ = / /g' -e 's/\"//g' -e 's/^/(terraform import /' -e 's/$/ > \/dev\/null 2>\&1 \&\& echo "Resource imported") || echo "Imported resource not found in the configuration"/' >> ../$IMPORT && \
 		echo "Done"
 	) || echo "Resource doesn't exist in the cloud"
 	# Remove all files
