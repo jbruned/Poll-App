@@ -71,7 +71,7 @@ resource "aws_security_group" "private_sg" {
 		from_port   = 0
 		to_port     = 0
 		protocol    = "-1"
-		cidr_blocks = ["0.0.0.0/0"]
+		cidr_blocks = [aws_vpc.main.cidr_block]
 	}
 
 	egress {
@@ -95,11 +95,34 @@ resource "aws_security_group" "public_sg" {
 	}
 
 	ingress {
+		description = "Access from local network"
+		from_port   = 0
+		to_port     = 0
+		protocol    = "-1"
+		cidr_blocks = [aws_vpc.main.cidr_block]
+	}
+
+	ingress {
+		description = "Access from current IP"
+		from_port = 0
+		to_port = 0
+		protocol = "-1"
+		cidr_blocks = ["${local.myip}/32"]
+	}
+
+	/*ingress {
 		from_port   = var.POSTGRES_PORT
 		to_port     = var.POSTGRES_PORT
 		protocol    = "tcp"
 		cidr_blocks = ["0.0.0.0/0"]
 	}
+
+	ingress {
+		from_port = var.KONG_ADMIN_PORT
+		to_port = var.KONG_ADMIN_PORT
+		protocol = "tcp"
+		cidr_blocks = ["0.0.0.0/0"]
+	}*/
 
 	egress {
 		from_port   = 0
@@ -156,7 +179,7 @@ resource "aws_db_instance" "postgres" {
 
 	lifecycle {
 		# Avoid modifications after importing the resource
-		#     (the password is not imported)
+		# (the password is not imported because it's sensitive)
 		ignore_changes = [password, apply_immediately]
 	}
 
@@ -169,7 +192,7 @@ resource "aws_lb" "main" {
 	name               = "${local.PREFIX}-load-balancer"
 	internal           = false
 	load_balancer_type = "application"
-	security_groups    = [aws_security_group.public_sg.id]
+	security_groups    = [aws_security_group.public_sg.id, aws_security_group.private_sg.id]
 	subnets            = [aws_subnet.public.id, aws_subnet.public2.id]
 
 	tags = {
@@ -179,7 +202,7 @@ resource "aws_lb" "main" {
 
 resource "aws_lb_target_group" "main" {
 	name        = "${local.PREFIX}-target-group"
-	port        = var.EXPOSED_PORT
+	port        = var.KONG_DEFAULT_PORT
 	protocol    = "HTTP"
 	vpc_id      = aws_vpc.main.id
 	target_type = "ip"
@@ -191,7 +214,9 @@ resource "aws_lb_target_group" "main" {
 		timeout             = 5
 		healthy_threshold   = 3
 		unhealthy_threshold = 3
+		matcher             = "200,401,403,404"
 	}
+
 }
 
 resource "aws_lb_listener" "main" {
@@ -211,4 +236,50 @@ resource "aws_ecs_cluster" "cluster" {
 	tags = {
 		Name = "${local.PREFIX}-ecs-cluster"
 	}
+}
+
+resource "aws_cloudwatch_log_group" "ecs" {
+	name              = "${local.PREFIX}-ecs-logs"
+	retention_in_days = 7
+}
+
+/*resource "aws_cloudwatch_dashboard" "main" {
+	dashboard_name = "${local.PREFIX}-dashboard"
+	dashboard_body = <<EOF
+	{
+		"widgets": [
+			{
+				"type": "metric",
+				"x": 0,
+				"y": 0,
+				"width": 24,
+				"height": 6,
+				"properties": {
+					"metrics": [
+						[ "AWS/ApplicationELB", "HealthyHostCount", "LoadBalancer", "${aws_lb.main.arn}", "TargetGroup", "${aws_lb_target_group.main.arn}" ],
+						[ ".", "UnHealthyHostCount", ".", "." ]
+					],
+					"view": "timeSeries",
+					"stacked": false,
+					"region": "${var.AWS_REGION}",
+					"stat": "Average",
+					"period": 60,
+					"title": "Healthy Hosts",
+					"legend": {
+						"position": "bottom"
+					},
+					"yAxis": {
+						"left": {
+							"min": 0
+						}
+					}
+				}
+			}
+		]
+	}
+	EOF
+}*/
+
+output "url" {
+	value = aws_lb.main.dns_name
 }
