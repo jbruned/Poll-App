@@ -3,11 +3,13 @@ This package contains the database models and exceptions
 for the Poll App
 """
 import time
-from datetime import datetime, timezone
+from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import exc
+from pytz import timezone
 
 db = SQLAlchemy()
+TIMEZONE = timezone('Europe/Madrid')
 
 
 class NotFoundException(Exception):
@@ -63,8 +65,7 @@ class Poll(db.Model):
         @param title: The poll title
         @param author: The poll author
         """
-        # poll = Poll(title=title, author=author, timestamp=db.func.now())
-        poll = Poll(title=title, author=author, timestamp=datetime.now(timezone('Europe/Madrid')))
+        poll = Poll(title=title, author=author, timestamp=datetime.now(TIMEZONE))
         db.session.add(poll)
         db.session.commit()
         return poll
@@ -247,8 +248,7 @@ class Option(db.Model):
         answer = Answer(
             option_id=self.id,
             session_id=session_id,
-            # timestamp=db.func.now(),
-            timestamp=datetime.now(timezone('Europe/Madrid'))
+            timestamp=datetime.now(TIMEZONE)
 
         )
         db.session.add(answer)
