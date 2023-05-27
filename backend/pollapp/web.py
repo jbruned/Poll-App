@@ -9,13 +9,12 @@ from logging import getLogger, CRITICAL, DEBUG
 from flask import Flask, send_file, abort, request, session
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import create_engine, exc
+from sqlalchemy import create_engine
 from sqlalchemy_utils import database_exists, create_database
 from werkzeug.exceptions import Unauthorized, Forbidden,  NotFound, Conflict, InternalServerError
 
 from .config import Config
-from .db import Poll, Option, NotFoundException, AlreadyVotedException,\
-    insert_test_data, handle_database_reconnect
+from .db import Poll, Option, NotFoundException, AlreadyVotedException, insert_test_data
 
 
 class WebGUI(Flask):
@@ -223,26 +222,27 @@ class WebGUI(Flask):
             """
             if debug:
                 traceback.print_exc()
-            try:
-                if message is not None and isinstance(code_or_exception, int):
-                    return (
-                        json.dumps({"error": message})
-                        if self.API_V1_PREFIX in request.url
-                        else message, code_or_exception
-                    )
-                if isinstance(code_or_exception, int):
+            if message is not None and isinstance(code_or_exception, int):
+                return (
+                    json.dumps({"error": message})
+                    if self.API_V1_PREFIX in request.url
+                    else message, code_or_exception
+                )
+
+            if isinstance(code_or_exception, int):
+                try:
                     return handle_error(code_or_exception,
                                         self.HTTP_ERRORS[code_or_exception])
-                if isinstance(code_or_exception, exc.OperationalError):
-                    print("Database connection lost. Attempting to reconnect...")
-                    handle_database_reconnect()
-                elif isinstance(code_or_exception, Exception):
+                except KeyError:
+                    return handle_error(500)
+            if isinstance(code_or_exception, Exception):
+                try:
                     return handle_error(
                         self.EXCEPTIONS[type(code_or_exception)],
                         str(code_or_exception) or "Unknown error"
                     )
-            except KeyError:
-                pass
+                except KeyError:
+                    return handle_error(500)
             return handle_error(500)
 
     @staticmethod

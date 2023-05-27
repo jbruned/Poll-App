@@ -1,0 +1,1 @@
+export TF_VAR_PREFIX=$1

@@ -15,7 +15,6 @@ resource "null_resource" "wait_for_bastion" {
 	}
 	triggers = {
 		instance_id = data.aws_instance.bastion.id
-		always_run  = timestamp()
 	}
 }
 
@@ -72,3 +71,16 @@ resource "postgresql_grant" "kong_user_grant" {
 	object_type = "database"
 	privileges  = ["ALL"]
 }
+
+/*resource "null_resource" "delete_bastion" {
+  depends_on = [
+    postgresql_grant.app_user_grant,
+    postgresql_grant.kong_user_grant
+  ]
+  triggers = {
+    instance_id = aws_instance.bastion.id
+  }
+  provisioner "local-exec" {
+    command = "aws ec2 terminate-instances --instance-ids ${self.triggers.instance_id} --region ${var.AWS_REGION}"
+  }
+}*/

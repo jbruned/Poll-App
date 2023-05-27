@@ -99,9 +99,7 @@ jobs:
   deploy-prod:
     name: Deploy (production env)
     runs-on: ubuntu-latest
-    environment:
-      name: AWS (prod)
-      url: ${{ steps.terraform_output.outputs.url }}
+    environment: AWS (prod)
     if: github.event_name == 'release' && startsWith(github.ref, 'refs/tags/')
     needs:
       - publish
@@ -120,24 +118,17 @@ jobs:
         run: cd deployment && bash deploy.sh bastion
       - name: Create databases and users
         run: cd deployment && bash deploy.sh db
-      - name: Initialize kong
-        run: cd deployment && bash deploy.sh kong_init
       - name: Deploy app
         run: cd deployment && bash deploy.sh app
-      - name: Setup kong
-        run: cd deployment && bash deploy.sh kong
       - name: Destroy bastion host
         run: cd deployment && bash destroy.sh bastion
         continue-on-error: true
       - name: Output app URL
-        run: cd deployment/core && terraform output url
-      - name: Get Terraform Output URL
-        id: terraform_output
-        run: cd deployment/core && echo "::set-output name=url::$(terraform output -raw url)"
+        run: cd deployment/app && terraform output url
       - name: Update domain DNS
         run: cd deployment && bash deploy.sh domain
       - name: Output public URL
-        run: cd deployment/domain && terraform output public_url || echo "No public URL"
+        run: cd deployment/domain && terraform output public_url
     env:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -155,15 +146,11 @@ jobs:
       IONOS_API_KEY: ${{ secrets.IONOS_API_KEY }}
       TF_VAR_DOMAIN: ${{ vars.DOMAIN }}
       TF_VAR_SUBDOMAIN: ${{ vars.SUBDOMAIN }}
-      TF_VAR_KONG_ADMIN_USER: ${{ vars.KONG_ADMIN_USER }}
-      TF_VAR_KONG_ADMIN_PASSWORD: ${{ secrets.KONG_ADMIN_PASSWORD }}
   deploy-dev:
     name: Deploy (development env)
     if: github.event_name == 'release' || (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/'))
     runs-on: ubuntu-latest
-    environment:
-        name: AWS (dev)
-        url: ${{ steps.terraform_output.outputs.url }}
+    environment: AWS (dev)
     needs:
       - publish
     steps:
@@ -182,20 +169,13 @@ jobs:
         run: cd deployment && bash deploy.sh bastion
       - name: Create databases and users
         run: cd deployment && bash deploy.sh db
-      - name: Initialize kong
-        run: cd deployment && bash deploy.sh kong_init
       - name: Deploy app
         run: cd deployment && bash deploy.sh app
-      - name: Setup kong
-        run: cd deployment && bash deploy.sh kong
       - name: Destroy bastion host
         run: cd deployment && bash destroy.sh bastion
         continue-on-error: true
       - name: Output app URL
-        run: cd deployment/core && terraform output url
-      - name: Get Terraform Output URL
-        id: terraform_output
-        run: cd deployment/core && echo "::set-output name=url::$(terraform output -raw url)"
+        run: cd deployment/app && terraform output url
     env:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -210,8 +190,3 @@ jobs:
       TF_VAR_RDS_PASSWORD: ${{ secrets.RDS_PASSWORD }}
       TF_VAR_BASTION_HOST_NAME: ${{ github.job }}
       TF_VAR_BASTION_DISPOSABLE_ID: ${{ github.run_id }}
-      TF_VAR_CONTAINER_COUNT: ${{ vars.TASK_COUNT }}
-      TF_VAR_CONTAINER_CPU: ${{ vars.TASK_CPU }}
-      TF_VAR_CONTAINER_MEMORY: ${{ vars.TASK_MEMORY }}
-      TF_VAR_KONG_ADMIN_USER: ${{ vars.KONG_ADMIN_USER }}
-      TF_VAR_KONG_ADMIN_PASSWORD: ${{ secrets.KONG_ADMIN_PASSWORD }}

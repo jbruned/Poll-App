@@ -314,10 +314,6 @@ El pipeline de CI/CD del proyecto se ha implementado como un Workflow personaliz
 
 El flujo de ejecución resultante en GitHub Actions sería el siguiente (no se ha pusheado ninguna tag ni creado ninguna release):
 
-![Flujo del pipeline](../../img/pipeline.png "Flujo de ejecución del pipeline de CI/CD")
-
-Por último, en la siguiente imagen se puede ver el detalle de la ejecución de la fase de despliegue, que se detalla en el [ADR correspondiente](../Tech/Deployment_Cloud.md).
-
-![Deployment stage](../../img/pipeline_deploy.png "Detalle de la fase de despliegue")
+![Flujo del pipeline](../../img/Diagrama_pipeline.jpg "Flujo de ejecución del pipeline de CI/CD (no se ha pusheado ninguna tag ni creado ninguna release)")
 
 </div>

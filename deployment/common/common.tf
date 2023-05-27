@@ -63,62 +63,24 @@ variable "KONG_DB_PASSWORD" {
 	sensitive = true
 }
 
-variable "KONG_VERSION" {
-	type    = string
-	default = "3.2.1.0"
-}
-
-variable "KONG_CONTAINER_NAME" {
-	type    = string
-	default = "kong"
-}
-
-variable "KONG_LOG_PATH" {
-	type    = string
-	default = "/usr/local/kong/logs"
-}
-
-variable "KONG_ADMIN_PORT" {
-	type    = number
-	default = 8001
-}
-
-variable "KONG_ADMIN_ROUTE" {
-	type    = string
-	default = "/kong-admin"
-}
-
-variable "KONG_DEFAULT_PORT" {
-	type    = number
-	default = 8000
-}
-
 variable "CONTAINER_NAME" {
 	type    = string
 	default = "pollapp"
 }
 
+variable "CPU" {
+	type    = number
+	default = 256
+}
+
+variable "MEMORY" {
+	type    = number
+	default = 512
+}
+
 variable "AWS_IMAGE_NAME" {
 	type    = string
 	default = "poll-app-gtio"
-}
-
-variable "CONTAINER_COUNT" {
-	type        = number
-	description = "Number of containers with our app to run"
-	default     = 2
-}
-
-variable "CONTAINER_CPU" {
-	type        = number
-	description = "CPU to allocate to each container of our app"
-	default     = 512
-}
-
-variable "CONTAINER_MEMORY" {
-	type        = number
-	description = "Memory to allocate to each container of our app"
-	default     = 1024
 }
 
 variable "PREFIX" {
@@ -153,7 +115,6 @@ locals {
 	RDS_SG_NAME            = "${local.PREFIX}-rds-sg"
 	RDS_SUBNET_GROUP_NAME  = "${local.PREFIX}-rds-subnet-group"
 	BASTION_HOST_NAME      = "${local.PREFIX}-bastion-${var.BASTION_HOST_NAME}${var.BASTION_DISPOSABLE_ID}"
-	LOG_GROUP_NAME		   = "${local.PREFIX}-ecs-logs"
 }
 
 provider "aws" {
@@ -161,11 +122,3 @@ provider "aws" {
 }
 
 data "aws_availability_zones" "available" {}
-
-data "http" "myip" {
-	url = "https://api.my-ip.io/ip.txt"
-}
-
-locals {
-	myip = chomp(data.http.myip.response_body)
-}

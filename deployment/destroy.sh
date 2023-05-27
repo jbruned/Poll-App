@@ -9,18 +9,6 @@ if [ "$#" -eq 0 ] || [ "$1" = "app" ]; then
 	terraform init && terraform destroy -auto-approve
 	cd ..
 fi
-if [ "$#" -eq 0 ] || [ "$1" = "kong" ]; then
-	echo "Destroying Kong"
-	cd kong
-	terraform init && terraform destroy -auto-approve
-	cd ..
-fi
-if [ "$#" -eq 0 ] || [ "$1" = "kong_init" ]; then
-	echo "Destroying Kong init"
-	cd kong_init
-	terraform init && terraform destroy -auto-approve
-	cd ..
-fi
 if [ "$#" -eq 0 ] || [ "$1" = "db" ]; then
     echo "Destroying databases and users"
     cd db

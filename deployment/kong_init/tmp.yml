@@ -1,8 +1,0 @@
-services:
-- name: kong-admin
-  url: localhost:8001
-  routes:
-  - name: kong-admin
-    strip_path: true
-    paths:
-    - /kong-admin
