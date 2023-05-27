@@ -3,9 +3,9 @@ This package contains the database models and exceptions
 for the Poll App
 """
 import time
+from datetime import datetime, timezone
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import exc
-from datetime import datetime, timezone
 
 db = SQLAlchemy()
 
@@ -337,6 +337,7 @@ def insert_test_data():
     Option.insert(text="Option 3", poll_id=poll.id)
     Option.insert(text="All of the above", poll_id=poll.id)
 
+
 def handle_database_reconnect(max_retries: int = 5, retry_interval: int = 5):
     """
     Tries to reconnect to the database
@@ -353,6 +354,4 @@ def handle_database_reconnect(max_retries: int = 5, retry_interval: int = 5):
         except exc.SQLAlchemyError:
             retries += 1
             time.sleep(retry_interval)
-            
     print("Unable to reconnect to the database after maximum retries.")
-
