@@ -1,0 +1,6 @@
+**.terraform
+**.tfstate
+**.tfstate.*
+**.lock.hcl
+**.ln.tf
+**tf_import.sh
