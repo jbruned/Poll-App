@@ -1,12 +1,13 @@
 IMAGE_NAME = pollapp
+include .env
 run:
-	make deps && make lint && make build && make deploy-local
+	make deps && make linters && make build && make deploy-local
 deps:
 	make deps-front && make deps-back
 deps-front:
 	cd frontend && npm install && cd ..
 deps-back:
-	cd backend && pip install --user -r requirements.txt && cd ..
+	cd backend && pip install -r requirements.txt && cd ..
 linters:
 	make lint-front && make lint-back
 lint-front:
