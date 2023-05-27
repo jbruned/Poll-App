@@ -1,5 +1,4 @@
 IMAGE_NAME = pollapp
-include .env
 run:
 	make deps && make linters && make build && make deploy-local
 deps:
