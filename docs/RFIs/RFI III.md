@@ -85,7 +85,7 @@ A futuro, se sigue considerando viable la opción de la redirección directa o a
 <div style="text-align: justify">
   
 A continuación se observa el diagrama final de la *pipeline* implementada:
-![Flujo del pipeline](../img/Diagrama_pipeline.jpg "Flujo de ejecución del pipeline de CI/CD (no se ha pusheado ninguna tag ni creado ninguna release)")
+![Flujo del pipeline](../img/pipeline.png "Flujo de ejecución del pipeline de CI/CD")
 
 En base a ello, seguidamente se explican brevemente cada uno de los "nodos" de la *pipeline*.
 </div>

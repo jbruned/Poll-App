@@ -2,15 +2,14 @@
 set -e
 
 source init.sh
+IMPORT="tf_import.sh"
 
 if [ "$#" -eq 0 ] || [ "$1" = "core" ]; then
     echo "Deploying core"
     cd core
     terraform init
-    # If import.sh exists and no terraform.tfstate exists, then run it
-    if [ -f import.sh ] && [ ! -f terraform.tfstate ]; then
-		bash import.sh
-		rm import.sh
+    if [ -f $IMPORT ]; then
+		bash $IMPORT && rm $IMPORT
 	fi
     terraform apply -auto-approve -compact-warnings -input=false
     cd ..
@@ -19,9 +18,8 @@ if [ "$#" -eq 0 ] || [ "$1" = "bastion" ]; then
 	echo "Deploying bastion"
 	cd bastion
 	terraform init
-	if [ -f import.sh ] && [ ! -f terraform.tfstate ]; then
-		bash import.sh
-		rm import.sh
+	if [ -f $IMPORT ]; then
+		bash $IMPORT && rm $IMPORT
 	fi
 	terraform apply -auto-approve -compact-warnings -input=false
 	cd ..
@@ -30,9 +28,18 @@ if [ "$#" -eq 0 ] || [ "$1" = "db" ]; then
     echo "Creating databases and users"
     cd db
     terraform init
-	if [ -f import.sh ] && [ ! -f terraform.tfstate ]; then
-		bash import.sh
-		rm import.sh
+	if [ -f $IMPORT ]; then
+		bash $IMPORT && rm $IMPORT
+	fi
+	terraform apply -auto-approve -compact-warnings -input=false
+	cd ..
+fi
+if [ "$#" -eq 0 ] || [ "$1" = "kong_init" ]; then
+	echo "Creating and initializing Kong"
+	cd kong_init
+	terraform init
+	if [ -f $IMPORT ]; then
+		bash $IMPORT && rm $IMPORT
 	fi
 	terraform apply -auto-approve -compact-warnings -input=false
 	cd ..
@@ -41,10 +48,20 @@ if [ "$#" -eq 0 ] || [ "$1" = "app" ]; then
 	echo "Deploying app"
 	cd app
 	terraform init
-	if [ -f import.sh ] && [ ! -f terraform.tfstate ]; then
-		bash import.sh && rm import.sh
+	if [ -f $IMPORT ]; then
+		bash $IMPORT && rm $IMPORT
 	fi
 	terraform apply -auto-approve -compact-warnings -input=false
+	cd ..
+fi
+if [ "$#" -eq 0 ] || [ "$1" = "kong" ]; then
+	echo "Deploying Kong"
+	cd kong
+	terraform init
+	if [ -f $IMPORT ]; then
+		bash $IMPORT && rm $IMPORT
+	fi
+	terraform apply -auto-approve -compact-warnings -input=false || echo "Kong was probably already deployed so an API key is needed to access the Admin API"
 	cd ..
 fi
 if [ "$#" -eq 0 ] || [ "$1" = "domain" ]; then
@@ -54,8 +71,8 @@ if [ "$#" -eq 0 ] || [ "$1" = "domain" ]; then
 		echo "Deploying domain"
 		cd domain
 		terraform init
-		if [ -f import.sh ] && [ ! -f terraform.tfstate ]; then
-			bash import.sh && rm import.sh
+		if [ -f $IMPORT ]; then
+			bash $IMPORT && rm $IMPORT
 		fi
 		terraform apply -auto-approve -compact-warnings -input=false
 		cd ..
