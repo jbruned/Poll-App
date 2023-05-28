@@ -133,7 +133,7 @@ jobs:
         run: cd deployment/core && terraform output url
       - name: Get Terraform Output URL
         id: terraform_output
-        run: cd deployment/core && echo "url=http://$(terraform output -raw url | grep -o 'pollapp\(.*\).com')" >> $GITHUB_OUTPUT
+        run: cd deployment/core && (echo "url=$(terraform output -raw http_url | grep -o 'http\(.*\).com')" >> $GITHUB_OUTPUT || exit 0)
       - name: Update domain DNS
         run: cd deployment && bash deploy.sh domain
       - name: Output public URL
@@ -194,7 +194,7 @@ jobs:
         run: cd deployment/core && terraform output url
       - name: Get Terraform Output URL
         id: terraform_output
-        run: cd deployment/core && echo "url=http://$(terraform output -raw url | grep -o 'pollapp\(.*\).com')" >> $GITHUB_OUTPUT
+        run: cd deployment/core && (echo "url=$(terraform output -raw http_url | grep -o 'http\(.*\).com')" >> $GITHUB_OUTPUT || exit 0)
     env:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
