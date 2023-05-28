@@ -51,7 +51,7 @@ resource "kong_route" "protected" {
 }
 
 resource "kong_service" "admin" {
-	name     = "admin"
+	name     = "kong-admin"
 	protocol = "http"
 	host     = "localhost"
 	port     = var.KONG_ADMIN_PORT
