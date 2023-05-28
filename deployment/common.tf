@@ -136,10 +136,24 @@ variable "BASTION_DISPOSABLE_ID" {
 	default = ""
 }
 
+variable "SSL_CERT_BASE64" {
+	type      = string
+	sensitive = true
+	default   = ""
+}
+
+variable "SSL_KEY_BASE64" {
+	type      = string
+	sensitive = true
+	default   = ""
+}
+
 locals {
 	ROLE_ARN  = "arn:aws:iam::${var.AWS_ACCOUNT_ID}:role/LabRole"
 	IMAGE_URL = "${var.AWS_ACCOUNT_ID}.dkr.ecr.${var.AWS_REGION}.amazonaws.com/${var.AWS_IMAGE_NAME}:latest"
 	PREFIX    = var.PREFIX
+	USE_SSL = var.SSL_CERT_BASE64 != "" && var.SSL_KEY_BASE64 != ""
+	myip = chomp(data.http.myip.response_body)
 
 	// Identifiers
 	DB_INSTANCE_IDENTIFIER = "${local.PREFIX}-postgres"
@@ -164,8 +178,4 @@ data "aws_availability_zones" "available" {}
 
 data "http" "myip" {
 	url = "https://api.my-ip.io/ip.txt"
-}
-
-locals {
-	myip = chomp(data.http.myip.response_body)
 }

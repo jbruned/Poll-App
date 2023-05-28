@@ -101,7 +101,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: AWS (prod)
-      # url: ${{ steps.terraform_output.outputs.url }}
+      url: ${{ steps.terraform_output.outputs.url }}
     if: github.event_name == 'release' && startsWith(github.ref, 'refs/tags/')
     needs:
       - publish
@@ -113,7 +113,7 @@ jobs:
       - name: Test AWS CLI login
         run: (aws sts get-caller-identity > /dev/null && echo "Successfully logged in") || (echo "Error while logging in" && exit 1)
       - name: Import existing infrastructure
-        run: cd deployment && bash import.sh
+        run: cd deployment && bash import.sh fetch
       - name: Deploy core
         run: cd deployment && bash deploy.sh core
       - name: Create bastion host
@@ -131,9 +131,10 @@ jobs:
         continue-on-error: true
       - name: Output app URL
         run: cd deployment/core && terraform output url
-#      - name: Get Terraform Output URL
-#        id: terraform_output
-#        run: cd deployment/core && echo "{url}={http://$(terraform output -raw url | grep '.com')}" >> $GITHUB_OUTPUT
+      # - name: Get Terraform Output URL
+        # id: terraform_output
+        # run: cd deployment/core && { echo "url=$(terraform output -json http_url | grep -o 'http\(.*\).com')" >> $GITHUB_OUTPUT } || echo ""
+        # run: cd deployment/core && { echo "url=$(terraform output -json http_url | grep -o 'http\(.*\).com')" >> $GITHUB_ENV; echo "url=$url" >> $GITHUB_OUTPUT; } || echo ""
       - name: Update domain DNS
         run: cd deployment && bash deploy.sh domain
       - name: Output public URL
@@ -163,11 +164,10 @@ jobs:
     runs-on: ubuntu-latest
     environment:
         name: AWS (dev)
-        # url: ${{ steps.terraform_output.outputs.url }}
+        url: ${{ steps.terraform_output.outputs.url }}
     needs:
       - publish
     steps:
-      # Exactly the same as deploy-prod, except for the environment
       - name: Checkout repo
         uses: actions/checkout@v3
       - name: Setup Terraform
@@ -175,7 +175,7 @@ jobs:
       - name: Test AWS CLI login
         run: (aws sts get-caller-identity > /dev/null && echo "Successfully logged in") || (echo "Error while logging in" && exit 1)
       - name: Import existing infrastructure
-        run: cd deployment && bash import.sh
+        run: cd deployment && bash import.sh fetch
       - name: Deploy core
         run: cd deployment && bash deploy.sh core
       - name: Create bastion host
@@ -193,9 +193,10 @@ jobs:
         continue-on-error: true
       - name: Output app URL
         run: cd deployment/core && terraform output url
-#      - name: Get Terraform Output URL
-#        id: terraform_output
-#        run: cd deployment/core && echo "{url}={http://$(terraform output -raw url | grep '.com')}" >> $GITHUB_OUTPUT
+      # - name: Get Terraform Output URL
+        # id: terraform_output
+        # run: cd deployment/core && { echo "url=$(terraform output -json http_url | grep -o 'http\(.*\).com')" >> $GITHUB_OUTPUT } || echo ""
+        # run: cd deployment/core && { echo "url=$(terraform output -json http_url | grep -o 'http\(.*\).com')" >> $GITHUB_ENV; echo "url=$url" >> $GITHUB_OUTPUT; } || echo ""
     env:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}

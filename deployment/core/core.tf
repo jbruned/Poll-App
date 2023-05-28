@@ -283,3 +283,11 @@ resource "aws_cloudwatch_log_group" "ecs" {
 output "url" {
 	value = aws_lb.main.dns_name
 }
+
+locals {
+	IS_DEFAULT_PORT = var.EXPOSED_PORT == 80 || var.EXPOSED_PORT == 443
+}
+
+output "http_url" {
+	value = "${local.USE_SSL ? "https" : "http"}://${aws_lb.main.dns_name}${local.IS_DEFAULT_PORT ? "" : ":"}${local.IS_DEFAULT_PORT ? "" : var.EXPOSED_PORT}"
+}
