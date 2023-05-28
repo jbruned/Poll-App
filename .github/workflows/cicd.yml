@@ -131,10 +131,10 @@ jobs:
         continue-on-error: true
       - name: Output app URL
         run: cd deployment/core && terraform output url
-      - name: Get Terraform Output URL
-        id: terraform_output
+      # - name: Get Terraform Output URL
+        # id: terraform_output
         # run: cd deployment/core && { echo "url=$(terraform output -json http_url | grep -o 'http\(.*\).com')" >> $GITHUB_OUTPUT } || echo ""
-        run: cd deployment/core && { echo "url=$(terraform output -json http_url | grep -o 'http\(.*\).com')" >> $GITHUB_ENV; echo "url=$url" >> $GITHUB_OUTPUT; } || echo ""
+        # run: cd deployment/core && { echo "url=$(terraform output -json http_url | grep -o 'http\(.*\).com')" >> $GITHUB_ENV; echo "url=$url" >> $GITHUB_OUTPUT; } || echo ""
       - name: Update domain DNS
         run: cd deployment && bash deploy.sh domain
       - name: Output public URL
@@ -193,10 +193,10 @@ jobs:
         continue-on-error: true
       - name: Output app URL
         run: cd deployment/core && terraform output url
-      - name: Get Terraform Output URL
-        id: terraform_output
+      # - name: Get Terraform Output URL
+        # id: terraform_output
         # run: cd deployment/core && { echo "url=$(terraform output -json http_url | grep -o 'http\(.*\).com')" >> $GITHUB_OUTPUT } || echo ""
-        run: cd deployment/core && { echo "url=$(terraform output -json http_url | grep -o 'http\(.*\).com')" >> $GITHUB_ENV; echo "url=$url" >> $GITHUB_OUTPUT; } || echo ""
+        # run: cd deployment/core && { echo "url=$(terraform output -json http_url | grep -o 'http\(.*\).com')" >> $GITHUB_ENV; echo "url=$url" >> $GITHUB_OUTPUT; } || echo ""
     env:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
